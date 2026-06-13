@@ -2472,15 +2472,144 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   backdrop-filter: blur(8px);
 }
 
-/* Responsive */
+/* Mobile — boxes must grow with text (applies to all pages ≤900px) */
+@media (max-width: 900px) {
+  .slide-inner {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .slide-inner > .network-grid,
+  .slide-inner > .cards.three,
+  .slide-inner > .flow,
+  .slide-inner > .impact-row,
+  .slide-inner > .partners,
+  .slide-inner > .metric-list {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: min-content;
+  }
+
+  .network-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
+    gap: 0.65rem;
+  }
+
+  .cards.three {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .card,
+  .nav-box,
+  .flow-step,
+  .impact,
+  .net-item,
+  .partner-col,
+  .goal-box,
+  .detail-block,
+  .metric,
+  .pill,
+  .split-text,
+  a.net-item.net-item-clickable {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+    max-height: none;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .net-item p,
+  .net-item h4,
+  .net-count,
+  .net-tap-hint {
+    max-width: 100%;
+  }
+
+  .net-item p {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .card h3,
+  .flow-step h4,
+  .net-item h4 {
+    line-height: 1.3;
+    overflow-wrap: break-word;
+  }
+
+  .split-text p,
+  .card p,
+  .flow-step p,
+  .net-item p,
+  .partner-col li,
+  .goal-box p,
+  .detail-text {
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+
+  .impact-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .impact,
+  a.impact.impact-clickable {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .partners {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .flow-arrow {
+    display: none;
+  }
+
+  .flow-step {
+    max-width: none;
+    text-align: left;
+  }
+
+  .split {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 0.65rem;
+  }
+
+  .split-text,
+  .split-visual {
+    min-height: 0;
+    height: auto;
+  }
+}
+
+/* Responsive — layout tweaks (text-in-box rules are in block above) */
 @media (max-width: 900px) {
   .split { grid-template-columns: 1fr; gap: 1rem; }
-  .cards.three { grid-template-columns: 1fr; }
-  .network-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .partners { grid-template-columns: 1fr; }
-  .flow { flex-wrap: wrap; }
-  .flow-arrow { display: none; }
-  .flow-step { max-width: none; flex: 1 1 40%; }
   .cloud-viz, .cube-scene { height: clamp(90px, 22cqh, 180px); }
   .split-visual.map-wrap { order: -1; }
   .study-area-page-split {
@@ -2497,11 +2626,30 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
 }
 
 @media (max-width: 520px) {
-  .network-grid { grid-template-columns: 1fr; }
   .hero-stats { gap: 0.75rem; }
   .stat-num { font-size: 1.5rem; }
   .slide { padding-inline: 1rem; }
-  .flow-step { flex: 1 1 100%; }
+
+  .section-nav-stack .nav-box-title {
+    font-size: 0.78rem;
+  }
+
+  .card h3,
+  .flow-step h4,
+  .net-item h4 {
+    font-size: 0.82rem;
+  }
+
+  .card p,
+  .card ul,
+  .flow-step p,
+  .net-item p {
+    font-size: 0.76rem;
+  }
+
+  .impact-click-body {
+    font-size: 0.78rem;
+  }
 }
 
 @media (max-height: 700px) {
@@ -2764,6 +2912,17 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   .lf-page .lf-plot-3d {
     min-height: clamp(180px, 28vh, 260px);
     height: auto;
+  }
+
+  .lf-page .detail-block {
+    overflow: hidden;
+    height: auto;
+    min-height: min-content;
+  }
+
+  .lf-page .detail-text {
+    overflow-wrap: break-word;
+    line-height: 1.4;
   }
 }
 
@@ -3249,30 +3408,105 @@ button.btn.primary {
     gap: 0.5rem;
   }
 
-  .mobile-snap,
-  .partner-logos,
-  .mobile-snap-intro,
-  .nav-box,
-  .section-tag,
-  .center-title,
+  /* Phone boxes: grow to fit wrapped text */
   .card,
-  .split-text,
-  .split-visual,
-  .partner-col,
-  .satreps-note,
+  .nav-box,
   .flow-step,
   .impact,
   .net-item,
+  .partner-col,
+  .goal-box,
+  .detail-block,
+  .metric,
+  .pill,
+  .split-text,
+  a.net-item.net-item-clickable {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+    max-height: none;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .net-item p {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .center-title,
+  .split-text h2,
+  h2 {
+    font-size: clamp(1rem, 4.2vw, 1.3rem);
+    line-height: 1.25;
+    overflow-wrap: break-word;
+  }
+
+  .split-text p,
+  .card p,
+  .flow-step p,
+  .net-item p,
+  .partner-col li,
+  .goal-box p,
+  .detail-text {
+    font-size: clamp(0.78rem, 3.2vw, 0.88rem);
+    line-height: 1.45;
+  }
+
+  .card h3,
+  .flow-step h4,
+  .net-item h4 {
+    font-size: clamp(0.85rem, 3.4vw, 0.95rem);
+    line-height: 1.3;
+  }
+
+  .card ul {
+    font-size: clamp(0.75rem, 3vw, 0.84rem);
+    line-height: 1.4;
+  }
+
+  .pill {
+    font-size: 0.72rem;
+    padding: 0.28rem 0.55rem;
+    line-height: 1.3;
+  }
+
+  .goal-box {
+    padding: 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .mobile-snap,
+  .partner-logos,
+  .mobile-snap-intro,
+  .section-tag,
+  .center-title,
+  .split-visual,
+  .satreps-note,
   .study-area-sidebar-wrap,
   .tnb-page-sidebar-wrap,
   .tnb-map-panel,
   .study-area-map,
-  .detail-block,
   .detail-controls,
-  .contact-actions .btn,
-  .goal-box,
   .cube-scene {
     scroll-snap-align: center;
+    scroll-margin-block: 0.5rem;
+  }
+
+  .nav-box,
+  .card,
+  .split-text,
+  .partner-col,
+  .flow-step,
+  .impact,
+  .net-item,
+  .goal-box,
+  .contact-actions .btn {
+    scroll-snap-align: start;
     scroll-margin-block: 0.5rem;
   }
 
@@ -3298,14 +3532,18 @@ button.btn.primary {
 
   .section-nav-stack .nav-box {
     width: 100%;
-    min-height: clamp(88px, 14vh, 120px);
-    padding: 0.75rem 0.85rem;
+    min-height: min-content;
+    height: auto;
+    padding: 0.65rem 0.75rem;
     border-radius: 12px;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
   .section-nav-stack .nav-box-title {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    width: 100%;
   }
 
   .section-nav-stack .nav-box-icon {
@@ -3354,8 +3592,8 @@ button.btn.primary {
   }
 
   .card {
-    padding: 1rem;
-    min-height: clamp(120px, 22vh, 220px);
+    padding: 0.85rem;
+    min-height: min-content;
   }
 
   .flow {
@@ -3371,8 +3609,9 @@ button.btn.primary {
   .flow-step {
     max-width: none;
     flex: none;
-    min-height: clamp(100px, 18vh, 160px);
-    padding: 0.85rem;
+    min-height: min-content;
+    padding: 0.75rem 0.85rem;
+    text-align: left;
   }
 
   .impact-row {
@@ -3380,9 +3619,27 @@ button.btn.primary {
     gap: 0.5rem;
   }
 
-  .impact {
-    min-height: clamp(72px, 12vh, 110px);
-    padding: 0.85rem 1rem;
+  .impact,
+  a.impact.impact-clickable {
+    width: 100%;
+    min-width: 0;
+    min-height: min-content;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .impact-click-top {
+    align-items: flex-start;
+  }
+
+  .impact-click-body {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .impact-hint {
+    font-size: 0.72rem;
   }
 
   .partners {
@@ -3392,8 +3649,25 @@ button.btn.primary {
   }
 
   .partner-col {
-    min-height: clamp(120px, 20vh, 200px);
-    padding: 0.85rem;
+    min-height: min-content;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .partner-col h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .partner-col li {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    padding: 0.35rem 0;
+  }
+
+  .satreps-note {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    padding: 0.65rem 0.75rem;
   }
 
   .split {
@@ -3406,7 +3680,8 @@ button.btn.primary {
 
   .split-text,
   .split-visual {
-    min-height: clamp(140px, 24vh, 280px);
+    min-height: 0;
+    height: auto;
   }
 
   .split-visual.map-wrap,
@@ -3417,11 +3692,20 @@ button.btn.primary {
 
   .network-grid {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    grid-auto-rows: auto;
+    align-items: start;
+    gap: 0.65rem;
   }
 
-  .net-item {
-    min-height: clamp(88px, 14vh, 130px);
+  .net-item,
+  a.net-item.net-item-clickable {
+    min-height: min-content;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .net-tap-hint {
+    font-size: 0.72rem;
+    margin-top: 0.35rem;
   }
 
   .study-area-page-split,
@@ -3479,6 +3763,42 @@ button.btn.primary {
     overflow-y: auto;
   }
 
+  .tnb-page-sidebar h2,
+  .study-area-sidebar h2 {
+    font-size: clamp(0.95rem, 4vw, 1.15rem);
+    line-height: 1.25;
+  }
+
+  .tnb-page-lead,
+  .tnb-detail p,
+  .study-area-sidebar p {
+    font-size: clamp(0.72rem, 3vw, 0.82rem);
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+
+  .contact-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .contact-actions .btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    padding: 0.65rem 0.85rem;
+    text-align: center;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  .contact-text {
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+
   .tnb-risk-list-wrap {
     max-height: min(36vh, 280px);
     overflow-y: auto;
@@ -3487,6 +3807,17 @@ button.btn.primary {
   .lf-page .detail-side {
     max-height: min(40vh, 300px);
     overflow-y: auto;
+  }
+
+  .lf-page .detail-block {
+    overflow: hidden;
+    height: auto;
+    min-height: min-content;
+  }
+
+  .lf-page .detail-text {
+    overflow-wrap: break-word;
+    line-height: 1.4;
   }
 }
 
@@ -3500,4 +3831,33 @@ html.portrait-mobile .viewport-169 {
   height: 100% !important;
   max-width: 100% !important;
   max-height: 100% !important;
+}
+
+html.portrait-mobile .slide-inner {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  justify-content: flex-start;
+}
+
+html.portrait-mobile .network-grid {
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
+  align-items: start;
+}
+
+html.portrait-mobile .card,
+html.portrait-mobile .nav-box,
+html.portrait-mobile .flow-step,
+html.portrait-mobile .impact,
+html.portrait-mobile .net-item,
+html.portrait-mobile .partner-col,
+html.portrait-mobile .goal-box,
+html.portrait-mobile .detail-block,
+html.portrait-mobile .split-text,
+html.portrait-mobile a.net-item.net-item-clickable {
+  height: auto;
+  min-height: min-content;
+  overflow: hidden;
+  overflow-wrap: break-word;
 }
