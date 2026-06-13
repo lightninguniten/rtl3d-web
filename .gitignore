@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Logs and temp
+*.log
+*.tmp
+~$*
+
+# Optional: uncomment to shrink the repo (run build-osm-water-data.bat after clone)
+# data/osm/water-infrastructure.json
+# data/osm/water-layers.json

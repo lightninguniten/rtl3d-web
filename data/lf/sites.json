@@ -1,0 +1,89 @@
+{
+  "origin": {
+    "lat": 2.726931,
+    "lon": 102.24901
+  },
+  "sites": [
+    {
+      "code": "MKPL",
+      "name": "MET Kuala Pilah",
+      "lat": 2.726931,
+      "lon": 102.24901,
+      "x_km": 0.0,
+      "y_km": 0.0,
+      "alt_km": 0.129
+    },
+    {
+      "code": "UTNL",
+      "name": "UNITEN Putrajaya Campus",
+      "lat": 2.969325,
+      "lon": 101.728753,
+      "x_km": -57.849,
+      "y_km": 26.983,
+      "alt_km": 0.068
+    },
+    {
+      "code": "DAML",
+      "name": "DID Batu Dam",
+      "lat": 3.275989,
+      "lon": 101.684435,
+      "x_km": -62.777,
+      "y_km": 61.121,
+      "alt_km": 0.104
+    },
+    {
+      "code": "PJWL",
+      "name": "DID Padang Jawa",
+      "lat": 3.045798,
+      "lon": 101.491347,
+      "x_km": -84.248,
+      "y_km": 35.496,
+      "alt_km": 0.009
+    },
+    {
+      "code": "PBSL",
+      "name": "Pulau Besar",
+      "lat": 2.113398,
+      "lon": 102.334112,
+      "x_km": 9.463,
+      "y_km": -68.298,
+      "alt_km": 0.015
+    },
+    {
+      "code": "KUTL",
+      "name": "Kolej UNITI, Port Dickson",
+      "lat": 2.404219,
+      "lon": 101.96472,
+      "x_km": -31.611,
+      "y_km": -35.924,
+      "alt_km": 0.01
+    },
+    {
+      "code": "FLKL",
+      "name": "Falak Astronomy Complex",
+      "lat": 2.293866,
+      "lon": 102.083391,
+      "x_km": -18.416,
+      "y_km": -48.209,
+      "alt_km": 0.028
+    },
+    {
+      "code": "UTML",
+      "name": "UTeM Malacca",
+      "lat": 2.313962,
+      "lon": 102.318442,
+      "x_km": 7.72,
+      "y_km": -45.972,
+      "alt_km": 0.09
+    },
+    {
+      "code": "UJSL",
+      "name": "UiTM Jasin Campus",
+      "lat": 2.228043,
+      "lon": 102.458225,
+      "x_km": 23.263,
+      "y_km": -55.536,
+      "alt_km": 0.029
+    }
+  ]
+}
