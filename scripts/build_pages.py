@@ -70,15 +70,15 @@ HEAD = """<!DOCTYPE html>
 HOME = """
           <div class="slide-inner hero hub">
             <div class="partner-logos" aria-label="Partner universities">
-              <a class="partner-logo" href="https://www.uniten.edu.my/" target="_blank" rel="noopener noreferrer" title="UNITEN — Universiti Tenaga Nasional">
-                <img src="images/logos/uniten.png" alt="UNITEN — Universiti Tenaga Nasional" width="160" height="113" loading="eager">
-              </a>
-              <a class="partner-logo" href="https://www.utem.edu.my/" target="_blank" rel="noopener noreferrer" title="UTeM — Universiti Teknikal Malaysia Melaka">
-                <img src="images/logos/utem.jpg" alt="UTeM — Universiti Teknikal Malaysia Melaka" width="160" height="93" loading="eager">
-              </a>
-              <a class="partner-logo" href="https://www.kindai.ac.jp/english/" target="_blank" rel="noopener noreferrer" title="Kindai University">
-                <img src="images/logos/kindai.svg" alt="Kindai University" width="200" height="53" loading="eager">
-              </a>
+              <button type="button" class="partner-logo" data-partner-qr data-qr-url="https://www.uniten.edu.my/" data-qr-title="UNITEN — Universiti Tenaga Nasional" data-qr-label="uniten.edu.my" aria-label="Show UNITEN website QR code">
+                <img src="images/logos/uniten.png" alt="" width="160" height="113" loading="eager">
+              </button>
+              <button type="button" class="partner-logo" data-partner-qr data-qr-url="https://www.utem.edu.my/" data-qr-title="UTeM — Universiti Teknikal Malaysia Melaka" data-qr-label="utem.edu.my" aria-label="Show UTeM website QR code">
+                <img src="images/logos/utem.jpg" alt="" width="160" height="93" loading="eager">
+              </button>
+              <button type="button" class="partner-logo" data-partner-qr data-qr-url="https://www.kindai.ac.jp/english/" data-qr-title="Kindai University" data-qr-label="kindai.ac.jp" aria-label="Show Kindai University website QR code">
+                <img src="images/logos/kindai.svg" alt="" width="200" height="53" loading="eager">
+              </button>
             </div>
             <div class="hero-badge">SATREPS · Malaysia–Japan Joint Research</div>
             <h1 class="hero-title compact">
@@ -392,7 +392,7 @@ CONTACT = """
 """
 
 PAGES = [
-    ("index.html", "home", "RTL3D — Real-Time Lightning 3D Imaging & Forecasting", "Real-Time Lightning 3D Imaging and Forecasting — SATREPS Malaysia-Japan research", "RTL3D", HOME, "", "  <script src=\"js/home-nav.js\"></script>"),
+    ("index.html", "home", "RTL3D — Real-Time Lightning 3D Imaging & Forecasting", "Real-Time Lightning 3D Imaging and Forecasting — SATREPS Malaysia-Japan research", "RTL3D", HOME, "", "  <script src=\"js/home-nav.js\"></script>\n  <script src=\"js/partner-logo-qr.js\"></script>"),
     ("our-mission.html", "mission", "Our Mission — RTL3D", "Our Mission — RTL3D lightning research", "RTL3D", MISSION, "", ""),
     ("research-framework.html", "framework", "Research Framework — RTL3D", "Research Framework — RTL3D", "RTL3D", FRAMEWORK, "", ""),
     ("observation-network.html", "network", "Observation Network — RTL3D", "Observation Network — RTL3D", "RTL3D", NETWORK, "", ""),
