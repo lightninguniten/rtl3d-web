@@ -217,10 +217,24 @@ body.fullscreen #fullscreen-btn .icon-exit { display: block; }
   align-items: center;
   justify-content: center;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   padding:
     clamp(0.35rem, 1.2cqh, 0.75rem)
     clamp(0.75rem, 2vw, 1.5rem)
     calc(var(--safe-bottom) + clamp(0.35rem, 1.2cqh, 0.75rem));
+}
+
+.page-view.drag-scroll-active {
+  cursor: grab;
+}
+
+.page-view.is-drag-scrolling {
+  cursor: grabbing;
+  user-select: none;
 }
 
 .slide {
@@ -2507,8 +2521,21 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   display: flex;
   flex-direction: column;
   padding: clamp(0.25rem, 1cqh, 0.5rem) clamp(0.5rem, 1.8vw, 1.25rem);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   min-height: 0;
+}
+
+.lf-page.drag-scroll-active {
+  cursor: grab;
+}
+
+.lf-page.is-drag-scrolling {
+  cursor: grabbing;
+  user-select: none;
 }
 
 .lf-page-header {
@@ -3079,12 +3106,22 @@ button.btn.primary {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
     scroll-padding-top: 0.35rem;
     scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
     padding:
       0.35rem 0.75rem
       calc(var(--safe-bottom) + 0.35rem);
+  }
+
+  .page-view.drag-scroll-active {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .page-view.is-drag-scrolling {
+    cursor: grabbing;
+    scroll-snap-type: none;
   }
 
   .slide-inner {
@@ -3125,7 +3162,6 @@ button.btn.primary {
   .goal-box,
   .cube-scene {
     scroll-snap-align: center;
-    scroll-snap-stop: always;
     scroll-margin-block: 0.5rem;
   }
 
@@ -3299,8 +3335,46 @@ button.btn.primary {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
     scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
+  }
+
+  .lf-page.drag-scroll-active {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .lf-page.is-drag-scrolling {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  [data-drag-scroll],
+  .drag-scroll,
+  .tnb-page-sidebar,
+  .study-area-sidebar,
+  .tnb-risk-list-wrap,
+  .map-legend-power,
+  .map-legend-water,
+  .lf-page .site-table {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .tnb-page-sidebar,
+  .study-area-sidebar {
+    max-height: min(42vh, 340px);
+    overflow-y: auto;
+  }
+
+  .tnb-risk-list-wrap {
+    max-height: min(36vh, 280px);
+    overflow-y: auto;
+  }
+
+  .lf-page .detail-side {
+    max-height: min(40vh, 300px);
+    overflow-y: auto;
   }
 
   .lf-page .detail-body {
@@ -3309,12 +3383,6 @@ button.btn.primary {
     grid-template-columns: none;
     grid-template-rows: none;
     gap: 0.65rem;
-  }
-
-  .lf-page .detail-side {
-    max-height: none;
-    overflow: visible;
-    min-height: clamp(140px, 22vh, 220px);
   }
 
   .lf-page .detail-main {

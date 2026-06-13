@@ -2,7 +2,7 @@
   'use strict';
 
   const DRAG_THRESHOLD = 4;
-  const DRAG_SCROLL_SELECTOR = '[data-drag-scroll], .drag-scroll';
+  const DRAG_SCROLL_SELECTOR = '[data-drag-scroll], .drag-scroll, .page-view, .lf-page';
 
   function isScrollableY(el) {
     return el.scrollHeight > el.clientHeight + 1;
@@ -63,6 +63,7 @@
     );
 
     el.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
       if (e.button !== 0 || !isScrollable(el) || isInteractiveTarget(e.target)) return;
       const scrollY = isScrollableY(el);
       const scrollX = isScrollableX(el);
