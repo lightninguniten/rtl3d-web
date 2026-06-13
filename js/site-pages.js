@@ -17,5 +17,7 @@
     { id: 'lf', file: 'lf.html', title: 'LF Network', parent: 'network' },
     { id: 'tnb', file: 'tnb-power.html', title: 'TNB Power Supply', parent: 'impact' },
     { id: 'did-met', file: 'did-met-alert.html', title: 'DID & MET Early Warning', parent: 'impact' },
+    { id: 'public-safety', file: 'public-safety.html', title: 'Public Safety — Aviation & Maritime', parent: 'impact' },
+    { id: 'public-safety-industry', file: 'public-safety-industry.html', title: 'Public Safety — Industry & Tourism', parent: 'impact' },
   ];
 })();

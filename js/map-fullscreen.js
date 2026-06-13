@@ -169,9 +169,15 @@
     enableMapInteraction(map);
   }
 
+  function isFullscreenMapEl(mapEl) {
+    return (
+      mapEl.dataset.lightningMap === 'true' || mapEl.dataset.lightningRadar === 'true'
+    );
+  }
+
   window.addEventListener('rtl3d:map-ready', (ev) => {
     const { mapEl, map } = ev.detail || {};
-    if (!mapEl || !map || mapEl.dataset.lightningMap !== 'true') return;
+    if (!mapEl || !map || !isFullscreenMapEl(mapEl)) return;
     initLightningMapFullscreen(mapEl, map);
   });
 })();

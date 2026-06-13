@@ -22,6 +22,12 @@
   /** Study region bbox for OSM power-line query (south, west, north, east) */
   const POWER_BBOX = { s: 2.0, w: 101.3, n: 3.5, e: 102.65 };
 
+  /** Peninsular Malaysia — fixed map view for public-safety / aviation pages */
+  const PENINSULAR_BOUNDS = L.latLngBounds([1.25, 99.6], [6.75, 104.5]);
+
+  /** Wider pan/zoom envelope for lightning radar — regional context beyond the peninsula */
+  const RADAR_REGION_BOUNDS = L.latLngBounds([-4.5, 94.5], [11.0, 109.5]);
+
   /** Offline cache — run scripts/build_osm_power_data.py to refresh */
   const LOCAL_OSM_POWER_URL = 'data/osm/power-infrastructure.json';
   const OSM_CACHE_VERSION = 6;
@@ -1566,12 +1572,20 @@
       return rect.width > 40 && rect.height > 40;
     }
 
+    function fixedMapViewBounds() {
+      if (mapEl.dataset.mapView === 'peninsular' || mapEl.dataset.aviationRoutes === 'true') {
+        return PENINSULAR_BOUNDS;
+      }
+      return null;
+    }
+
     function refreshMapView() {
       if (!map) return;
       map.invalidateSize({ animate: false, pan: false });
       if (document.body.classList.contains('map-leaflet-fs') || map._isFullscreen) return;
-      if (studyBounds && studyBounds.isValid()) {
-        map.fitBounds(studyBounds, { padding: [24, 24], maxZoom: 10, animate: false });
+      const viewBounds = fixedMapViewBounds() || studyBounds;
+      if (viewBounds && viewBounds.isValid()) {
+        map.fitBounds(viewBounds, { padding: [24, 24], maxZoom: 9, animate: false });
       } else if (fallbackView) {
         map.setView(fallbackView, 8, { animate: false });
       }
@@ -1584,7 +1598,17 @@
       const showTnbRegion = mapEl.dataset.tnbRegion === 'true';
       const showPowerLines = mapEl.dataset.powerLines === 'true';
       const showWaterInfra = mapEl.dataset.waterInfrastructure === 'true';
-      const showLightning = mapEl.dataset.lightningMap === 'true';
+      const showAviationRoutes = mapEl.dataset.aviationRoutes === 'true';
+      const showLightningRadar = mapEl.dataset.lightningRadar === 'true';
+      const showLightning = mapEl.dataset.lightningMap === 'true' && !showLightningRadar;
+      const usePeninsularView =
+        mapEl.dataset.mapView === 'peninsular' || showAviationRoutes || showLightningRadar;
+      const mapPanBounds = showLightningRadar
+        ? RADAR_REGION_BOUNDS
+        : usePeninsularView
+          ? PENINSULAR_BOUNDS
+          : null;
+      const mapMinZoom = showLightningRadar ? 4 : usePeninsularView ? 6 : undefined;
 
       map = L.map(mapEl, {
         scrollWheelZoom: true,
@@ -1598,7 +1622,10 @@
         attributionControl: true,
         zoomSnap: 0.25,
         zoomDelta: 1,
-        preferCanvas: showLightning,
+        preferCanvas: showLightning || showLightningRadar,
+        minZoom: mapMinZoom,
+        maxBounds: mapPanBounds ? mapPanBounds.pad(0.03) : undefined,
+        maxBoundsViscosity: mapPanBounds ? 0.85 : undefined,
       });
 
       L.control.zoom({ position: 'topleft' }).addTo(map);
@@ -1611,7 +1638,10 @@
       }).addTo(map);
 
       const bounds = L.latLngBounds([]);
-      const stationsLayer = showPowerLines || showWaterInfra ? L.layerGroup().addTo(map) : null;
+      const stationsLayer =
+        showPowerLines || showWaterInfra || showAviationRoutes || showLightningRadar
+          ? L.layerGroup().addTo(map)
+          : null;
 
       if (showTnbRegion && !showPowerLines) {
         const tnbBounds = L.latLngBounds([1.25, 99.6], [6.75, 104.5]);
@@ -1643,7 +1673,7 @@
         bounds.extend([site.lat, site.lon]);
       });
 
-      if (!showPowerLines && !showWaterInfra) {
+      if (!showPowerLines && !showWaterInfra && !showAviationRoutes && !showLightningRadar) {
         bounds.extend(circleBounds(origin.lat, origin.lon, COVERAGE_KM));
         L.circle([origin.lat, origin.lon], {
           radius: COVERAGE_KM * 1000,
@@ -1658,7 +1688,7 @@
           .addTo(map);
       }
 
-      studyBounds = bounds;
+      studyBounds = fixedMapViewBounds() || bounds;
       isolateMapNavigation(mapEl, map);
 
       if (showPowerLines) {
@@ -1675,8 +1705,18 @@
         });
       }
 
+      if (showAviationRoutes && typeof window.addAviationRoutesLayer === 'function') {
+        window.addAviationRoutesLayer(map, mapEl, stationsLayer, () => {
+          refreshMapView();
+        });
+      }
+
       if (showLightning && typeof window.initLightningMapLayer === 'function') {
         window.initLightningMapLayer(map, mapEl);
+      }
+
+      if (showLightningRadar && typeof window.initLightningRadarLayer === 'function') {
+        window.initLightningRadarLayer(map, mapEl);
       }
 
       mapEl.rtl3dMap = map;

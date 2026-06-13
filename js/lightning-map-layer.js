@@ -162,7 +162,19 @@
   }
 
   function distanceToLineFeature(center, feature) {
-    const coords = feature.geometry && feature.geometry.coordinates;
+    const geom = feature.geometry;
+    if (!geom || !geom.coordinates) {
+      return { lat: center.lat, lng: center.lng, distanceKm: Infinity };
+    }
+    if (geom.type === 'MultiLineString') {
+      let best = null;
+      geom.coordinates.forEach((line) => {
+        const hit = distanceToLineCoords(center, line);
+        if (!best || hit.distanceKm < best.distanceKm) best = hit;
+      });
+      return best || { lat: center.lat, lng: center.lng, distanceKm: Infinity };
+    }
+    const coords = geom.coordinates;
     if (!coords || coords.length < 2) {
       return { lat: center.lat, lng: center.lng, distanceKm: Infinity };
     }
@@ -457,6 +469,188 @@
     return mapEl.dataset.powerLines === 'true' || mapEl.dataset.waterInfrastructure === 'true';
   }
 
+  function usesTransportRisk(mapEl) {
+    return mapEl.dataset.aviationRoutes === 'true';
+  }
+
+  function bindRiskWarningToggle(warningEl) {
+    if (!warningEl || warningEl.dataset.riskToggleBound === '1') return;
+    warningEl.dataset.riskToggleBound = '1';
+
+    function toggleCollapsed() {
+      if (!warningEl.classList.contains('is-active') || !warningEl.classList.contains('is-multi')) {
+        return;
+      }
+      warningEl.classList.toggle('is-collapsed');
+      const expanded = !warningEl.classList.contains('is-collapsed');
+      warningEl.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    }
+
+    warningEl.addEventListener('click', (event) => {
+      if (!warningEl.classList.contains('is-active') || !warningEl.classList.contains('is-multi')) {
+        return;
+      }
+      if (warningEl.classList.contains('is-collapsed')) {
+        toggleCollapsed();
+        return;
+      }
+      if (event.target.closest('.tnb-risk-head')) {
+        toggleCollapsed();
+      }
+    });
+
+    warningEl.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (!warningEl.classList.contains('is-active') || !warningEl.classList.contains('is-multi')) {
+        return;
+      }
+      event.preventDefault();
+      toggleCollapsed();
+    });
+  }
+
+  function formatFlashEventTime(flash) {
+    if (!flash) return null;
+    if (flash.utc) return flash.utc;
+    if (flash.label) {
+      const stripped = flash.label.replace(/^Flash\s+\d+\s*[—–-]\s*/i, '').trim();
+      return stripped || flash.label;
+    }
+    return null;
+  }
+
+  function buildRiskListItemHtml(item, opts) {
+    const zone = riskZoneForDistance(item.distanceKm);
+    let html =
+      '<li class="' +
+      zone.className +
+      '"><span class="tnb-risk-zone-badge">' +
+      escapeHtml(zone.label) +
+      '</span> <strong>' +
+      escapeHtml(item.name) +
+      '</strong> <span class="tnb-risk-item-type">(' +
+      escapeHtml(item.typeLabel) +
+      ')</span> — ' +
+      item.distanceKm.toFixed(1) +
+      ' km<br><span class="tnb-risk-item-coords">' +
+      escapeHtml(formatCoords(item.lat, item.lng)) +
+      '</span>';
+
+    const eventTime = opts.delayEventTime;
+    const showDelay =
+      eventTime &&
+      (!opts.delayForRoutesOnly ||
+        (item.layerId && item.layerId.indexOf('aviation-route') === 0));
+    if (showDelay) {
+      html +=
+        '<br><span class="tnb-risk-item-delay">Time delay may occur at the lightning event time (' +
+        escapeHtml(eventTime) +
+        ').</span>';
+    }
+
+    return html + '</li>';
+  }
+
+  function renderRiskWarning(warningEl, mapBannerEl, opts) {
+    if (!warningEl) return;
+    const atRisk = Array.isArray(opts.atRisk) ? opts.atRisk : opts.atRisk ? [opts.atRisk] : [];
+    const infraReady = opts.ready !== false;
+    const assets = opts.assetPhrase || 'assets';
+    const safePrefix = opts.safePrefix || 'No assets';
+    const loadingSector = opts.loadingSector || 'infrastructure';
+    const themeClass = opts.themeClass || '';
+
+    if (!infraReady) {
+      warningEl.hidden = false;
+      warningEl.className = 'tnb-risk-warning' + (themeClass ? ' ' + themeClass : '');
+      warningEl.removeAttribute('role');
+      warningEl.removeAttribute('tabindex');
+      warningEl.removeAttribute('aria-expanded');
+      warningEl.innerHTML =
+        '<span class="tnb-risk-badge tnb-risk-badge-pending">…</span>' +
+        '<span class="tnb-risk-text">Loading ' +
+        loadingSector +
+        ' for radiation check (' +
+        assets +
+        ')…</span>';
+      if (mapBannerEl) mapBannerEl.hidden = true;
+      return;
+    }
+
+    if (!atRisk.length) {
+      warningEl.hidden = false;
+      warningEl.className = 'tnb-risk-warning is-safe' + (themeClass ? ' ' + themeClass : '');
+      warningEl.removeAttribute('role');
+      warningEl.removeAttribute('tabindex');
+      warningEl.removeAttribute('aria-expanded');
+      warningEl.innerHTML =
+        '<span class="tnb-risk-badge tnb-risk-badge-safe">Clear</span>' +
+        '<span class="tnb-risk-text">' +
+        safePrefix +
+        ' within ' +
+        RADIATION_RADIUS_KM +
+        ' km radiation zone.</span>';
+      if (mapBannerEl) mapBannerEl.hidden = true;
+      return;
+    }
+
+    const listItems = atRisk.map((item) => buildRiskListItemHtml(item, opts)).join('');
+
+    warningEl.hidden = false;
+    warningEl.className =
+      'tnb-risk-warning is-active is-multi is-collapsed' + (themeClass ? ' ' + themeClass : '');
+    warningEl.setAttribute('role', 'button');
+    warningEl.setAttribute('tabindex', '0');
+    warningEl.setAttribute('aria-expanded', 'false');
+    warningEl.innerHTML =
+      '<div class="tnb-risk-head">' +
+      '<span class="tnb-risk-badge">WARNING</span>' +
+      '<span class="tnb-risk-summary">' +
+      atRisk.length +
+      ' asset' +
+      (atRisk.length === 1 ? '' : 's') +
+      ' within ' +
+      RADIATION_RADIUS_KM +
+      ' km radiation zone</span>' +
+      '<span class="tnb-risk-chevron" aria-hidden="true">▼</span>' +
+      '</div>' +
+      '<div class="tnb-risk-list-wrap" data-drag-scroll>' +
+      '<ul class="tnb-risk-list">' +
+      listItems +
+      '</ul></div>';
+
+    const riskScroll = warningEl.querySelector('.tnb-risk-list-wrap');
+    if (riskScroll && typeof window.initDragScroll === 'function') {
+      window.initDragScroll(riskScroll);
+    }
+
+    if (mapBannerEl) {
+      mapBannerEl.hidden = false;
+      mapBannerEl.className = 'tnb-map-risk-banner is-active' + (themeClass ? ' ' + themeClass : '');
+      const preview = atRisk
+        .slice(0, 3)
+        .map(
+          (item) =>
+            escapeHtml(item.name) +
+            ' (' +
+            escapeHtml(item.typeLabel) +
+            ', ' +
+            item.distanceKm.toFixed(1) +
+            ' km, ' +
+            escapeHtml(formatCoords(item.lat, item.lng)) +
+            ')'
+        )
+        .join('; ');
+      const extra = atRisk.length > 3 ? '; +' + (atRisk.length - 3) + ' more' : '';
+      mapBannerEl.innerHTML =
+        '<span class="tnb-map-risk-badge">WARNING</span> ' +
+        atRisk.length +
+        ' at risk: ' +
+        preview +
+        extra;
+    }
+  }
+
   function updateTimeColorbar(flash, mapEl) {
     const bar = lightningControl(mapEl, 'flash-colorbar');
     const minEl = lightningControl(mapEl, 'flash-tmin');
@@ -494,7 +688,12 @@
     const statusEl = lightningControl(mapEl, 'flash-status');
     const warningEl = lightningControl(mapEl, 'risk-warning');
     const mapBannerEl = lightningControl(mapEl, 'map-risk-banner');
+    const maritimeWarningEl = lightningControl(mapEl, 'maritime-risk-warning');
+    const aviationWarningEl = lightningControl(mapEl, 'aviation-risk-warning');
+    const maritimeMapBannerEl = lightningControl(mapEl, 'maritime-map-risk-banner');
+    const aviationMapBannerEl = lightningControl(mapEl, 'aviation-map-risk-banner');
     const checkInfraRisk = usesInfraRisk(mapEl);
+    const checkTransportRisk = usesTransportRisk(mapEl);
     const waterRisk = mapEl.dataset.waterInfrastructure === 'true';
     if (!select) return;
 
@@ -506,6 +705,11 @@
     let ready = false;
     let infraTargets = mapEl._infraRiskTargets || [];
     let infraIndexLoaded = !checkInfraRisk;
+    let maritimeTargets = (mapEl._transportRiskIndex && mapEl._transportRiskIndex.maritime) || [];
+    let aviationTargets = (mapEl._transportRiskIndex && mapEl._transportRiskIndex.aviation) || [];
+    let transportIndexLoaded = !checkTransportRisk;
+
+    [warningEl, maritimeWarningEl, aviationWarningEl].forEach(bindRiskWarningToggle);
 
     function setStatus(message, isError) {
       if (!statusEl) return;
@@ -520,107 +724,55 @@
     }
 
     function setRiskWarning(atRiskList, infraReady) {
-      if (!warningEl || !checkInfraRisk) return;
-      const atRisk = Array.isArray(atRiskList) ? atRiskList : atRiskList ? [atRiskList] : [];
-      const assets = riskAssetPhrase();
+      if (!checkInfraRisk) return;
+      renderRiskWarning(warningEl, mapBannerEl, {
+        atRisk: atRiskList,
+        ready: infraReady,
+        loadingSector: waterRisk ? 'water assets' : 'grid assets',
+        assetPhrase: riskAssetPhrase(),
+        safePrefix: 'No ' + riskAssetPhrase(),
+      });
+    }
 
-      if (!infraReady) {
-        warningEl.hidden = false;
-        warningEl.className = 'tnb-risk-warning';
-        warningEl.innerHTML =
-          '<span class="tnb-risk-badge tnb-risk-badge-pending">…</span>' +
-          '<span class="tnb-risk-text">Loading ' +
-          (waterRisk ? 'water' : 'grid') +
-          ' assets for radiation check (' +
-          assets +
-          ')…</span>';
-        if (mapBannerEl) mapBannerEl.hidden = true;
-        return;
-      }
+    function setTransportRiskWarnings(center, flash) {
+      if (!checkTransportRisk) return [];
+      const maritimeAtRisk =
+        center && transportIndexLoaded
+          ? findAllAtRiskAssets(center, maritimeTargets, RADIATION_RADIUS_KM)
+          : [];
+      const aviationAtRisk =
+        center && transportIndexLoaded
+          ? findAllAtRiskAssets(center, aviationTargets, RADIATION_RADIUS_KM)
+          : [];
+      const eventTime = formatFlashEventTime(flash);
 
-      if (!atRisk.length) {
-        warningEl.hidden = false;
-        warningEl.className = 'tnb-risk-warning is-safe';
-        warningEl.innerHTML =
-          '<span class="tnb-risk-badge tnb-risk-badge-safe">Clear</span>' +
-          '<span class="tnb-risk-text">No ' +
-          assets +
-          ' within ' +
-          RADIATION_RADIUS_KM +
-          ' km radiation zone.</span>';
-        if (mapBannerEl) mapBannerEl.hidden = true;
-        return;
-      }
+      renderRiskWarning(maritimeWarningEl, maritimeMapBannerEl, {
+        atRisk: maritimeAtRisk,
+        ready: transportIndexLoaded,
+        loadingSector: 'maritime routes',
+        assetPhrase: 'ferry routes and shipping corridors',
+        safePrefix: 'No maritime routes',
+        themeClass: 'tnb-risk-warning-maritime',
+      });
+      renderRiskWarning(aviationWarningEl, aviationMapBannerEl, {
+        atRisk: aviationAtRisk,
+        ready: transportIndexLoaded,
+        loadingSector: 'aviation routes',
+        assetPhrase: 'flight routes and airports',
+        safePrefix: 'No aviation routes or airports',
+        themeClass: 'tnb-risk-warning-aviation',
+        delayEventTime: eventTime,
+        delayForRoutesOnly: true,
+      });
 
-      const listItems = atRisk
-        .map((item) => {
-          const zone = riskZoneForDistance(item.distanceKm);
-          return (
-            '<li class="' +
-            zone.className +
-            '"><span class="tnb-risk-zone-badge">' +
-            escapeHtml(zone.label) +
-            '</span> <strong>' +
-            escapeHtml(item.name) +
-            '</strong> <span class="tnb-risk-item-type">(' +
-            escapeHtml(item.typeLabel) +
-            ')</span> — ' +
-            item.distanceKm.toFixed(1) +
-            ' km<br><span class="tnb-risk-item-coords">' +
-            escapeHtml(formatCoords(item.lat, item.lng)) +
-            '</span></li>'
-          );
-        })
-        .join('');
+      return maritimeAtRisk.concat(aviationAtRisk);
+    }
 
-      warningEl.hidden = false;
-      warningEl.className = 'tnb-risk-warning is-active is-multi';
-      warningEl.innerHTML =
-        '<div class="tnb-risk-head">' +
-        '<span class="tnb-risk-badge">WARNING</span>' +
-        '<span class="tnb-risk-summary">' +
-        atRisk.length +
-        ' asset' +
-        (atRisk.length === 1 ? '' : 's') +
-        ' within ' +
-        RADIATION_RADIUS_KM +
-        ' km radiation zone</span>' +
-        '</div>' +
-        '<div class="tnb-risk-list-wrap" data-drag-scroll>' +
-        '<ul class="tnb-risk-list">' +
-        listItems +
-        '</ul></div>';
-
-      const riskScroll = warningEl.querySelector('.tnb-risk-list-wrap');
-      if (riskScroll && typeof window.initDragScroll === 'function') {
-        window.initDragScroll(riskScroll);
-      }
-
-      if (mapBannerEl) {
-        mapBannerEl.hidden = false;
-        mapBannerEl.className = 'tnb-map-risk-banner is-active';
-        const preview = atRisk
-          .slice(0, 3)
-          .map(
-            (item) =>
-              escapeHtml(item.name) +
-              ' (' +
-              escapeHtml(item.typeLabel) +
-              ', ' +
-              item.distanceKm.toFixed(1) +
-              ' km, ' +
-              escapeHtml(formatCoords(item.lat, item.lng)) +
-              ')'
-          )
-          .join('; ');
-        const extra = atRisk.length > 3 ? '; +' + (atRisk.length - 3) + ' more' : '';
-        mapBannerEl.innerHTML =
-          '<span class="tnb-map-risk-badge">WARNING</span> ' +
-          atRisk.length +
-          ' at risk: ' +
-          preview +
-          extra;
-      }
+    function hideTransportRiskWarnings() {
+      if (maritimeWarningEl) maritimeWarningEl.hidden = true;
+      if (aviationWarningEl) aviationWarningEl.hidden = true;
+      if (maritimeMapBannerEl) maritimeMapBannerEl.hidden = true;
+      if (aviationMapBannerEl) aviationMapBannerEl.hidden = true;
     }
 
     function clearRadiationAndRisk() {
@@ -644,15 +796,24 @@
 
     function updateFlashStatus(center) {
       if (!statusEl || !flashes.length) return;
-      const base = checkInfraRisk
-        ? flashes.length +
+      let base;
+      if (checkInfraRisk) {
+        base =
+          flashes.length +
           ' events — Jet = time; radiation centre = CG sources ≤' +
           RADIATION_CG_MAX_HEIGHT_KM +
-          ' km height.'
-        : flashes.length +
+          ' km height.';
+      } else if (checkTransportRisk) {
+        base =
+          flashes.length +
+          ' events — Jet = time; radiation checks maritime & aviation routes within 15 km.';
+      } else {
+        base =
+          flashes.length +
           ' events — Jet = time; rings = 15 km radiation zones from near-ground sources (≤' +
           RADIATION_CG_MAX_HEIGHT_KM +
           ' km).';
+      }
       if (!center || center.cgSources == null) {
         statusEl.textContent = base;
         return;
@@ -668,23 +829,36 @@
       const center = flashRadiationCenter(flash);
       if (!center) {
         if (checkInfraRisk) setRiskWarning([], infraIndexLoaded);
+        if (checkTransportRisk) setTransportRiskWarnings(null);
         return;
       }
 
       radiationLayer = buildRadiationLayer(map, center);
       radiationLayer.addTo(map);
 
-      if (!checkInfraRisk) {
+      let atRisk = [];
+
+      if (checkInfraRisk) {
+        atRisk = infraIndexLoaded
+          ? findAllAtRiskAssets(center, infraTargets, RADIATION_RADIUS_KM)
+          : [];
+        setRiskWarning(atRisk, infraIndexLoaded);
+      } else {
+        if (warningEl) warningEl.hidden = true;
+        if (mapBannerEl) mapBannerEl.hidden = true;
+      }
+
+      if (checkTransportRisk) {
+        const transportAtRisk = setTransportRiskWarnings(center, flash);
+        atRisk = atRisk.concat(transportAtRisk);
+      }
+
+      if (!checkInfraRisk && !checkTransportRisk) {
         if (warningEl) warningEl.hidden = true;
         if (mapBannerEl) mapBannerEl.hidden = true;
         updateFlashStatus(center);
         return;
       }
-
-      const atRisk = infraIndexLoaded
-        ? findAllAtRiskAssets(center, infraTargets, RADIATION_RADIUS_KM)
-        : [];
-      setRiskWarning(atRisk, infraIndexLoaded);
 
       if (atRisk.length) {
         riskHighlightLayer = buildRiskHighlightLayer(map, atRisk);
@@ -700,6 +874,7 @@
       if (!showCheckbox || !showCheckbox.checked) {
         if (warningEl) warningEl.hidden = true;
         if (mapBannerEl) mapBannerEl.hidden = true;
+        hideTransportRiskWarnings();
         return;
       }
 
@@ -730,8 +905,22 @@
       showCheckbox.addEventListener('change', () => applyFlash());
     }
 
+    function onTransportIndexReady(event) {
+      const detail = event.detail || mapEl._transportRiskIndex || {};
+      maritimeTargets = detail.maritime || [];
+      aviationTargets = detail.aviation || [];
+      transportIndexLoaded = true;
+      if (ready && showCheckbox && showCheckbox.checked) {
+        applyFlash();
+      }
+    }
+
     if (checkInfraRisk) {
       mapEl.addEventListener('rtl3d:infra-risk-index', onInfraIndexReady);
+    }
+
+    if (checkTransportRisk) {
+      mapEl.addEventListener('rtl3d:transport-risk-index', onTransportIndexReady);
     }
 
     setStatus('Loading lightning events\u2026');
@@ -753,7 +942,9 @@
               ? waterRisk
                 ? ' events — Jet = time; radiation checks dams, storage, rivers & drains within 15 km.'
                 : ' events — Jet = time; radiation checks grid assets within 15 km.'
-              : ' events — Jet = time; shaded rings show 15 km radiation zones.')
+              : checkTransportRisk
+                ? ' events — Jet = time; radiation checks maritime & aviation routes within 15 km.'
+                : ' events — Jet = time; shaded rings show 15 km radiation zones.')
         );
         applyFlash();
       })
