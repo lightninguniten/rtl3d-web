@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: https://lightninguniten.github.io/rtl3d-web/sitemap.xml

@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Study Area Map — RTL3D">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/study-area.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="Study Area Map — RTL3D">
+  <meta property="og:description" content="Study Area Map — RTL3D">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/study-area.html">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Study Area Map — RTL3D">
+  <meta name="twitter:description" content="Study Area Map — RTL3D">
   <title>Study Area Map — RTL3D</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +26,7 @@
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
-        <a id="back-btn" class="btn-icon btn-nav" title="Back" aria-label="Previous page">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           <span class="btn-label">Back</span>
         </a>
@@ -44,11 +55,10 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view page-view-study-area">
+        <main class="page-view">
 
-          <div class="slide-inner study-area-page study-area-page-split">
-            <aside class="study-area-sidebar-wrap">
-              <div class="study-area-sidebar split-text" data-drag-scroll aria-label="Study area information — drag to read">
+          <div class="slide-inner split study-area-page">
+            <div class="split-text">
               <span class="section-tag">Study Area</span>
               <h2>Observation sites across Malacca</h2>
               <p>A distributed network spanning the Straits of Malacca region, with stations operated by UTeM and UNITEN teams.</p>
@@ -61,10 +71,8 @@
                 <li><span class="dot lf-vhf"></span> Pulau Besar</li>
                 <li><span class="dot lf"></span> Kolej UNITI, Port Dickson</li>
               </ul>
-              </div>
-              <p class="study-area-drag-hint" aria-hidden="true">Drag to read</p>
-            </aside>
-            <div class="study-area-map-panel map-wrap study-area-map-wrap split-visual">
+            </div>
+            <div class="split-visual map-wrap">
               <div id="study-area-map" class="study-area-map" data-osm-sites-map role="img" aria-label="OpenStreetMap showing LF observation sites"></div>
               <div class="map-legend">
                 <span><i class="leg lf-vhf"></i> LF + VHF</span>

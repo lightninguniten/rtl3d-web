@@ -2,6 +2,19 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SITE_BASE = "https://lightninguniten.github.io/rtl3d-web"
+
+SEO_META = """  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{canonical}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="{og_title}">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:url" content="{canonical}">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{og_title}">
+  <meta name="twitter:description" content="{desc}">"""
 
 HEAD = """<!DOCTYPE html>
 <html lang="en">
@@ -9,6 +22,7 @@ HEAD = """<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="{desc}">
+{seo_meta}
   <title>{page_title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -408,9 +422,26 @@ PAGES = [
 ]
 
 
+def canonical_url(page_file: str) -> str:
+    if page_file == "index.html":
+        return f"{SITE_BASE}/"
+    return f"{SITE_BASE}/{page_file}"
+
+
+def seo_meta(page_file: str, page_title: str, desc: str) -> str:
+    og_title = page_title.replace("&", "&amp;")
+    safe_desc = desc.replace("&", "&amp;")
+    return SEO_META.format(
+        canonical=canonical_url(page_file),
+        og_title=og_title,
+        desc=safe_desc,
+    )
+
+
 def render(page_file, page_id, page_title, desc, brand, content, extra_head, extra_page_scripts):
     return HEAD.format(
         desc=desc,
+        seo_meta=seo_meta(page_file, page_title, desc),
         page_title=page_title,
         page_id=page_id,
         brand=brand,
