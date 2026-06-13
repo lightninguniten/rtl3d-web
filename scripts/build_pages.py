@@ -69,6 +69,17 @@ HEAD = """<!DOCTYPE html>
 
 HOME = """
           <div class="slide-inner hero hub">
+            <div class="partner-logos" aria-label="Partner universities">
+              <a class="partner-logo" href="https://www.uniten.edu.my/" target="_blank" rel="noopener noreferrer" title="UNITEN — Universiti Tenaga Nasional">
+                <img src="images/logos/uniten.png" alt="UNITEN — Universiti Tenaga Nasional" width="160" height="113" loading="eager">
+              </a>
+              <a class="partner-logo" href="https://www.utem.edu.my/" target="_blank" rel="noopener noreferrer" title="UTeM — Universiti Teknikal Malaysia Melaka">
+                <img src="images/logos/utem.jpg" alt="UTeM — Universiti Teknikal Malaysia Melaka" width="160" height="93" loading="eager">
+              </a>
+              <a class="partner-logo" href="https://www.kindai.ac.jp/english/" target="_blank" rel="noopener noreferrer" title="Kindai University">
+                <img src="images/logos/kindai.svg" alt="Kindai University" width="200" height="53" loading="eager">
+              </a>
+            </div>
             <div class="hero-badge">SATREPS · Malaysia–Japan Joint Research</div>
             <h1 class="hero-title compact">
               <span class="line">Real-Time Lightning</span>
