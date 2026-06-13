@@ -7,6 +7,19 @@ __pycache__/
 venv/
 env/
 
+# Secrets and credentials (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+*.credentials
+.npmrc
+
 # OS / editor
 .DS_Store
 Thumbs.db
