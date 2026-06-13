@@ -2533,20 +2533,20 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   cursor: grab;
 }
 
-  .lf-page.is-drag-scrolling {
-    cursor: grabbing;
-    user-select: none;
-    scroll-snap-type: none;
-  }
+.lf-page.is-drag-scrolling {
+  cursor: grabbing;
+  user-select: none;
+  scroll-snap-type: none;
+}
 
-  .lf-plot,
-  .lf-plot-3d-wrap {
-    touch-action: pan-y;
-  }
+.lf-plot,
+.lf-plot-3d-wrap {
+  touch-action: pan-y;
+}
 
-  .lf-plot-3d-wrap.is-panning {
-    touch-action: none;
-  }
+.lf-plot-3d-wrap.is-panning {
+  touch-action: none;
+}
 
 .lf-page-header {
   flex-shrink: 0;
@@ -2568,6 +2568,15 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
 
 .lf-page .detail-body {
   grid-template-columns: minmax(0, clamp(180px, 26cqw, 320px)) minmax(0, 1fr);
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  flex: none;
+}
+
+.lf-page .detail-main {
+  overflow: visible;
+  flex: none;
   height: auto;
   min-height: 0;
 }
@@ -2664,7 +2673,65 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
 }
 
 .lf-page .lf-plots {
+  flex: none;
+  height: auto;
   min-height: 0;
+}
+
+/* LF — stacked plots, full page scroll on phone / narrow screens */
+@media (max-width: 900px) {
+  .lf-page {
+    padding-bottom: calc(var(--safe-bottom) + 1.25rem);
+    scroll-snap-type: none;
+  }
+
+  .lf-page .detail-body,
+  .lf-page-body.detail-body {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    overflow: visible;
+    height: auto;
+    flex: none;
+    gap: 0.65rem;
+  }
+
+  .lf-page .detail-side {
+    flex: none;
+    max-height: min(38vh, 280px);
+    overflow-y: auto;
+  }
+
+  .lf-page .detail-main {
+    flex: none;
+    overflow: visible;
+    height: auto;
+  }
+
+  .lf-page .lf-plots {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    height: auto;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0.65rem;
+  }
+
+  .lf-page .lf-plot,
+  .lf-page .lf-plot-3d-wrap {
+    width: 100%;
+    height: auto;
+    min-height: clamp(200px, 32vh, 280px);
+    flex: none;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .lf-page .lf-plot-3d {
+    min-height: clamp(180px, 28vh, 260px);
+    height: auto;
+  }
 }
 
 a.btn-nav {
@@ -2953,7 +3020,9 @@ body.modal-open { overflow: hidden; }
   .detail-body { grid-template-columns: 1fr; }
   .detail-side { max-height: 28vh; }
   .lf-page .detail-body {
-    grid-template-columns: minmax(0, clamp(160px, 32cqw, 280px)) minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
   }
   .lf-page .detail-side {
     max-height: min(40vh, 300px);
@@ -2963,14 +3032,20 @@ body.modal-open { overflow: hidden; }
 }
 
 @media (max-width: 520px) {
-  .lf-plots {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, minmax(0, 1fr));
+  .lf-page .lf-plots {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0.65rem;
   }
-  .lf-plot-3d-wrap {
-    grid-column: 1;
+
+  .lf-page .lf-plot-3d-wrap {
+    grid-column: auto;
     grid-row: auto;
-    min-height: 0;
+    min-height: clamp(200px, 32vh, 280px);
+    height: auto;
   }
 }
 
@@ -3170,8 +3245,6 @@ button.btn.primary {
   .study-area-map,
   .detail-block,
   .detail-controls,
-  .lf-plot,
-  .lf-plot-3d-wrap,
   .contact-actions .btn,
   .goal-box,
   .cube-scene {
@@ -3349,8 +3422,9 @@ button.btn.primary {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
-    scroll-snap-type: y proximity;
-    scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
+    scroll-snap-type: none;
+    scroll-padding-bottom: calc(var(--safe-bottom) + 1.25rem);
+    padding-bottom: calc(var(--safe-bottom) + 1rem);
   }
 
   .lf-page.drag-scroll-active {
@@ -3397,21 +3471,33 @@ button.btn.primary {
     grid-template-columns: none;
     grid-template-rows: none;
     gap: 0.65rem;
+    overflow: visible;
+    height: auto;
+    flex: none;
   }
 
   .lf-page .detail-main {
-    min-height: clamp(280px, 42vh, 480px);
+    min-height: 0;
+    height: auto;
+    flex: none;
+    overflow: visible;
   }
 
   .lf-plots {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    flex: none;
+    height: auto;
+    gap: 0.65rem;
   }
 
   .lf-plot,
   .lf-plot-3d-wrap {
-    min-height: clamp(160px, 24vh, 240px);
+    min-height: clamp(200px, 32vh, 280px);
+    height: auto;
+    flex: none;
+    grid-column: auto;
+    grid-row: auto;
   }
 }
 
