@@ -2533,10 +2533,20 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   cursor: grab;
 }
 
-.lf-page.is-drag-scrolling {
-  cursor: grabbing;
-  user-select: none;
-}
+  .lf-page.is-drag-scrolling {
+    cursor: grabbing;
+    user-select: none;
+    scroll-snap-type: none;
+  }
+
+  .lf-plot,
+  .lf-plot-3d-wrap {
+    touch-action: pan-y;
+  }
+
+  .lf-plot-3d-wrap.is-panning {
+    touch-action: none;
+  }
 
 .lf-page-header {
   flex-shrink: 0;
@@ -2549,16 +2559,17 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
 }
 
 .lf-page-body {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   height: auto;
 }
 
 .lf-page .detail-body {
   grid-template-columns: minmax(0, clamp(180px, 26cqw, 320px)) minmax(0, 1fr);
-  height: 100%;
+  height: auto;
+  min-height: 0;
 }
 
 .lf-page .detail-side {
@@ -2944,7 +2955,10 @@ body.modal-open { overflow: hidden; }
   .lf-page .detail-body {
     grid-template-columns: minmax(0, clamp(160px, 32cqw, 280px)) minmax(0, 1fr);
   }
-  .lf-page .detail-side { max-height: 100%; overflow: hidden; }
+  .lf-page .detail-side {
+    max-height: min(40vh, 300px);
+    overflow-y: auto;
+  }
   .lf-plots { min-height: 0; }
 }
 

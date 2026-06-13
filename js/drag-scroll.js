@@ -19,8 +19,18 @@
   function isInteractiveTarget(target) {
     if (!target || typeof target.closest !== 'function') return false;
     return !!target.closest(
-      'input, button, select, textarea, option, a[href], label, [data-no-drag-scroll]'
+      'input, button, select, textarea, option, a[href], label, [data-no-drag-scroll], .lf-3d-controls, .modebar, .modebar-group'
     );
+  }
+
+  function isPageScroller(el) {
+    return el.classList.contains('lf-page') || el.classList.contains('page-view');
+  }
+
+  function canDragScrollTarget(target, scrollEl) {
+    if (!target || !scrollEl?.contains(target)) return false;
+    if (isInteractiveTarget(target)) return false;
+    return true;
   }
 
   function initDragScroll(el) {
@@ -62,9 +72,12 @@
       { passive: true }
     );
 
+    const useCapture = isPageScroller(el);
+
     el.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'touch') return;
-      if (e.button !== 0 || !isScrollable(el) || isInteractiveTarget(e.target)) return;
+      if (e.button !== 0 || !isScrollable(el)) return;
+      if (!canDragScrollTarget(e.target, el)) return;
       const scrollY = isScrollableY(el);
       const scrollX = isScrollableX(el);
       dragging = true;
@@ -75,7 +88,7 @@
       startScrollTop = el.scrollTop;
       startScrollLeft = el.scrollLeft;
       axis = scrollY && scrollX ? null : scrollY ? 'y' : 'x';
-    });
+    }, useCapture);
 
     el.addEventListener('pointermove', (e) => {
       if (!dragging || e.pointerId !== pointerId) return;
@@ -97,18 +110,18 @@
       } else {
         el.scrollLeft = startScrollLeft - dx;
       }
-    });
+    }, useCapture);
 
     el.addEventListener('pointerup', (e) => {
       if (e.pointerId !== pointerId) return;
       if (el.hasPointerCapture(pointerId)) el.releasePointerCapture(pointerId);
       endDrag();
-    });
+    }, useCapture);
 
     el.addEventListener('pointercancel', (e) => {
       if (e.pointerId !== pointerId) return;
       endDrag();
-    });
+    }, useCapture);
 
     el.addEventListener(
       'click',
@@ -126,7 +139,21 @@
     if (typeof ResizeObserver !== 'undefined') {
       const ro = new ResizeObserver(refreshScrollable);
       ro.observe(el);
+      if (el.classList.contains('lf-page')) {
+        const body = el.querySelector('.lf-page-body');
+        if (body) ro.observe(body);
+      }
     }
+  }
+
+  function refreshAllDragScroll() {
+    document.querySelectorAll(DRAG_SCROLL_SELECTOR).forEach(function (el) {
+      if (el.dataset.dragScrollInit === 'true') {
+        el.classList.toggle('drag-scroll-active', isScrollable(el));
+      } else {
+        initDragScroll(el);
+      }
+    });
   }
 
   function initAllDragScroll(root) {
@@ -169,5 +196,6 @@
   window.RTL3DDragScroll = {
     init: initDragScroll,
     scan: initAllDragScroll,
+    refresh: refreshAllDragScroll,
   };
 })();

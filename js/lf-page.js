@@ -679,6 +679,7 @@
       `<strong>${flash.utc}</strong> · ${flash.duration_s} s flash · ` +
       `${flash.n_sources_total.toLocaleString()} localized sources · ` +
       `showing ${flash.n_sources_plot.toLocaleString()} points`;
+    requestAnimationFrame(() => window.RTL3DDragScroll?.refresh?.());
   }
 
   function initPlots() {
@@ -693,6 +694,7 @@
     });
     const plot3dEl = document.getElementById(plot3dId);
     if (plot3dEl?.querySelector('.plotly')) Plotly.Plots.resize(plot3dId);
+    window.RTL3DDragScroll?.refresh?.();
   }
 
   function clamp3dZoom(z) {
@@ -725,6 +727,7 @@
     const ORBIT_EL_SENS = 0.009;
     let pinchDist = 0;
     let orbiting = false;
+    let orbitPending = null;
     let orbitStartX = 0;
     let orbitStartY = 0;
     let orbitOrigin = { azimuth: 0, elevation: 0 };
@@ -769,17 +772,31 @@
 
     wrap.addEventListener('mousedown', (e) => {
       if (e.button !== 0 || isControlBtn(e.target)) return;
-      e.preventDefault();
-      beginOrbit(e.clientX, e.clientY);
+      orbitPending = { x: e.clientX, y: e.clientY };
     });
 
     window.addEventListener('mousemove', (e) => {
+      if (orbitPending && !orbiting) {
+        const dx = e.clientX - orbitPending.x;
+        const dy = e.clientY - orbitPending.y;
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          orbitPending = null;
+          return;
+        }
+        e.preventDefault();
+        beginOrbit(orbitPending.x, orbitPending.y);
+        orbitPending = null;
+        moveOrbit(e.clientX, e.clientY);
+        return;
+      }
       if (!orbiting) return;
       e.preventDefault();
       moveOrbit(e.clientX, e.clientY);
     });
 
     window.addEventListener('mouseup', () => {
+      orbitPending = null;
       if (orbiting) endOrbit();
     });
 
