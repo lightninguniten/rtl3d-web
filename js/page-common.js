@@ -66,8 +66,15 @@
   }
 
   function toggleFullscreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-    else document.exitFullscreen?.();
+    try {
+      if (!document.fullscreenElement) {
+        const p = document.documentElement.requestFullscreen?.();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      } else {
+        const p = document.exitFullscreen?.();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      }
+    } catch (_) {}
   }
 
   if (fullscreenBtn) {

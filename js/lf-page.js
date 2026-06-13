@@ -854,16 +854,6 @@
     const vp = document.getElementById('viewport-169');
     if (vp && window.ResizeObserver) new ResizeObserver(onPlotResize).observe(vp);
 
-    if (fullscreenBtn) {
-      fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-        else document.exitFullscreen?.();
-      });
-      document.addEventListener('fullscreenchange', () => {
-        document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
-      });
-    }
-
     play3dBtn?.addEventListener('click', toggle3dAnimation);
     repeat3dBtn?.addEventListener('click', toggle3dRepeat);
     setRepeatButtonState(true);
