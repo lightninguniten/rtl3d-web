@@ -5,11 +5,7 @@ Includes LF observation maps, TNB grid risk views, and DID & MET water-infrastru
 
 ## Live demo
 
-**Public URL (after GitHub Pages is enabled):**
-
 https://lightninguniten.github.io/rtl3d-web/
-
-Repository: [github.com/lightninguniten/rtl3d-web](https://github.com/lightninguniten/rtl3d-web)
 
 ## Run locally
 
@@ -18,29 +14,6 @@ start-server.bat
 ```
 
 Open `http://127.0.0.1:8765/` (do not open HTML files directly with `file://` — JSON fetch will fail).
-
-## Publish to GitHub
-
-Repo: **lightninguniten/rtl3d-web**
-
-Double-click **`push-to-github.bat`** in this folder, or run:
-
-```bat
-cd c:\Project\04_interactiveweb
-git init
-git add .
-git commit -m "Initial commit: RTL3D interactive web"
-git branch -M main
-git remote add origin https://github.com/lightninguniten/rtl3d-web.git
-git push -u origin main
-```
-
-Then on GitHub:
-
-1. Open [Settings → Pages](https://github.com/lightninguniten/rtl3d-web/settings/pages)
-2. **Build and deployment → Source:** **GitHub Actions**
-3. Wait ~2 minutes (check the **Actions** tab)
-4. Open **https://lightninguniten.github.io/rtl3d-web/**
 
 ## Rebuild cached map data
 
