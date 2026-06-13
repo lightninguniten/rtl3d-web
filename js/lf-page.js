@@ -4,7 +4,6 @@
   const flashSelect = document.getElementById('lf-flash-select');
   const flashMeta = document.getElementById('lf-flash-meta');
   const siteList = document.getElementById('lf-site-list');
-  const fullscreenBtn = document.getElementById('fullscreen-btn');
   const play3dBtn = document.getElementById('lf-3d-play');
   const repeat3dBtn = document.getElementById('lf-3d-repeat');
 
