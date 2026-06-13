@@ -16,10 +16,22 @@
     return isScrollableY(el) || isScrollableX(el);
   }
 
+  function isMapScrollBlockTarget(target) {
+    if (!target || typeof target.closest !== 'function') return false;
+    if (document.body.classList.contains('map-leaflet-fs')) return true;
+    return !!target.closest(
+      '.tnb-map-panel.map-leaflet-fs-panel, .tnb-map-panel.leaflet-pseudo-fullscreen, ' +
+      '.leaflet-container, .leaflet-pane, .leaflet-control, ' +
+      '.study-area-map, .tnb-map, .map-leaflet-wrap'
+    );
+  }
+
   function isInteractiveTarget(target) {
     if (!target || typeof target.closest !== 'function') return false;
+    if (isMapScrollBlockTarget(target)) return true;
     return !!target.closest(
-      'input, button, select, textarea, option, a[href], label, [data-no-drag-scroll], .lf-3d-controls, .modebar, .modebar-group'
+      'input, button, select, textarea, option, a[href], label, [data-no-drag-scroll], ' +
+      '.lf-3d-controls, .modebar, .modebar-group'
     );
   }
 
@@ -37,6 +49,8 @@
     if (!el || el.nodeType !== 1 || el.dataset.dragScrollInit === 'true') return;
     el.dataset.dragScrollInit = 'true';
 
+    const isMapPageView = el.classList.contains('page-view-tnb');
+
     let dragging = false;
     let moved = false;
     let startX = 0;
@@ -47,7 +61,7 @@
     let axis = null;
 
     function refreshScrollable() {
-      el.classList.toggle('drag-scroll-active', isScrollable(el));
+      el.classList.toggle('drag-scroll-active', !isMapPageView && isScrollable(el));
     }
 
     function endDrag() {
@@ -72,9 +86,20 @@
       { passive: true }
     );
 
+    /* TNB/DID map pages: native touch scroll only — pointer drag here blocks Leaflet pan */
+    if (isMapPageView) {
+      refreshScrollable();
+      window.addEventListener('rtl3d:viewport-resize', refreshScrollable);
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(refreshScrollable).observe(el);
+      }
+      return;
+    }
+
     const useCapture = isPageScroller(el);
 
     el.addEventListener('pointerdown', (e) => {
+      if (isMapScrollBlockTarget(e.target)) return;
       if (e.pointerType === 'touch') return;
       if (e.button !== 0 || !isScrollable(el)) return;
       if (!canDragScrollTarget(e.target, el)) return;
@@ -147,6 +172,7 @@
   }
 
   function refreshAllDragScroll() {
+    if (document.body.classList.contains('map-leaflet-fs')) return;
     document.querySelectorAll(DRAG_SCROLL_SELECTOR).forEach(function (el) {
       if (el.dataset.dragScrollInit === 'true') {
         el.classList.toggle('drag-scroll-active', isScrollable(el));

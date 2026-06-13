@@ -1753,6 +1753,199 @@ a.impact.impact-clickable.impact-did-met:focus-visible {
   height: 100%;
 }
 
+/* Leaflet fullscreen — TNB & DID maps */
+.map-leaflet-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-leaflet-wrap .study-area-map {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.map-leaflet-phone-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 850;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 1rem;
+  border: none;
+  border-radius: 4px;
+  background: rgba(6, 11, 20, 0.42);
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(2px);
+}
+
+.tnb-map-panel.map-leaflet-phone:not(.map-leaflet-fs-panel) .map-leaflet-phone-gate {
+  display: flex;
+}
+
+.tnb-map-panel.map-leaflet-locked .map-leaflet-wrap .study-area-map {
+  pointer-events: none;
+}
+
+.tnb-map-panel.map-leaflet-locked .map-leaflet-wrap .leaflet-container {
+  cursor: default;
+}
+
+.map-leaflet-phone-gate-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  background-size: 22px 22px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.map-leaflet-phone-gate-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  max-width: 14rem;
+  line-height: 1.35;
+}
+
+/* Hide page chrome while Leaflet map is fullscreen */
+body.map-leaflet-fs {
+  overflow: hidden;
+  touch-action: none;
+}
+
+body.map-leaflet-fs .page-view,
+body.map-leaflet-fs .slide-inner.tnb-page-split {
+  pointer-events: none;
+  touch-action: none;
+}
+
+body.map-leaflet-fs .tnb-map-panel {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+body.map-leaflet-fs .map-leaflet-wrap,
+body.map-leaflet-fs .study-area-map,
+body.map-leaflet-fs .leaflet-container,
+.tnb-map-panel.map-leaflet-fs-panel .map-leaflet-wrap,
+.tnb-map-panel.map-leaflet-fs-panel .study-area-map,
+.tnb-map-panel.map-leaflet-fs-panel .leaflet-container,
+.tnb-map-panel.leaflet-pseudo-fullscreen,
+.tnb-map-panel.leaflet-pseudo-fullscreen .map-leaflet-wrap,
+.tnb-map-panel.leaflet-pseudo-fullscreen .study-area-map,
+.tnb-map-panel.leaflet-pseudo-fullscreen .leaflet-container,
+.tnb-map-panel:fullscreen,
+.tnb-map-panel:fullscreen .map-leaflet-wrap,
+.tnb-map-panel:fullscreen .study-area-map,
+.tnb-map-panel:fullscreen .leaflet-container {
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.tnb-map-panel.map-leaflet-fs-panel .map-leaflet-phone-gate,
+.tnb-map-panel.leaflet-pseudo-fullscreen .map-leaflet-phone-gate,
+.tnb-map-panel:fullscreen .map-leaflet-phone-gate {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Map pages: allow native vertical scroll; map area uses gate until fullscreen */
+.page-view-tnb {
+  touch-action: pan-y;
+}
+
+body.map-leaflet-fs .page-view-tnb {
+  touch-action: none;
+  overflow: hidden;
+}
+
+body.map-leaflet-fs .map-leaflet-phone-gate {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+body.map-leaflet-fs .top-bar,
+body.map-leaflet-fs .tnb-page-sidebar-wrap,
+body.map-leaflet-fs .tnb-drag-hint,
+body.map-leaflet-fs .lightning-bg {
+  display: none !important;
+}
+
+body.map-leaflet-fs .viewport-shell,
+body.map-leaflet-fs .viewport-frame,
+body.map-leaflet-fs .viewport-169,
+body.map-leaflet-fs .page-view,
+body.map-leaflet-fs .slide-inner.tnb-page-split {
+  position: static;
+  display: block;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+body.map-leaflet-fs .map-legend-power,
+body.map-leaflet-fs .map-legend-water,
+.tnb-map-panel.map-leaflet-fs-panel .map-legend-power,
+.tnb-map-panel.map-leaflet-fs-panel .map-legend-water,
+.tnb-map-panel:fullscreen .map-legend-power,
+.tnb-map-panel:fullscreen .map-legend-water,
+.tnb-map-panel.leaflet-pseudo-fullscreen .map-legend-power,
+.tnb-map-panel.leaflet-pseudo-fullscreen .map-legend-water {
+  display: none !important;
+}
+
+.tnb-map-panel.map-leaflet-fs-panel,
+.tnb-map-panel.leaflet-pseudo-fullscreen {
+  display: flex;
+  flex-direction: column;
+  background: #0a101c;
+  pointer-events: auto !important;
+  touch-action: none;
+}
+
+body > .tnb-map-panel.leaflet-pseudo-fullscreen,
+body > .tnb-map-panel.map-leaflet-fs-panel {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  z-index: 99999;
+  margin: 0;
+}
+
+.tnb-map-panel.map-leaflet-fs-panel .map-leaflet-wrap,
+.tnb-map-panel.map-leaflet-fs-panel .study-area-map,
+.tnb-map-panel.leaflet-pseudo-fullscreen .map-leaflet-wrap,
+.tnb-map-panel.leaflet-pseudo-fullscreen .study-area-map {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+.tnb-map-panel .leaflet-control-fullscreen {
+  margin-top: 0;
+}
+
 .tnb-page .split-visual.map-wrap,
 .tnb-map-wrap {
   align-self: stretch;

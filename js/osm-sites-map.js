@@ -1542,13 +1542,12 @@
     );
   }
 
-  function isolateMapNavigation(mapEl) {
-    const block = (e) => e.stopPropagation();
-    mapEl.addEventListener('wheel', block, { passive: false });
-    mapEl.addEventListener('touchstart', block, { passive: true });
-    mapEl.addEventListener('touchmove', block, { passive: true });
-    mapEl.addEventListener('touchend', block, { passive: true });
-    mapEl.addEventListener('mousedown', block);
+  function isolateMapNavigation(mapEl, map) {
+    if (map && L.DomEvent?.disableScrollPropagation) {
+      L.DomEvent.disableScrollPropagation(mapEl);
+    } else {
+      mapEl.addEventListener('wheel', (e) => e.stopPropagation(), { passive: false });
+    }
   }
 
   function initOsmSitesMap(mapEl) {
@@ -1570,6 +1569,7 @@
     function refreshMapView() {
       if (!map) return;
       map.invalidateSize({ animate: false, pan: false });
+      if (document.body.classList.contains('map-leaflet-fs') || map._isFullscreen) return;
       if (studyBounds && studyBounds.isValid()) {
         map.fitBounds(studyBounds, { padding: [24, 24], maxZoom: 10, animate: false });
       } else if (fallbackView) {
@@ -1589,6 +1589,8 @@
       map = L.map(mapEl, {
         scrollWheelZoom: true,
         dragging: true,
+        touchZoom: true,
+        tap: false,
         doubleClickZoom: true,
         boxZoom: true,
         keyboard: false,
@@ -1657,7 +1659,7 @@
       }
 
       studyBounds = bounds;
-      isolateMapNavigation(mapEl);
+      isolateMapNavigation(mapEl, map);
 
       if (showPowerLines) {
         addPowerLinesLayer(map, mapEl, stationsLayer, (lineBounds) => {
@@ -1676,6 +1678,10 @@
       if (showLightning && typeof window.initLightningMapLayer === 'function') {
         window.initLightningMapLayer(map, mapEl);
       }
+
+      mapEl.rtl3dMap = map;
+      mapEl.rtl3dStudyBounds = studyBounds;
+      window.dispatchEvent(new CustomEvent('rtl3d:map-ready', { detail: { mapEl, map } }));
     }
 
     function ensureMap(attempt) {

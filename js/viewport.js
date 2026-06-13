@@ -9,6 +9,8 @@
   }
 
   function fitViewport() {
+    if (document.body.classList.contains('map-leaflet-fs')) return;
+
     const frame = document.getElementById('viewport-frame');
     const vp = document.getElementById('viewport-169');
     const bar = document.querySelector('.top-bar');
