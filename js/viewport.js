@@ -2,6 +2,11 @@
   'use strict';
 
   const RATIO = 16 / 9;
+  const PORTRAIT_FILL_MAX_WIDTH = 900;
+
+  function isPortraitMobile(availW, availH) {
+    return availW <= 600 || (availH > availW && availW <= PORTRAIT_FILL_MAX_WIDTH);
+  }
 
   function fitViewport() {
     const shell = document.querySelector('.viewport-shell');
@@ -28,9 +33,15 @@
     availW = Math.max(availW, 160);
     availH = Math.max(availH, 90);
 
+    const portraitMobile = isPortraitMobile(availW, availH);
+    document.documentElement.classList.toggle('portrait-mobile', portraitMobile);
+
     let w;
     let h;
-    if (availW / availH >= RATIO) {
+    if (portraitMobile) {
+      w = availW;
+      h = availH;
+    } else if (availW / availH >= RATIO) {
       h = availH;
       w = h * RATIO;
     } else {
@@ -60,6 +71,7 @@
   fitViewport();
   requestAnimationFrame(fitViewport);
   window.addEventListener('resize', fitViewport);
+  window.addEventListener('orientationchange', fitViewport);
   document.addEventListener('fullscreenchange', fitViewport);
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', fitViewport);

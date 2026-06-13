@@ -59,7 +59,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 16:9 viewport — auto-sized by JS to fit display */
+/* Viewport — 16:9 on desktop/tablet landscape; full height on phone portrait */
 .viewport-shell {
   position: fixed;
   inset: 0;
@@ -522,14 +522,6 @@ strong { color: var(--text); font-weight: 600; }
 
 @media (max-width: 720px) {
   .section-nav { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 560px) {
-  .partner-logos {
-    grid-template-columns: 1fr;
-    max-width: 220px;
-    gap: 0.65rem;
-  }
 }
 
 @media (max-height: 700px) {
@@ -3062,4 +3054,120 @@ body.modal-open { overflow: hidden; }
 
 button.btn.primary {
   font-family: var(--font-sans);
+}
+
+/* Phone portrait — primary mobile layout (class set by viewport.js) */
+html.portrait-mobile .viewport-frame {
+  align-items: stretch;
+}
+
+html.portrait-mobile .page-view {
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+html.portrait-mobile .slide-inner {
+  justify-content: flex-start;
+  height: auto;
+  min-height: 100%;
+  max-height: none;
+  overflow: visible;
+  padding-top: clamp(0.25rem, 1cqh, 0.5rem);
+  padding-bottom: clamp(0.5rem, 2cqh, 1rem);
+}
+
+html.portrait-mobile .hero.hub {
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+html.portrait-mobile .partner-logos {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 100%;
+  gap: clamp(0.4rem, 2.5cqw, 0.75rem);
+}
+
+html.portrait-mobile .partner-logo {
+  max-width: none;
+  width: 100%;
+  height: clamp(50px, 7.5cqh, 64px);
+  padding: 0.35rem 0.4rem;
+}
+
+html.portrait-mobile .hero-badge {
+  margin-bottom: 0.45rem;
+  font-size: 0.68rem;
+  padding: 0.28rem 0.7rem;
+}
+
+html.portrait-mobile .hero-title.compact {
+  font-size: clamp(1.2rem, 4.8cqh, 1.7rem);
+  margin-bottom: 0.35rem;
+}
+
+html.portrait-mobile .hub-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+}
+
+html.portrait-mobile .section-nav {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 100%;
+  gap: 0.45rem;
+}
+
+html.portrait-mobile .nav-box {
+  min-height: 52px;
+  padding: 0.5rem 0.6rem;
+}
+
+html.portrait-mobile .nav-box-title {
+  font-size: 0.8rem;
+}
+
+html.portrait-mobile .study-area-page-split,
+html.portrait-mobile .tnb-page-split {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(clamp(200px, 32cqh, 340px), 1fr);
+  height: auto;
+  min-height: 100%;
+}
+
+html.portrait-mobile .study-area-page-split .study-area-map,
+html.portrait-mobile .tnb-page-split .tnb-map {
+  min-height: clamp(200px, 32cqh, 340px);
+}
+
+html.portrait-mobile .lf-page {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+html.portrait-mobile .lf-page .detail-body {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+html.portrait-mobile .lf-page .detail-side {
+  max-height: clamp(120px, 22cqh, 200px);
+  overflow-y: auto;
+}
+
+html.portrait-mobile .split {
+  height: auto;
+  min-height: 100%;
+}
+
+html.portrait-mobile .cards.three {
+  gap: 0.55rem;
+}
+
+html.portrait-mobile .card {
+  padding: 0.75rem;
 }
