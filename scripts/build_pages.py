@@ -69,7 +69,7 @@ HEAD = """<!DOCTYPE html>
 
 HOME = """
           <div class="slide-inner hero hub">
-            <div class="partner-logos" aria-label="Partner universities">
+            <div class="partner-logos mobile-snap" aria-label="Partner universities">
               <button type="button" class="partner-logo" data-partner-qr data-qr-url="https://www.uniten.edu.my/" data-qr-title="UNITEN — Universiti Tenaga Nasional" data-qr-label="uniten.edu.my" aria-label="Show UNITEN website QR code">
                 <img src="images/logos/uniten.png" alt="" width="160" height="113" loading="eager">
               </button>
@@ -80,13 +80,15 @@ HOME = """
                 <img src="images/logos/kindai.svg" alt="" width="200" height="53" loading="eager">
               </button>
             </div>
-            <div class="hero-badge">SATREPS · Malaysia–Japan Joint Research</div>
-            <h1 class="hero-title compact">
-              <span class="line">Real-Time Lightning</span>
-              <span class="line accent">3D Imaging &amp; Forecasting</span>
-            </h1>
-            <p class="hub-label">Choose a section to explore</p>
-            <nav id="section-nav" class="section-nav" aria-label="Jump to section"></nav>
+            <div class="mobile-snap mobile-snap-intro">
+              <div class="hero-badge">SATREPS · Malaysia–Japan Joint Research</div>
+              <h1 class="hero-title compact">
+                <span class="line">Real-Time Lightning</span>
+                <span class="line accent">3D Imaging &amp; Forecasting</span>
+              </h1>
+              <p class="hub-label">Choose a section to explore</p>
+            </div>
+            <nav id="section-nav" class="section-nav section-nav-stack" aria-label="Jump to section"></nav>
           </div>
 """
 

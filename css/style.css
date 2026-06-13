@@ -3078,6 +3078,10 @@ button.btn.primary {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    touch-action: pan-y;
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 0.35rem;
+    scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
     padding:
       0.35rem 0.75rem
       calc(var(--safe-bottom) + 0.35rem);
@@ -3091,21 +3095,81 @@ button.btn.primary {
     overflow: visible;
     padding-inline: 0.5rem;
     padding-top: 0.15rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1.5rem;
+    gap: 0.5rem;
+  }
+
+  .mobile-snap,
+  .partner-logos,
+  .mobile-snap-intro,
+  .nav-box,
+  .section-tag,
+  .center-title,
+  .card,
+  .split-text,
+  .split-visual,
+  .partner-col,
+  .satreps-note,
+  .flow-step,
+  .impact,
+  .net-item,
+  .study-area-sidebar-wrap,
+  .tnb-page-sidebar-wrap,
+  .tnb-map-panel,
+  .study-area-map,
+  .detail-block,
+  .detail-controls,
+  .lf-plot,
+  .lf-plot-3d-wrap,
+  .contact-actions .btn,
+  .goal-box,
+  .cube-scene {
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    scroll-margin-block: 0.5rem;
   }
 
   .hero.hub {
     justify-content: flex-start;
     min-height: 0;
-    height: 100%;
-    gap: 0.3rem;
+    height: auto;
+    gap: 0.5rem;
+  }
+
+  .mobile-snap-intro {
+    text-align: center;
+    padding: 0.35rem 0;
+  }
+
+  .section-nav-stack {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    max-width: 100%;
+    gap: 0.5rem;
+  }
+
+  .section-nav-stack .nav-box {
+    width: 100%;
+    min-height: clamp(88px, 14vh, 120px);
+    padding: 0.75rem 0.85rem;
+    border-radius: 12px;
+    justify-content: center;
+  }
+
+  .section-nav-stack .nav-box-title {
+    font-size: 0.88rem;
+  }
+
+  .section-nav-stack .nav-box-icon {
+    font-size: 1.15rem;
   }
 
   .partner-logos {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     max-width: 100%;
     gap: 0.4rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0;
   }
 
   .partner-logo {
@@ -3132,62 +3196,101 @@ button.btn.primary {
   }
 
   .hub-label {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0;
     font-size: 0.72rem;
   }
 
-  .section-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 100%;
-    gap: 0.35rem;
+  .cards.three {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
   }
 
-  .nav-box {
-    min-height: 44px;
-    padding: 0.35rem 0.45rem;
-    border-radius: 10px;
+  .card {
+    padding: 1rem;
+    min-height: clamp(120px, 22vh, 220px);
   }
 
-  .nav-box-title {
-    font-size: 0.72rem;
-    line-height: 1.2;
+  .flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
   }
 
-  .nav-box-icon {
-    font-size: 0.95rem;
+  .flow-arrow {
+    display: none;
   }
 
-  .nav-box-num {
-    font-size: 0.78rem;
+  .flow-step {
+    max-width: none;
+    flex: none;
+    min-height: clamp(100px, 18vh, 160px);
+    padding: 0.85rem;
   }
 
-  body[data-page="home"] .page-view {
-    overflow: hidden;
+  .impact-row {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  body[data-page="home"] .hero.hub {
-    display: grid;
-    grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
-    height: 100%;
+  .impact {
+    min-height: clamp(72px, 12vh, 110px);
+    padding: 0.85rem 1rem;
   }
 
-  body[data-page="home"] .section-nav {
-    align-content: start;
-    overflow-y: auto;
+  .partners {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .partner-col {
+    min-height: clamp(120px, 20vh, 200px);
+    padding: 0.85rem;
+  }
+
+  .split {
+    display: flex;
+    flex-direction: column;
+    height: auto;
     min-height: 0;
+    gap: 0.65rem;
+  }
+
+  .split-text,
+  .split-visual {
+    min-height: clamp(140px, 24vh, 280px);
+  }
+
+  .split-visual.map-wrap,
+  .tnb-map-panel,
+  .study-area-map {
+    min-height: clamp(220px, 36vh, 380px);
+  }
+
+  .network-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .net-item {
+    min-height: clamp(88px, 14vh, 130px);
   }
 
   .study-area-page-split,
   .tnb-page-split {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(clamp(200px, 32cqh, 340px), 1fr);
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    grid-template-rows: none;
     height: auto;
-    min-height: 100%;
+    min-height: 0;
+    gap: 0.65rem;
   }
 
   .study-area-page-split .study-area-map,
   .tnb-page-split .tnb-map {
-    min-height: clamp(200px, 32cqh, 340px);
+    min-height: clamp(220px, 36vh, 380px);
   }
 
   .lf-page {
@@ -3195,29 +3298,38 @@ button.btn.primary {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    touch-action: pan-y;
+    scroll-snap-type: y mandatory;
+    scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
   }
 
   .lf-page .detail-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0.65rem;
   }
 
   .lf-page .detail-side {
-    max-height: clamp(120px, 22cqh, 200px);
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
+    min-height: clamp(140px, 22vh, 220px);
   }
 
-  .split {
-    height: auto;
-    min-height: 100%;
+  .lf-page .detail-main {
+    min-height: clamp(280px, 42vh, 480px);
   }
 
-  .cards.three {
-    gap: 0.55rem;
+  .lf-plots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .card {
-    padding: 0.75rem;
+  .lf-plot,
+  .lf-plot-3d-wrap {
+    min-height: clamp(160px, 24vh, 240px);
   }
 }
 
