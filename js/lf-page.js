@@ -678,7 +678,10 @@
       `<strong>${flash.utc}</strong> · ${flash.duration_s} s flash · ` +
       `${flash.n_sources_total.toLocaleString()} localized sources · ` +
       `showing ${flash.n_sources_plot.toLocaleString()} points`;
-    requestAnimationFrame(() => window.RTL3DDragScroll?.refresh?.());
+    requestAnimationFrame(() => {
+      onPlotResize();
+      window.RTL3DDragScroll?.refresh?.();
+    });
   }
 
   function initPlots() {
