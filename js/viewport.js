@@ -4,64 +4,56 @@
   const RATIO = 16 / 9;
   const PORTRAIT_FILL_MAX_WIDTH = 900;
 
-  function isPortraitMobile(availW, availH) {
-    return availW <= 600 || (availH > availW && availW <= PORTRAIT_FILL_MAX_WIDTH);
+  function isPortraitMobile(vw, vh) {
+    return vw <= 600 || (vh > vw && vw <= PORTRAIT_FILL_MAX_WIDTH);
   }
 
   function fitViewport() {
-    const shell = document.querySelector('.viewport-shell');
     const frame = document.getElementById('viewport-frame');
     const vp = document.getElementById('viewport-169');
     const bar = document.querySelector('.top-bar');
-    if (!shell || !vp) return;
+    if (!vp) return;
 
     const vv = window.visualViewport;
-    const vw = vv?.width ?? window.innerWidth;
-    const vh = vv?.height ?? window.innerHeight;
+    const vw = Math.round(vv?.width ?? window.innerWidth);
+    const vh = Math.round(vv?.height ?? window.innerHeight);
     const barH = bar ? bar.offsetHeight : 0;
 
-    let availW = vw;
-    let availH = Math.max(vh - barH, 80);
-
-    if (frame) {
-      frame.style.width = '100%';
-      frame.style.flex = '1 1 auto';
-      availW = frame.clientWidth || availW;
-      availH = frame.clientHeight || availH;
-    }
-
-    availW = Math.max(availW, 160);
-    availH = Math.max(availH, 90);
+    const availW = Math.max(vw, 160);
+    const availH = Math.max(vh - barH, 90);
 
     const portraitMobile = isPortraitMobile(availW, availH);
     document.documentElement.classList.toggle('portrait-mobile', portraitMobile);
 
-    let w;
-    let h;
     if (portraitMobile) {
-      w = availW;
-      h = availH;
-    } else if (availW / availH >= RATIO) {
-      h = availH;
-      w = h * RATIO;
+      vp.style.width = '100%';
+      vp.style.height = '100%';
+      vp.style.maxWidth = '100%';
+      vp.style.maxHeight = '100%';
+      if (frame) {
+        frame.style.width = '100%';
+        frame.style.flex = '1 1 auto';
+      }
     } else {
-      w = availW;
-      h = w / RATIO;
+      let w;
+      let h;
+      if (availW / availH >= RATIO) {
+        h = availH;
+        w = h * RATIO;
+      } else {
+        w = availW;
+        h = w / RATIO;
+      }
+      w = Math.min(w, availW);
+      h = Math.min(h, availH);
+      vp.style.width = Math.floor(w) + 'px';
+      vp.style.height = Math.floor(h) + 'px';
+      vp.style.maxWidth = '100%';
+      vp.style.maxHeight = '100%';
     }
 
-    w = Math.min(w, availW);
-    h = Math.min(h, availH);
-
-    const wPx = Math.floor(w);
-    const hPx = Math.floor(h);
-
-    vp.style.width = wPx + 'px';
-    vp.style.height = hPx + 'px';
-    vp.style.maxWidth = '100%';
-    vp.style.maxHeight = '100%';
-
-    document.documentElement.style.setProperty('--viewport-w', wPx + 'px');
-    document.documentElement.style.setProperty('--viewport-h', hPx + 'px');
+    document.documentElement.style.setProperty('--viewport-w', availW + 'px');
+    document.documentElement.style.setProperty('--viewport-h', availH + 'px');
     document.documentElement.style.setProperty('--top-bar-h', barH + 'px');
     document.documentElement.style.setProperty('--frame-h', availH + 'px');
 
@@ -71,10 +63,13 @@
   fitViewport();
   requestAnimationFrame(fitViewport);
   window.addEventListener('resize', fitViewport);
-  window.addEventListener('orientationchange', fitViewport);
+  window.addEventListener('orientationchange', function () {
+    window.setTimeout(fitViewport, 100);
+  });
   document.addEventListener('fullscreenchange', fitViewport);
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', fitViewport);
+    window.visualViewport.addEventListener('scroll', fitViewport);
   }
 
   const frame = document.getElementById('viewport-frame');
