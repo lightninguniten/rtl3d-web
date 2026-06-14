@@ -168,6 +168,10 @@
         const body = el.querySelector('.lf-page-body');
         if (body) ro.observe(body);
       }
+      if (el.classList.contains('efield-page')) {
+        const efieldBody = el.querySelector('.efield-body');
+        if (efieldBody) ro.observe(efieldBody);
+      }
       if (el.classList.contains('page-view')) {
         const inner = el.querySelector('.slide-inner');
         if (inner) ro.observe(inner);

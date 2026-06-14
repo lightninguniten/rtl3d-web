@@ -8,6 +8,11 @@
     return vw <= 600 || (vh > vw && vw <= PORTRAIT_FILL_MAX_WIDTH);
   }
 
+  function isObservationDetailPage() {
+    const page = document.body.dataset.page;
+    return page === 'efield' || page === 'gamma';
+  }
+
   function fitViewport() {
     if (document.body.classList.contains('map-leaflet-fs')) return;
 
@@ -25,9 +30,12 @@
     const availH = Math.max(vh - barH, 90);
 
     const portraitMobile = isPortraitMobile(availW, availH);
+    const observationDetail = isObservationDetailPage();
+    const fillFrame = portraitMobile || observationDetail;
     document.documentElement.classList.toggle('portrait-mobile', portraitMobile);
+    document.documentElement.classList.toggle('observation-detail-page', observationDetail);
 
-    if (portraitMobile) {
+    if (fillFrame) {
       vp.style.width = '100%';
       vp.style.height = '100%';
       vp.style.maxWidth = '100%';

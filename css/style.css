@@ -6255,6 +6255,17 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
   scroll-padding-bottom: calc(var(--safe-bottom) + 0.75rem);
   padding-bottom: calc(var(--safe-bottom) + 0.5rem);
   gap: clamp(0.3rem, 0.9cqh, 0.5rem);
+  height: 100%;
+  min-height: 0;
+}
+
+html.observation-detail-page .viewport-frame {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+html.observation-detail-page .viewport-169 {
+  flex: 1 1 auto;
 }
 
 .efield-header {
@@ -6267,9 +6278,9 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
   border-bottom: 1px solid var(--border);
 }
 
-@media (min-width: 720px) {
+@container (min-width: 52rem) {
   .efield-header {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
     align-items: end;
   }
 }
@@ -6292,9 +6303,16 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
 
 .efield-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 4.5rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.3rem, 0.8cqw, 0.45rem);
   width: 100%;
+  max-width: 100%;
+}
+
+@container (min-width: 36rem) {
+  .efield-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .efield-stat {
@@ -6339,8 +6357,20 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
 .efield-info-row {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(0.35rem, 1cqw, 0.5rem);
+}
+
+@container (min-width: 22rem) {
+  .efield-info-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 44rem) {
+  .efield-info-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .efield-card {
@@ -6439,9 +6469,21 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
   flex: none;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(0.35rem, 1cqw, 0.5rem);
   align-items: stretch;
+}
+
+@container (min-width: 26rem) {
+  .efield-step-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 48rem) {
+  .efield-step-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .efield-step-preview {
@@ -6792,16 +6834,43 @@ html.portrait-mobile body[data-page="home"] .hub-hook {
 .efield-bottom {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(0.35rem, 1cqw, 0.5rem);
   align-items: start;
 }
 
+@container (min-width: 44rem) {
+  .efield-bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.efield-spec-card,
+.efield-context-card {
+  min-width: 0;
+}
+
+.efield-spec-card {
+  container-type: inline-size;
+}
+
 .efield-spec-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.25rem, 0.6cqh, 0.35rem);
   margin: 0;
+}
+
+@container (min-width: 20rem) {
+  .efield-spec-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 32rem) {
+  .efield-spec-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 .efield-spec-grid > div {
