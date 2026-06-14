@@ -33,7 +33,12 @@
   const video = document.getElementById('hsv-video');
   const source = document.getElementById('hsv-video-source');
   const caption = document.getElementById('hsv-video-caption');
+  const page = document.querySelector('.hsv-page');
+  const theater = document.getElementById('hsv-theater');
+  const theaterToggle = document.getElementById('hsv-theater-toggle');
   if (!select || !video || !source || !caption) return;
+
+  const THEATER_KEY = 'rtl3d-hsv-theater';
 
   const base = 'videos/highspeedvideos/';
 
@@ -74,4 +79,33 @@
   select.addEventListener('change', function () {
     loadClip(Number(select.value));
   });
+
+  function setTheater(active) {
+    if (!page || !theaterToggle) return;
+    page.classList.toggle('hsv-theater-active', active);
+    theaterToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
+    theaterToggle.setAttribute('aria-label', active ? 'Exit theater mode' : 'Expand theater mode');
+    theaterToggle.title = active ? 'Exit theater mode' : 'Theater mode';
+    try {
+      sessionStorage.setItem(THEATER_KEY, active ? '1' : '0');
+    } catch (e) {}
+    if (active && theater) {
+      theater.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  if (theaterToggle) {
+    let theaterOn = page.classList.contains('hsv-theater-active');
+    try {
+      const stored = sessionStorage.getItem(THEATER_KEY);
+      if (stored === '1' || stored === '0') {
+        theaterOn = stored === '1';
+        setTheater(theaterOn);
+      }
+    } catch (e) {}
+
+    theaterToggle.addEventListener('click', function () {
+      setTheater(!page.classList.contains('hsv-theater-active'));
+    });
+  }
 })();

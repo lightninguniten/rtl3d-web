@@ -54,22 +54,46 @@
           <div class="grid-overlay"></div>
         </div>
 
-        <main class="lf-page efield-page hsv-page" data-drag-scroll aria-label="High-speed video — drag to scroll">
-          <header class="efield-header">
+        <main class="lf-page efield-page hsv-page hsv-theater-active" data-drag-scroll aria-label="High-speed video — drag to scroll">
+          <header class="efield-header hsv-page-header">
             <div class="efield-header-text">
               <span class="section-tag">Observation Network</span>
               <h1>High-Speed Video of Lightning</h1>
-              <p class="efield-lead">The human eye sees a lightning flash as a single instantaneous burst. Two Vision Research Phantom T2410 cameras record at up to 525,000 frames per second — revealing stepped leaders probing downward, a bright return stroke racing upward, and dart leaders re-igniting spent channels in milliseconds.</p>
             </div>
-            <div class="efield-stats" aria-label="Key camera metrics">
+          </header>
+
+          <section class="hsv-theater" id="hsv-theater" aria-label="High-speed lightning footage">
+            <div class="hsv-theater-stage">
+              <div class="hsv-video-box" id="hsv-video-box">
+                <video id="hsv-video" controls autoplay muted preload="metadata" playsinline title="High-speed lightning footage">
+                  <source id="hsv-video-source" src="videos/highspeedvideos/Y20260515H152823_CINE1_427_CC_2RL.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="hsv-theater-bar">
+                <div class="hsv-theater-controls">
+                  <label class="hsv-video-label" for="hsv-clip-select">Recording</label>
+                  <select id="hsv-clip-select" class="hsv-clip-select" aria-label="Select high-speed recording"></select>
+                </div>
+                <button type="button" id="hsv-theater-toggle" class="hsv-theater-btn" aria-pressed="true" aria-label="Exit theater mode" title="Exit theater mode">
+                  <svg class="hsv-theater-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 7h4V3"/><path d="M17 3h4v4"/><path d="M21 17v4h-4"/><path d="M7 21H3v-4"/>
+                  </svg>
+                  <span class="hsv-theater-btn-label">Theater</span>
+                </button>
+              </div>
+            </div>
+            <p class="hsv-video-caption" id="hsv-video-caption">Cloud-to-ground flash with two return leaders — Phantom T2410, RTL3D observation network.</p>
+          </section>
+
+          <div class="efield-body">
+            <p class="efield-lead hsv-lead">The human eye sees a lightning flash as a single instantaneous burst. Two Vision Research Phantom T2410 cameras record at up to 525,000 frames per second — revealing stepped leaders probing downward, a bright return stroke racing upward, and dart leaders re-igniting spent channels in milliseconds.</p>
+
+            <div class="efield-stats hsv-stats" aria-label="Key camera metrics">
               <div class="efield-stat"><span class="efield-stat-val">2</span><span class="efield-stat-label">T2410 units</span></div>
               <div class="efield-stat"><span class="efield-stat-val">525k</span><span class="efield-stat-label">fps max</span></div>
               <div class="efield-stat"><span class="efield-stat-val">24k</span><span class="efield-stat-label">fps @ 1 Mpx</span></div>
               <div class="efield-stat"><span class="efield-stat-val">24</span><span class="efield-stat-label">Gpx/s</span></div>
             </div>
-          </header>
-
-          <div class="efield-body">
             <section class="efield-info-row">
               <article class="efield-card">
                 <h3>How it works</h3>
@@ -112,25 +136,6 @@
                   </ul>
                 </article>
               </div>
-            </section>
-
-            <section class="hsv-video-section" aria-labelledby="hsv-video-title">
-              <div class="hsv-video-head">
-                <h2 id="hsv-video-title" class="efield-section-title">Footage</h2>
-                <p class="efield-visual-sub">High-speed recording of lightning captured in the RTL3D observation network.</p>
-              </div>
-
-              <div class="hsv-video-toolbar">
-                <label class="hsv-video-label" for="hsv-clip-select">Recording</label>
-                <select id="hsv-clip-select" class="hsv-clip-select" aria-label="Select high-speed recording"></select>
-              </div>
-
-              <div class="hsv-video-box" id="hsv-video-box">
-                <video id="hsv-video" controls autoplay muted preload="metadata" playsinline title="High-speed lightning footage">
-                  <source id="hsv-video-source" src="videos/highspeedvideos/Y20260515H152823_CINE1_427_CC_2RL.mp4" type="video/mp4">
-                </video>
-              </div>
-              <p class="hsv-video-caption" id="hsv-video-caption">Cloud-to-ground flash with two return leaders — Phantom T2410, RTL3D observation network.</p>
             </section>
 
             <section class="efield-bottom">
