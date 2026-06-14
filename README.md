@@ -1,7 +1,7 @@
 # RTL3D Interactive Web
 
 Static web front-end for **Real-Time Lightning 3D Imaging & Forecasting** (SATREPS Malaysia–Japan).  
-Includes LF observation maps, TNB grid risk views, and DID & MET water-infrastructure alerting.
+Includes LF observation maps, TNB grid risk views, DID & MET water alerting, and public-safety radar views.
 
 ## Live demo
 
@@ -14,6 +14,8 @@ start-server.bat
 ```
 
 Open `http://127.0.0.1:8765/` (do not open HTML files directly with `file://` — JSON fetch will fail).
+
+Use clean paths in the browser, e.g. `http://127.0.0.1:8765/tnb-power/` (trailing slash).
 
 ## Rebuild cached map data
 
@@ -37,9 +39,12 @@ This research work is supported by **SATREPS Real-Time Lightning 3D Imaging and 
 | Path | Purpose |
 |------|---------|
 | `index.html` | Home hub |
-| `tnb-power.html` | TNB grid + lightning map |
-| `did-met-alert.html` | DID & MET water + lightning map |
+| `{slug}/index.html` | Canonical pages (clean URLs) |
+| `{slug}.html` | Legacy redirect stubs only |
 | `data/lf/` | Lightning flash and site JSON |
 | `data/osm/` | Cached OpenStreetMap power & water layers |
 | `js/` | Map layers, lightning UI, navigation |
 | `scripts/` | Python builders for offline JSON caches |
+| `scripts/build_pages.py` | Archived HTML templates — do not run |
+
+See `AGENTS.md` for the full page list and module index.

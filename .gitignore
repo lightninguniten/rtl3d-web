@@ -34,6 +34,6 @@ desktop.ini
 *.tmp
 ~$*
 
-# Optional: uncomment to shrink the repo (run build-osm-water-data.bat after clone)
+# Optional: uncomment to shrink the repo (run build-osm-data.bat after clone)
+# data/osm/power-infrastructure.json
 # data/osm/water-infrastructure.json
-# data/osm/water-layers.json

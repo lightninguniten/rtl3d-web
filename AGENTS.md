@@ -11,36 +11,58 @@ start-server.bat
 
 → `http://127.0.0.1:8765/`
 
-## Site map (pages)
+## URL layout
 
-| Page | File | `data-page` | Notes |
+- **Home:** `/` → `index.html`
+- **Pages:** `/{slug}/` → `{slug}/index.html` (clean URLs, no `.html` in the address bar)
+- **Legacy:** root `{slug}.html` files are thin redirect stubs only (bookmarks / old links)
+
+Page registry and nav URLs: `js/site-pages.js` + `js/site-urls.js`.
+
+## Site map
+
+| Page | Path | `data-page` | Notes |
 |------|------|-------------|--------|
-| Home hub | `index.html` | `home` | Section nav from `RTL3D_PAGES` |
-| Our Mission | `our-mission.html` | `mission` | |
-| Research Framework | `research-framework.html` | `framework` | |
-| Observation Network | `observation-network.html` | `network` | |
-| LF Network | `lf.html` | `lf` | Plotly 3D/2D, `lf-page.js` |
-| 3D Charge Imaging | `charge-imaging.html` | `imaging` | |
-| Social Impact | `social-impact.html` | `impact` | Links to TNB |
-| **TNB Power** | `tnb-power.html` | `tnb` | Leaflet map, lightning, OSM grid |
-| Study Area Map | `study-area.html` | `study-area` | Leaflet, observation sites |
-| Partners | `partners.html` | `partners` | |
-| Contact | `contact.html` | `contact` | |
-
-Page registry: `js/site-pages.js` (`RTL3D_PAGES`, `RTL3D_EXTRA`).
+| Home hub | `/` | `home` | Section nav from `RTL3D_PAGES` |
+| Our Mission | `our-mission/` | `mission` | |
+| Research Framework | `research-framework/` | `framework` | |
+| Observation Network | `observation-network/` | `network` | |
+| LF Network | `lf/` | `lf` | Plotly 3D/2D, `lf-page.js` |
+| Electric Field | `electric-field/` | `efield` | Observation detail |
+| Gamma-ray & Radon | `gamma-radon/` | `gamma` | Observation detail |
+| 3D Charge Imaging | `charge-imaging/` | `imaging` | |
+| Social Impact | `social-impact/` | `impact` | Links to map pages |
+| TNB Power | `tnb-power/` | `tnb` | Leaflet, lightning, OSM grid |
+| DID & MET | `did-met-alert/` | `did-met` | Water + lightning map |
+| Public Safety | `public-safety/` | `public-safety` | Aviation & maritime |
+| Industry & Tourism | `public-safety-industry/` | `public-safety-industry` | Radar view |
+| Study Area Map | `study-area/` | `study-area` | Leaflet, observation sites |
+| Partners | `partners/` | `partners` | |
+| Contact | `contact/` | `contact` | |
 
 ## JavaScript modules
 
 | File | Role |
 |------|------|
+| `js/site-urls.js` | Resolve clean page URLs from any depth |
 | `js/site-pages.js` | Page list / navigation metadata |
-| `js/page-common.js` | Shared page behaviour, back button |
+| `js/page-common.js` | Shared page behaviour, back button, lightning bg |
+| `js/page-visits.js` | Visit tracking / home hub highlights |
 | `js/viewport.js` | 16:9 viewport scaling, resize events |
+| `js/drag-scroll.js` | Click-drag scroll |
 | `js/home-nav.js` | Home hub section cards |
-| `js/drag-scroll.js` | Click-drag scroll (`data-drag-scroll`, `window.initDragScroll`) |
-| `js/osm-sites-map.js` | Leaflet map, OSM power lines + infrastructure, layer control |
-| `js/lightning-map-layer.js` | LF flash scatter, radiation zones, grid risk warnings |
-| `js/lf-page.js` | LF modal: Plotly plots, sensor table, animation |
+| `js/home-featured.js` | Home interactive preview roulette |
+| `js/home-hub.js` | Home hub cinema / motion |
+| `js/partner-logo-qr.js` | Partner logo QR overlays |
+| `js/osm-sites-map.js` | Leaflet map, OSM power lines + infrastructure |
+| `js/lightning-map-layer.js` | LF flash scatter, radiation zones, grid risk |
+| `js/osm-water-layers.js` | DID/MET water layers |
+| `js/osm-aviation-layers.js` | Aviation infrastructure |
+| `js/lightning-radar-layer.js` | Industry radar layer |
+| `js/map-fullscreen.js` | Leaflet fullscreen helper |
+| `js/lf-page.js` | LF modal: Plotly plots, sensor table |
+| `js/efield-page.js` | Electric field guide carousel |
+| `js/gamma-radon-page.js` | Gamma/radon guide carousel |
 | `js/facebook-qr.js` | Facebook QR overlay |
 
 ## Data files
@@ -50,16 +72,20 @@ Page registry: `js/site-pages.js` (`RTL3D_PAGES`, `RTL3D_EXTRA`).
 | `data/lf/flashes.json` | `scripts/build_lf_data.py` | Lightning source x,y,z,t per flash event |
 | `data/lf/sites.json` | same | LF observation network sites |
 | `data/lf/lf-data.js` | same | `window.LF_DATA` embed for offline |
-| `data/osm/power-infrastructure.json` | `scripts/build_osm_power_data.py` | Cached Overpass power features (~14k elements) |
+| `data/osm/power-infrastructure.json` | `scripts/build_osm_power_data.py` | Cached Overpass power features |
+| `data/osm/water-layers-core.json` | `scripts/build_osm_water_data.py` | Water layers (fast load) |
+| `data/osm/water-layers-detail.json` | same | Water detail layers |
+| `data/osm/water-risk-index.json` | same | Water risk targets |
 
 **Rebuild data:**
 
 ```bat
 py -3 scripts\build_lf_data.py
 build-osm-data.bat
+build-osm-water-data.bat
 ```
 
-## TNB map (`tnb-power.html`) — key behaviour
+## TNB map (`tnb-power/`) — key behaviour
 
 - Map element: `#tnb-map` with `data-osm-sites-map data-power-lines="true" data-lightning-map="true"`.
 - **Lightning**: Jet-coloured scatter by time; event selector in fixed toolbar (`#tnb-flash-select`).
@@ -86,7 +112,8 @@ Single stylesheet: `css/style.css`. TNB split layout: `.tnb-page-split`, toolbar
 - Do not commit secrets. Large JSON caches are generated, not hand-edited.
 - Map popups: click only (no hover labels). Infrastructure popups include coordinates.
 - Prefer extending existing modules over new frameworks.
-- **No outbound hyperlinks** in page body content (papers, vendors, external sites). Citations as plain text only; keep explanations on-page. See `.cursor/rules/interactive-web-no-outbound-links.mdc`.
+- **No outbound hyperlinks** in page body content (papers, vendors, external sites). Citations as plain text only.
+- Edit `{slug}/index.html` for page content — do not run `scripts/build_pages.py` (archived templates only).
 - Run `start-server.bat` to test fetch-based features.
 
 ## Related project paths

@@ -1,4 +1,9 @@
-"""Generate multi-page RTL3D site from section content."""
+"""RTL3D page templates (reference only).
+
+Live HTML is under {slug}/index.html with root *.html redirect stubs.
+Do not run this script — it would overwrite redirect stubs with flat pages.
+Edit slug/index.html files directly, or refactor this module before regenerating.
+"""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -225,7 +230,7 @@ NETWORK = """
             <span class="section-tag center">Output 1</span>
             <h2 class="center-title">Lightning observation network</h2>
             <div class="network-grid">
-              <a href="lf.html" class="net-item net-item-clickable" aria-label="Open Low Frequency network details">
+              <a href="lf/" class="net-item net-item-clickable" aria-label="Open Low Frequency network details">
                 <div class="net-icon lf">LF</div>
                 <h4>Low Frequency</h4>
                 <p class="net-count">&gt;9 stations</p>
@@ -238,14 +243,14 @@ NETWORK = """
                 <p class="net-count">&gt;6 stations</p>
                 <p>Leader development imaging across tens of kilometers with high temporal resolution.</p>
               </div>
-              <a href="gamma-radon.html" class="net-item net-item-clickable" aria-label="Open Gamma-ray and Radon network details">
+              <a href="gamma-radon/" class="net-item net-item-clickable" aria-label="Open Gamma-ray and Radon network details">
                 <div class="net-icon gamma">γ</div>
                 <h4>Gamma-ray &amp; Radon</h4>
                 <p class="net-count">3 monitors</p>
                 <p>High-energy radiation observation linked to thunderstorm electrification.</p>
                 <span class="net-tap-hint">Tap for details →</span>
               </a>
-              <a href="electric-field.html" class="net-item net-item-clickable" aria-label="Open Electric Field network details">
+              <a href="electric-field/" class="net-item net-item-clickable" aria-label="Open Electric Field network details">
                 <div class="net-icon efield">E</div>
                 <h4>Electric Field</h4>
                 <p class="net-count">5 sensor sets</p>
@@ -343,28 +348,28 @@ IMPACT = """
               </div>
             </div>
             <div class="impact-row">
-              <a href="did-met-alert.html" class="impact impact-clickable impact-did-met" aria-label="Open DID and MET early warning map">
+              <a href="did-met-alert/" class="impact impact-clickable impact-did-met" aria-label="Open DID and MET early warning map">
                 <span class="impact-click-top">
                   <span class="impact-click-icon" aria-hidden="true">🛡️</span>
                   <span class="impact-click-body"><strong>DID &amp; MET</strong> — Early warning &amp; alert systems</span>
                 </span>
                 <span class="impact-hint">Click to view map →</span>
               </a>
-              <a href="tnb-power.html" class="impact impact-clickable impact-tnb" aria-label="Open TNB power supply map">
+              <a href="tnb-power/" class="impact impact-clickable impact-tnb" aria-label="Open TNB power supply map">
                 <span class="impact-click-top">
                   <span class="impact-click-icon" aria-hidden="true">⚡</span>
                   <span class="impact-click-body"><strong>TNB</strong> — Stable electric power supply</span>
                 </span>
                 <span class="impact-hint">Click to view map →</span>
               </a>
-              <a href="public-safety.html" class="impact impact-clickable impact-public-safety" aria-label="Open aviation and maritime public safety map">
+              <a href="public-safety/" class="impact impact-clickable impact-public-safety" aria-label="Open aviation and maritime public safety map">
                 <span class="impact-click-top">
                   <span class="impact-click-icon" aria-hidden="true">✈️</span>
                   <span class="impact-click-body"><strong>Public safety</strong> — Aviation &amp; maritime</span>
                 </span>
                 <span class="impact-hint">Click to view map →</span>
               </a>
-              <a href="public-safety-industry.html" class="impact impact-clickable impact-public-safety-industry" aria-label="Open industry and tourism lightning radar">
+              <a href="public-safety-industry/" class="impact impact-clickable impact-public-safety-industry" aria-label="Open industry and tourism lightning radar">
                 <span class="impact-click-top">
                   <span class="impact-click-icon" aria-hidden="true">🏭</span>
                   <span class="impact-click-body"><strong>Public safety</strong> — Industry &amp; tourism</span>
@@ -513,10 +518,10 @@ def render(page_file, page_id, page_title, desc, brand, content, extra_head, ext
 
 
 def main():
-    for args in PAGES:
-        path = ROOT / args[0]
-        path.write_text(render(*args), encoding="utf-8")
-        print(f"Wrote {path.name}")
+    raise SystemExit(
+        "build_pages.py is archived template content only. "
+        "Edit {slug}/index.html in the repo root; running this would break clean URLs."
+    )
 
 
 if __name__ == "__main__":

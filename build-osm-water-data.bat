@@ -20,7 +20,7 @@ if errorlevel 1 (
 
 echo.
 
-echo Done. Cached files: data\osm\water-layers.json (fast load) and water-infrastructure.json.
+echo Done. Cached files: data\osm\water-layers-core.json, water-layers-detail.json, water-risk-index.json, water-infrastructure.json.
 echo Refresh the DID ^& MET page — second load uses browser IndexedDB cache.
 
 pause

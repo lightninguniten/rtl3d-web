@@ -4,7 +4,6 @@
   /** Must match scripts/build_osm_water_data.py */
   const WATER_BBOX = { s: 2.0, w: 101.3, n: 3.5, e: 102.65 };
   const LOCAL_OSM_WATER_URL = 'data/osm/water-infrastructure.json';
-  const LOCAL_OSM_WATER_LAYERS_URL = 'data/osm/water-layers.json';
   const LOCAL_OSM_WATER_CORE_URL = 'data/osm/water-layers-core.json';
   const LOCAL_OSM_WATER_DETAIL_URL = 'data/osm/water-layers-detail.json';
   const LOCAL_OSM_WATER_RISK_URL = 'data/osm/water-risk-index.json';
@@ -812,14 +811,6 @@
     return bboxMatchesCached(meta.bbox, bbox);
   }
 
-  function normalizeLegacyLayersPayload(data, bbox) {
-    if (!data?.layers || !validateWaterMeta(data.meta, bbox)) return null;
-    const waterByLayer = emptyWaterByLayer();
-    mergeLayerPayload(waterByLayer, data);
-    const featureCount = data.meta?.featureCount || Object.values(waterByLayer).reduce((n, f) => n + f.length, 0);
-    return { waterByLayer, featureCount, riskTargets: null, _fromLocalFile: true, _splitBundle: false };
-  }
-
   function normalizeSplitCorePayload(coreData, riskData, bbox) {
     if (!coreData?.layers || !validateWaterMeta(coreData.meta, bbox)) return null;
     const waterByLayer = emptyWaterByLayer();
@@ -839,7 +830,6 @@
   let waterCorePromise = null;
   let waterDetailPromise = null;
   let waterRiskPromise = null;
-  let waterLegacyPromise = null;
   let waterCanvasRenderer = null;
 
   function startWaterPrefetch() {
@@ -853,9 +843,6 @@
     waterRiskPromise = fetch(LOCAL_OSM_WATER_RISK_URL)
       .then((resp) => (resp.ok ? resp.json() : null))
       .catch(() => null);
-    waterLegacyPromise = fetch(LOCAL_OSM_WATER_LAYERS_URL)
-      .then((resp) => (resp.ok ? resp.json() : null))
-      .catch(() => null);
   }
 
   async function loadWaterData(bbox) {
@@ -866,10 +853,6 @@
       splitPayload._riskPromise = waterRiskPromise;
       return splitPayload;
     }
-
-    const legacyData = await waterLegacyPromise;
-    const legacyPayload = normalizeLegacyLayersPayload(legacyData, bbox);
-    if (legacyPayload) return legacyPayload;
 
     const rawResp = await fetch(LOCAL_OSM_WATER_URL).catch(() => null);
     if (rawResp?.ok) {
