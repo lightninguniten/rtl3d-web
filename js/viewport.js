@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const RATIO = 19 / 6;
+  const RATIO = 16 / 9;
   const PORTRAIT_FILL_MAX_WIDTH = 900;
 
   function isPortraitMobile(vw, vh) {
