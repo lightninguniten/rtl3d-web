@@ -6,7 +6,6 @@
   const hub = document.querySelector('.hero.hub');
   if (!hub) return;
 
-  const orbs = hub.querySelectorAll('.hub-spotlight-orb');
   const cinemaPanel = hub.querySelector('.hub-cinema-panel');
   const title = hub.querySelector('.hub-title');
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,27 +26,17 @@
     title.classList.add('is-revealed');
   }
 
-  if (!prefersReduced && orbs.length) {
+  if (!prefersReduced && cinemaPanel) {
     hub.addEventListener('mousemove', (e) => {
       const rect = hub.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      const factors = [18, 12, 9];
-      orbs.forEach((orb, i) => {
-        const f = factors[i] || 10;
-        orb.style.transform = `translate(${x * f}px, ${y * f}px)`;
-      });
-      if (cinemaPanel) {
-        cinemaPanel.style.transform =
-          `perspective(900px) rotateX(${y * -2.2}deg) rotateY(${x * 2.8}deg)`;
-      }
+      cinemaPanel.style.transform =
+        `perspective(900px) rotateX(${y * -2.2}deg) rotateY(${x * 2.8}deg)`;
     });
 
     hub.addEventListener('mouseleave', () => {
-      orbs.forEach((orb) => {
-        orb.style.transform = '';
-      });
-      if (cinemaPanel) cinemaPanel.style.transform = '';
+      cinemaPanel.style.transform = '';
     });
   }
 
@@ -60,7 +49,7 @@
     ];
     let idx = 0;
     hook.classList.add('is-ready');
-    window.setInterval(() => {
+    const hookInterval = window.setInterval(() => {
       idx = (idx + 1) % phrases.length;
       hook.classList.remove('is-ready');
       flashLightning();
@@ -69,6 +58,7 @@
         hook.classList.add('is-ready');
       });
     }, 4500);
+    window.addEventListener('pagehide', () => window.clearInterval(hookInterval), { once: true });
   } else if (hook) {
     hook.classList.add('is-ready');
   }

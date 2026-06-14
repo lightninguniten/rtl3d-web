@@ -42,7 +42,7 @@
   }
 
   function canGoBack() {
-    return sameOriginReferrer() || window.history.length > 1;
+    return sameOriginReferrer();
   }
 
   function goToPreviousPage() {

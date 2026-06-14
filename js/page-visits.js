@@ -63,8 +63,9 @@
     if (!href) return null;
     const pages = window.RTL3D_PAGES || [];
     const extra = window.RTL3D_EXTRA || [];
-    const file = href.split('/').pop().split('?')[0].split('#')[0];
-    const match = [...pages, ...extra].find((p) => p.file === file);
+    const slug = href.split('?')[0].split('#')[0].replace(/\/+$/, '').split('/').pop();
+    if (!slug) return null;
+    const match = [...pages, ...extra].find((p) => p.slug && p.slug === slug);
     return match ? match.id : null;
   }
 

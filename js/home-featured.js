@@ -22,9 +22,8 @@
   const glideMsPerRow = prefersReduced ? GLIDE_MS_PER_ROW * 2.5 : GLIDE_MS_PER_ROW;
 
   let rowStep = 0;
-  let index = 0;
   let count = items.length;
-  let glideOffset = 0;
+  let totalOffset = 0;   // pixels scrolled; always in [0, count * rowStep)
   let glideRaf = null;
   let lastGlideTs = 0;
   let pointerId = null;
@@ -90,16 +89,10 @@
     return parseTransformY(getComputedStyle(track).transform);
   }
 
-  function indexFromOffset(y) {
-    const i = Math.round(y / rowStep);
-    return ((i % count) + count) % count;
-  }
-
   function syncFromVisual() {
     const y = getCurrentOffsetY();
-    index = indexFromOffset(y);
-    glideOffset = Math.max(0, y - index * rowStep);
-    if (glideOffset >= rowStep) glideOffset = 0;
+    const full = count * rowStep;
+    totalOffset = full > 0 ? ((y % full) + full) % full : 0;
   }
 
   function visibleCountForHeight(vpH, gap) {
@@ -133,7 +126,7 @@
     track.style.transition = animate
       ? `transform ${TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.15, 1)`
       : 'none';
-    track.style.transform = `translate3d(0, ${-(index * rowStep + glideOffset)}px, 0)`;
+    track.style.transform = `translate3d(0, ${-totalOffset}px, 0)`;
   }
 
   function canAutoGlide() {
@@ -151,12 +144,9 @@
 
     const dt = Math.min(ts - lastGlideTs, 48);
     lastGlideTs = ts;
-    glideOffset += (rowStep / glideMsPerRow) * dt;
-
-    while (glideOffset >= rowStep) {
-      glideOffset -= rowStep;
-      index = (index + 1) % count;
-    }
+    totalOffset += (rowStep / glideMsPerRow) * dt;
+    const full = count * rowStep;
+    if (totalOffset >= full) totalOffset -= full;
 
     renderPosition(false);
   }
@@ -170,8 +160,9 @@
   function stepManual(dir) {
     if (!rowStep || dragging) return;
     syncFromVisual();
-    index = ((index + dir) % count + count) % count;
-    glideOffset = 0;
+    const full = count * rowStep;
+    const snapped = Math.round(totalOffset / rowStep) * rowStep;
+    totalOffset = ((snapped + dir * rowStep) % full + full) % full;
     renderPosition(true);
   }
 
@@ -210,7 +201,8 @@
 
   function relayout() {
     if (!ensureLayout()) return;
-    glideOffset = Math.min(glideOffset, rowStep - 0.01);
+    const full = count * rowStep;
+    if (full > 0) totalOffset = totalOffset % full;
     renderPosition(false);
     if (!glideRaf) startGlide();
   }
@@ -242,7 +234,7 @@
     dragMoved = false;
     dragStartY = e.clientY;
     syncFromVisual();
-    dragStartOffset = index * rowStep + glideOffset;
+    dragStartOffset = totalOffset;
   });
 
   viewport.addEventListener('pointermove', (e) => {
@@ -254,7 +246,7 @@
       dragging = true;
       dragMoved = true;
       syncFromVisual();
-      dragStartOffset = index * rowStep + glideOffset;
+      dragStartOffset = totalOffset;
       viewport.setPointerCapture(e.pointerId);
       e.preventDefault();
     }
@@ -274,8 +266,8 @@
 
       const dy = e.clientY - dragStartY;
       const pos = dragStartOffset - dy;
-      index = indexFromOffset(pos);
-      glideOffset = 0;
+      const full = count * rowStep;
+      totalOffset = ((Math.round(pos / rowStep) * rowStep) % full + full) % full;
       renderPosition(true);
       window.setTimeout(() => {
         dragMoved = false;

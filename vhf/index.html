@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E📶%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="VHF lightning observation network — stations, sensors, and 3D source mapping results.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/vhf/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="VHF Network — RTL3D">
+  <meta property="og:description" content="VHF lightning observation network — stations, sensors, and 3D source mapping results.">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/vhf/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="VHF Network — RTL3D">
+  <meta name="twitter:description" content="VHF lightning observation network — stations, sensors, and 3D source mapping results.">
+  <title>VHF Network — RTL3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+</head>
+<body data-page="vhf">
+  <div class="viewport-shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="btn-label">Back</span>
+        </a>
+        <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          <span class="btn-label">Home</span>
+        </a>
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <span class="brand-text">RTL3D · VHF</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="viewport-frame" id="viewport-frame">
+    <div class="viewport-169" id="viewport-169">
+      <div class="lightning-bg" aria-hidden="true">
+        <canvas id="lightning-canvas"></canvas>
+        <div class="grid-overlay"></div>
+      </div>
+
+      <main class="lf-page">
+        <header class="lf-page-header">
+          <span class="section-tag">VHF Network</span>
+          <h1>Very High Frequency Lightning Observation</h1>
+        </header>
+
+        <div class="detail-body lf-page-body">
+          <aside class="detail-side">
+            <section class="detail-block">
+              <h3>Sensor system</h3>
+              <div class="sensor-diagram" aria-hidden="true">
+                <svg viewBox="0 0 200 175" class="sensor-svg">
+                  <!-- Receiver box -->
+                  <rect x="82" y="118" width="36" height="28" rx="3" fill="#1e293b" stroke="#a78bfa"/>
+                  <text x="100" y="132" text-anchor="middle" fill="#94a3b8" font-size="6.5">VHF Rx</text>
+                  <text x="100" y="141" text-anchor="middle" fill="#64748b" font-size="5.5">20–80 MHz</text>
+                  <!-- Support post -->
+                  <line x1="100" y1="118" x2="100" y2="72" stroke="#64748b" stroke-width="2.5"/>
+                  <!-- Circular flat plate — oval for 3D perspective -->
+                  <ellipse cx="100" cy="56" rx="30" ry="10" fill="#312e5e" stroke="#a78bfa" stroke-width="2"/>
+                  <!-- Plate surface rings -->
+                  <ellipse cx="100" cy="56" rx="21" ry="7" fill="none" stroke="#a78bfa" stroke-width="0.8" opacity="0.4"/>
+                  <ellipse cx="100" cy="56" rx="12" ry="4" fill="none" stroke="#a78bfa" stroke-width="0.8" opacity="0.4"/>
+                  <!-- Cross hair -->
+                  <line x1="70" y1="56" x2="130" y2="56" stroke="#a78bfa" stroke-width="0.8" opacity="0.4"/>
+                  <line x1="100" y1="46" x2="100" y2="66" stroke="#a78bfa" stroke-width="0.8" opacity="0.4"/>
+                  <!-- Plate thickness edge (bottom rim) -->
+                  <path d="M70 56 Q70 60 100 62 Q130 60 130 56" fill="#1e1b4b" stroke="#7c3aed" stroke-width="1.2"/>
+                  <!-- Feed cable from plate underside to post -->
+                  <line x1="100" y1="62" x2="100" y2="72" stroke="#64748b" stroke-width="1.5"/>
+                  <!-- Radiation arcs (broadside) -->
+                  <path d="M62 46 Q48 56 62 66" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="4 3"/>
+                  <path d="M138 46 Q152 56 138 66" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="4 3"/>
+                  <path d="M56 42 Q38 56 56 70" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+                  <path d="M144 42 Q162 56 144 70" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+                  <!-- Labels -->
+                  <text x="100" y="22" text-anchor="middle" fill="#94a3b8" font-size="8">VHF Circular Flat-Plate Antenna</text>
+                  <text x="100" y="166" text-anchor="middle" fill="#64748b" font-size="7">GPS-synchronized · 50 MS/s ADC</text>
+                </svg>
+              </div>
+              <p class="detail-text">Broadband VHF circular flat-plate antennas operating in the 20–80 MHz band detect individual lightning stepped-leader pulses. GPS-synchronized sampling across 6 sites enables time-of-arrival 3D source mapping with sub-km accuracy over a ~20 km baseline.</p>
+            </section>
+
+            <section class="detail-block detail-block-sites">
+              <h3>Station locations</h3>
+              <ul class="site-table drag-scroll" id="vhf-site-list" data-drag-scroll aria-label="Station list — drag to scroll"></ul>
+            </section>
+          </aside>
+
+          <section class="detail-main">
+            <div class="detail-controls">
+              <label for="vhf-flash-select">Select lightning event</label>
+              <select id="vhf-flash-select" class="page-select"></select>
+              <p id="vhf-flash-meta" class="flash-meta"></p>
+            </div>
+            <div class="lf-plots">
+              <div id="vhf-plot-plan" class="lf-plot"></div>
+              <div class="lf-plot lf-plot-3d-wrap">
+                <div id="vhf-plot-3d" class="lf-plot-3d"></div>
+                <div class="lf-3d-controls">
+                  <button type="button" id="vhf-3d-play" class="lf-3d-play" aria-label="Play 3D animation" title="Play / pause 3D">
+                    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                  </button>
+                  <button type="button" id="vhf-3d-repeat" class="lf-3d-repeat" aria-label="Repeat 3D animation" title="Repeat 3D off">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div id="vhf-plot-time" class="lf-plot"></div>
+              <div id="vhf-plot-xz" class="lf-plot"></div>
+              <div id="vhf-plot-zy" class="lf-plot"></div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    </div>
+  </div>
+
+  <script src="js/site-urls.js"></script>
+  <script src="js/site-pages.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/facebook-qr.js"></script>
+  <script src="js/drag-scroll.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
+  <script src="js/page-common.js"></script>
+  <script src="js/vhf-page.js" defer></script>
+</body>
+</html>

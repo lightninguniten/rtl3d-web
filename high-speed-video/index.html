@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E🎥%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="High-speed video of lightning with Vision Research Phantom T2410 cameras — BSI CMOS sensor, up to 525,000 fps, revealing stepped leaders, return strokes, and channel development.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/high-speed-video/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="High-Speed Video — RTL3D">
+  <meta property="og:description" content="Vision Research Phantom T2410 high-speed cameras reveal lightning structure invisible to the naked eye — up to 525,000 fps with a back-side illuminated CMOS sensor.">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/high-speed-video/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="High-Speed Video — RTL3D">
+  <meta name="twitter:description" content="Ultra-fast cameras reveal lightning structure invisible to the naked eye.">
+  <title>High-Speed Video — RTL3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="hsv">
+  <div class="viewport-shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="btn-label">Back</span>
+        </a>
+        <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          <span class="btn-label">Home</span>
+        </a>
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <span class="brand-text">RTL3D · High-Speed Video</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="viewport-frame" id="viewport-frame">
+      <div class="viewport-169" id="viewport-169">
+        <div class="lightning-bg" aria-hidden="true">
+          <canvas id="lightning-canvas"></canvas>
+          <div class="grid-overlay"></div>
+        </div>
+
+        <main class="lf-page efield-page hsv-page" data-drag-scroll aria-label="High-speed video — drag to scroll">
+          <header class="efield-header">
+            <div class="efield-header-text">
+              <span class="section-tag">Observation Network</span>
+              <h1>High-Speed Video of Lightning</h1>
+              <p class="efield-lead">The human eye sees a lightning flash as a single instantaneous burst. Two Vision Research Phantom T2410 cameras record at up to 525,000 frames per second — revealing stepped leaders probing downward, a bright return stroke racing upward, and dart leaders re-igniting spent channels in milliseconds.</p>
+            </div>
+            <div class="efield-stats" aria-label="Key camera metrics">
+              <div class="efield-stat"><span class="efield-stat-val">2</span><span class="efield-stat-label">T2410 units</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">525k</span><span class="efield-stat-label">fps max</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">24k</span><span class="efield-stat-label">fps @ 1 Mpx</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">24</span><span class="efield-stat-label">Gpx/s</span></div>
+            </div>
+          </header>
+
+          <div class="efield-body">
+            <section class="efield-info-row">
+              <article class="efield-card">
+                <h3>How it works</h3>
+                <p>The Phantom T2410 uses a back-side illuminated (BSI) CMOS sensor with a global electronic shutter and 24 Gpx/s throughput. At 24,270 fps (1280 × 800) each frame lasts ~41 μs — enough to resolve stepped-leader structure. In binned mode at 100,000 fps (640 × 384) the return-stroke luminosity wave, travelling at roughly one-third the speed of light, can be tracked frame by frame up the channel.</p>
+              </article>
+              <article class="efield-card">
+                <h3>What is captured</h3>
+                <p><strong>Stepped leaders</strong> — the invisible-to-eye downward-propagating discharge that branches and pauses in 50 μs steps. <strong>Return stroke</strong> — the bright upward-propagating wave triggered when a leader contacts ground. <strong>Dart leaders</strong> — fast restrikes that follow the existing channel in subsequent strokes. <strong>Corona and recoil leaders</strong> visible in upper branches.</p>
+              </article>
+              <article class="efield-card">
+                <h3>Role in RTL3D</h3>
+                <p>Two Phantom T2410 units provide visual ground truth for the 3D source locations produced by the LF and VHF networks. Frame-by-frame channel images are IRIG/GPS time-stamped and overlaid on the 3D point cloud, confirming that mapped sources trace the actual visible channel geometry and branching structure.</p>
+              </article>
+            </section>
+
+            <section class="hsv-camera-section" aria-labelledby="hsv-camera-title">
+              <div class="hsv-camera-head">
+                <h2 id="hsv-camera-title" class="efield-section-title">Camera platform</h2>
+                <p class="efield-visual-sub">Vision Research Phantom T2410 — compact T-Series high-speed camera with BSI sensor for light-starved outdoor capture.</p>
+              </div>
+              <div class="hsv-camera-layout">
+                <figure class="hsv-camera-figure">
+                  <img
+                    src="images/hsv/phantom-t2410-front.jpg"
+                    alt="Vision Research Phantom T2410 high-speed camera, front view"
+                    width="800"
+                    height="800"
+                    loading="lazy"
+                    decoding="async">
+                  <figcaption>Phantom T2410 — 1280 × 800 BSI sensor, 24 Gpx/s throughput, global shutter.</figcaption>
+                </figure>
+                <article class="efield-card hsv-camera-card">
+                  <h3>Phantom T2410 highlights</h3>
+                  <ul class="efield-points">
+                    <li><strong>Throughput</strong> — 24 Gpx/s; 24,270 fps at full 1-Mpx resolution (1280 × 800).</li>
+                    <li><strong>Peak frame rate</strong> — up to 525,000 fps in standard or binned mode at reduced resolution; 100,000 fps at 640 × 384 binned.</li>
+                    <li><strong>Light sensitivity</strong> — BSI CMOS with 84.3% quantum efficiency (mono); suited to night-time lightning against a dark sky.</li>
+                    <li><strong>Exposure</strong> — 1.1 μs minimum (190 ns with FAST option); Extreme Dynamic Range (EDR) for saturated return-stroke cores.</li>
+                    <li><strong>Sync &amp; trigger</strong> — IRIG in/out, hardware BNC trigger, image-based auto-trigger, and programmable pre/post-trigger capture.</li>
+                  </ul>
+                </article>
+              </div>
+            </section>
+
+            <section class="hsv-video-section" aria-labelledby="hsv-video-title">
+              <div class="hsv-video-head">
+                <h2 id="hsv-video-title" class="efield-section-title">Footage</h2>
+                <p class="efield-visual-sub">High-speed recording of lightning captured in the RTL3D observation network.</p>
+              </div>
+
+              <div class="hsv-video-toolbar">
+                <label class="hsv-video-label" for="hsv-clip-select">Recording</label>
+                <select id="hsv-clip-select" class="hsv-clip-select" aria-label="Select high-speed recording"></select>
+              </div>
+
+              <div class="hsv-video-box" id="hsv-video-box">
+                <video id="hsv-video" controls autoplay muted preload="metadata" playsinline title="High-speed lightning footage">
+                  <source id="hsv-video-source" src="videos/highspeedvideos/Y20260515H152823_CINE1_427_CC_2RL.mp4" type="video/mp4">
+                </video>
+              </div>
+              <p class="hsv-video-caption" id="hsv-video-caption">Cloud-to-ground flash with two return leaders — Phantom T2410, RTL3D observation network.</p>
+            </section>
+
+            <section class="efield-bottom">
+              <article class="efield-card efield-spec-card">
+                <h3>Camera specifications</h3>
+                <dl class="efield-spec-grid">
+                  <div><dt>Model</dt><dd>Vision Research Phantom T2410</dd></div>
+                  <div><dt>Number of cameras</dt><dd>2 units</dd></div>
+                  <div><dt>Max resolution</dt><dd>1280 × 800 px (1 Mpx)</dd></div>
+                  <div><dt>Frame rate @ 1 Mpx</dt><dd>24,270 fps</dd></div>
+                  <div><dt>Max frame rate</dt><dd>525,000 fps (reduced res.)</dd></div>
+                  <div><dt>Throughput</dt><dd>24 Gpx/s</dd></div>
+                  <div><dt>Sensor</dt><dd>CMOS BSI, global shutter, 12-bit</dd></div>
+                  <div><dt>Pixel size</dt><dd>18.5 μm (37 μm binned)</dd></div>
+                  <div><dt>Min exposure</dt><dd>1.1 μs (190 ns FAST option)</dd></div>
+                  <div><dt>Quantum efficiency</dt><dd>84.3% mono; 77% color</dd></div>
+                  <div><dt>Memory</dt><dd>64 / 128 / 256 GB RAM</dd></div>
+                  <div><dt>Lens mount</dt><dd>Nikon F (standard)</dd></div>
+                  <div><dt>Synchronisation</dt><dd>IRIG in/out, GPS time-stamp</dd></div>
+                  <div><dt>Trigger</dt><dd>BNC hardware, image auto-trigger, LF event</dd></div>
+                  <div><dt>Coupled sensors</dt><dd>LF, VHF networks</dd></div>
+                </dl>
+              </article>
+
+              <article class="efield-card efield-context-card">
+                <h3>Why frame rate matters</h3>
+                <ul class="efield-points">
+                  <li><strong>30 fps (standard video)</strong> — the entire lightning event collapses into one or two saturated white frames. Channel structure, branching, and stroke sequence are completely lost.</li>
+                  <li><strong>1,000–10,000 fps</strong> — individual strokes become separable; stepped-leader tip luminosity becomes visible as a faint advancing point in each frame.</li>
+                  <li><strong>50,000–525,000 fps</strong> — the return-stroke luminosity wave can be tracked upward frame by frame; dart-leader propagation speed can be measured directly from the footage.</li>
+                  <li>Overlaying the frame sequence on RTL3D 3D source maps confirms spatial accuracy of the time-of-arrival solution to within the channel width.</li>
+                </ul>
+              </article>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/site-urls.js"></script>
+  <script src="js/site-pages.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/facebook-qr.js"></script>
+  <script src="js/drag-scroll.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
+  <script src="js/hsv-page.js"></script>
+  <script src="js/page-common.js"></script>
+</body>
+</html>
