@@ -819,6 +819,11 @@ body[data-page="home"] .hub-section-label {
 
 body[data-page="home"] .hub-featured .hub-section-label {
   pointer-events: none;
+  flex-shrink: 0;
+}
+
+body[data-page="home"] .hub-nav-wrap .hub-section-label {
+  flex-shrink: 0;
 }
 
 body[data-page="home"] .hub-live-dot {
@@ -841,16 +846,17 @@ body[data-page="home"] .hub-featured {
   margin: 0;
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  min-height: min(100%, 18rem);
-  overflow: visible;
+  align-self: stretch;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 body[data-page="home"] .hub-featured-roulette {
   position: relative;
   z-index: 1;
-  flex: 1 1 auto;
-  min-height: clamp(7rem, 24cqh, 11rem);
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   touch-action: none;
@@ -863,23 +869,24 @@ body[data-page="home"] .hub-featured-roulette:active {
 }
 
 body[data-page="home"] .hub-featured-viewport {
-  flex: 1 1 auto;
-  min-height: clamp(6.5rem, 22cqh, 10rem);
-  max-height: clamp(7rem, 26cqh, 12rem);
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  max-height: none;
   overflow: hidden;
   position: relative;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    #000 8%,
-    #000 92%,
+    #000 6%,
+    #000 94%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    #000 8%,
-    #000 92%,
+    #000 6%,
+    #000 94%,
     transparent 100%
   );
 }
@@ -902,7 +909,8 @@ body[data-page="home"] .hub-featured-grid {
 body[data-page="home"] .hub-featured-roulette .hub-featured-card {
   flex: 0 0 auto;
   height: auto;
-  min-height: clamp(2rem, 4.8cqh, 2.75rem);
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 body[data-page="home"] .hub-featured-card {
@@ -916,7 +924,7 @@ body[data-page="home"] .hub-featured-card {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  padding: clamp(0.24rem, 0.6cqh, 0.42rem) clamp(0.38rem, 0.9cqw, 0.58rem);
+  padding: clamp(0.28rem, 0.75cqh, 0.55rem) clamp(0.4rem, 0.9cqw, 0.62rem);
   border-radius: 14px;
   border: none;
   overflow: visible;
@@ -1046,16 +1054,17 @@ body[data-page="home"] .hub-nav-wrap {
   width: 100%;
   max-width: none;
   margin: 0;
-  flex: 1 1 auto;
-  min-height: min(100%, 10rem);
-  overflow: visible;
+  align-self: stretch;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 body[data-page="home"] .hub-bento.section-nav {
-  flex: 1 1 auto;
-  min-height: clamp(6.5rem, 20cqh, 9.5rem);
+  flex: 1 1 0;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));

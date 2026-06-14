@@ -11,7 +11,8 @@
   const items = window.RTL3D_INTERACTIVE || [];
   if (!items.length) return;
 
-  const VISIBLE = 3;
+  const VISIBLE_MIN = 3;
+  const CARD_MIN_PX = 40;
   const TRANSITION_MS = 700;
   const GLIDE_MS_PER_ROW = 2000;
   const DRAG_THRESHOLD = 6;
@@ -101,20 +102,30 @@
     if (glideOffset >= rowStep) glideOffset = 0;
   }
 
+  function visibleCountForHeight(vpH, gap) {
+    const maxVisible = Math.max(VISIBLE_MIN, Math.min(count, Math.floor((vpH + gap) / (CARD_MIN_PX + gap))));
+    return maxVisible;
+  }
+
   function ensureLayout() {
     const cards = track.querySelectorAll('.hub-featured-card');
     const card = cards[0];
     if (!card) return false;
 
     const gap = parseFloat(getComputedStyle(track).rowGap || getComputedStyle(track).gap) || 0;
-    let h = card.offsetHeight;
-    if (h < 8 && cards[1]) {
-      h = cards[1].getBoundingClientRect().top - card.getBoundingClientRect().top;
-    }
-    if (h < 8) h = FALLBACK_ROW_STEP - gap;
+    const vpH = viewport.clientHeight;
+    if (vpH < 48) return false;
 
-    rowStep = h + gap;
-    viewport.style.height = `${rowStep * VISIBLE - gap}px`;
+    const visible = visibleCountForHeight(vpH, gap);
+    const cardH = Math.max(CARD_MIN_PX, (vpH - (visible - 1) * gap) / visible);
+    rowStep = cardH + gap;
+
+    cards.forEach((el) => {
+      el.style.height = `${cardH}px`;
+      el.style.minHeight = `${cardH}px`;
+    });
+
+    viewport.style.height = '';
     return rowStep > 0;
   }
 
@@ -186,7 +197,7 @@
       return;
     }
     rowStep = FALLBACK_ROW_STEP;
-    viewport.style.height = `${rowStep * VISIBLE}px`;
+    viewport.style.height = '';
     boot();
   }
 
@@ -217,6 +228,7 @@
     const ro = new ResizeObserver(relayout);
     ro.observe(viewport);
     ro.observe(track);
+    if (roulette) ro.observe(roulette);
   }
 
   roulette.addEventListener('wheel', onWheel, { passive: false });
