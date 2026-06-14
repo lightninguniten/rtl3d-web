@@ -2,7 +2,7 @@
   'use strict';
 
   const DRAG_THRESHOLD = 4;
-  const DRAG_SCROLL_SELECTOR = '[data-drag-scroll], .drag-scroll, .page-view, .lf-page';
+  const DRAG_SCROLL_SELECTOR = '[data-drag-scroll], .drag-scroll, .page-view, .lf-page, body[data-page="home"] .hub-lower';
 
   function isScrollableY(el) {
     return el.scrollHeight > el.clientHeight + 1;
