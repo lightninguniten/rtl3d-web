@@ -15,6 +15,8 @@
 
   window.RTL3D_EXTRA = [
     { id: 'lf', file: 'lf.html', title: 'LF Network', parent: 'network' },
+    { id: 'efield', file: 'electric-field.html', title: 'Electric Field', parent: 'network' },
+    { id: 'gamma', file: 'gamma-radon.html', title: 'Gamma-ray & Radon', parent: 'network' },
     { id: 'tnb', file: 'tnb-power.html', title: 'TNB Power Supply', parent: 'impact' },
     { id: 'did-met', file: 'did-met-alert.html', title: 'DID & MET Early Warning', parent: 'impact' },
     { id: 'public-safety', file: 'public-safety.html', title: 'Public Safety — Aviation & Maritime', parent: 'impact' },

@@ -86,6 +86,7 @@ Single stylesheet: `css/style.css`. TNB split layout: `.tnb-page-split`, toolbar
 - Do not commit secrets. Large JSON caches are generated, not hand-edited.
 - Map popups: click only (no hover labels). Infrastructure popups include coordinates.
 - Prefer extending existing modules over new frameworks.
+- **No outbound hyperlinks** in page body content (papers, vendors, external sites). Citations as plain text only; keep explanations on-page. See `.cursor/rules/interactive-web-no-outbound-links.mdc`.
 - Run `start-server.bat` to test fetch-based features.
 
 ## Related project paths

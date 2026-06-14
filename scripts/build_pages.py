@@ -237,18 +237,20 @@ NETWORK = """
                 <p class="net-count">&gt;6 stations</p>
                 <p>Leader development imaging across tens of kilometers with high temporal resolution.</p>
               </div>
-              <div class="net-item">
+              <a href="gamma-radon.html" class="net-item net-item-clickable" aria-label="Open Gamma-ray and Radon network details">
                 <div class="net-icon gamma">γ</div>
                 <h4>Gamma-ray &amp; Radon</h4>
                 <p class="net-count">3 monitors</p>
                 <p>High-energy radiation observation linked to thunderstorm electrification.</p>
-              </div>
-              <div class="net-item">
+                <span class="net-tap-hint">Tap for details →</span>
+              </a>
+              <a href="electric-field.html" class="net-item net-item-clickable" aria-label="Open Electric Field network details">
                 <div class="net-icon efield">E</div>
                 <h4>Electric Field</h4>
                 <p class="net-count">5 sensor sets</p>
                 <p>Near-field measurements supporting charge estimation and validation.</p>
-              </div>
+                <span class="net-tap-hint">Tap for details →</span>
+              </a>
               <div class="net-item">
                 <div class="net-icon video">▶</div>
                 <h4>High-Speed Video</h4>
