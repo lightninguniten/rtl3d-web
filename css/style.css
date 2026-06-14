@@ -6278,13 +6278,6 @@ html.observation-detail-page .viewport-169 {
   border-bottom: 1px solid var(--border);
 }
 
-@container (min-width: 52rem) {
-  .efield-header {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
-    align-items: end;
-  }
-}
-
 .efield-header-text h1 {
   font-size: clamp(0.95rem, 2.8cqh, 1.4rem);
   margin: 0.12rem 0 0.25rem;
@@ -6309,7 +6302,7 @@ html.observation-detail-page .viewport-169 {
   max-width: 100%;
 }
 
-@container (min-width: 36rem) {
+@container (min-width: 32rem) {
   .efield-stats {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
