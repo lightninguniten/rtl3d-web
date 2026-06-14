@@ -35,7 +35,7 @@ Page registry: `js/site-pages.js` (`RTL3D_PAGES`, `RTL3D_EXTRA`).
 |------|------|
 | `js/site-pages.js` | Page list / navigation metadata |
 | `js/page-common.js` | Shared page behaviour, back button |
-| `js/viewport.js` | 16:9 viewport scaling, resize events |
+| `js/viewport.js` | 19:6 viewport scaling, resize events |
 | `js/home-nav.js` | Home hub section cards |
 | `js/drag-scroll.js` | Click-drag scroll (`data-drag-scroll`, `window.initDragScroll`) |
 | `js/osm-sites-map.js` | Leaflet map, OSM power lines + infrastructure, layer control |

@@ -67,7 +67,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Viewport — 16:9 on desktop/tablet landscape; full height on phone portrait */
+/* Viewport — 19:6 ultrawide on desktop/tablet; full height on phone portrait */
 .viewport-shell {
   position: fixed;
   inset: 0;
@@ -97,6 +97,7 @@ html, body {
   flex-shrink: 1;
   max-width: 100%;
   max-height: 100%;
+  aspect-ratio: 19 / 6;
   container-type: size;
 }
 
@@ -5577,6 +5578,7 @@ button.btn.primary {
     max-width: 100% !important;
     max-height: 100% !important;
     flex: 1 1 auto;
+    aspect-ratio: auto;
   }
 
   .page-view {
@@ -6192,6 +6194,7 @@ html.portrait-mobile .viewport-169 {
   height: 100% !important;
   max-width: 100% !important;
   max-height: 100% !important;
+  aspect-ratio: auto;
 }
 
 html.portrait-mobile .slide-inner {
@@ -6283,9 +6286,10 @@ html.content-scroll-page .viewport-frame {
   justify-content: flex-start;
 }
 
-html.observation-detail-page .viewport-169,
-html.content-scroll-page .viewport-169 {
+html.portrait-mobile.observation-detail-page .viewport-169,
+html.portrait-mobile.content-scroll-page .viewport-169 {
   flex: 1 1 auto;
+  aspect-ratio: auto;
 }
 
 html.content-scroll-page body[data-page="home"] .page-view {

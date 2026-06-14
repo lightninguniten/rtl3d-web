@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const RATIO = 16 / 9;
+  const RATIO = 19 / 6;
   const PORTRAIT_FILL_MAX_WIDTH = 900;
 
   function isPortraitMobile(vw, vh) {
@@ -36,7 +36,7 @@
 
     const portraitMobile = isPortraitMobile(availW, availH);
     const scrollContent = isScrollContentPage();
-    const fillFrame = portraitMobile || scrollContent;
+    const fillFrame = portraitMobile;
     document.documentElement.classList.toggle('portrait-mobile', portraitMobile);
     document.documentElement.classList.toggle('observation-detail-page', isObservationDetailPage());
     document.documentElement.classList.toggle('content-scroll-page', scrollContent);
@@ -70,6 +70,7 @@
 
     document.documentElement.style.setProperty('--viewport-w', availW + 'px');
     document.documentElement.style.setProperty('--viewport-h', availH + 'px');
+    document.documentElement.style.setProperty('--viewport-ratio', String(RATIO));
     document.documentElement.style.setProperty('--top-bar-h', barH + 'px');
     document.documentElement.style.setProperty('--frame-h', availH + 'px');
 
@@ -93,5 +94,5 @@
     new ResizeObserver(fitViewport).observe(frame);
   }
 
-  window.RTL3DViewport = { fit: fitViewport };
+  window.RTL3DViewport = { fit: fitViewport, ratio: RATIO };
 })();
