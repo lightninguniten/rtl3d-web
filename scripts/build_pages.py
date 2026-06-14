@@ -21,6 +21,7 @@ HEAD = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E⚡%3C/text%3E%3C/svg%3E">
   <meta name="description" content="{desc}">
 {seo_meta}
   <title>{page_title}</title>
@@ -51,10 +52,6 @@ HEAD = """<!DOCTYPE html>
         <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </button>
-        <button id="fullscreen-btn" class="btn-icon" title="Toggle fullscreen" aria-label="Toggle fullscreen">
-          <svg class="icon-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-          <svg class="icon-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
-        </button>
       </div>
     </header>
     <div class="viewport-frame" id="viewport-frame">
@@ -75,6 +72,7 @@ HEAD = """<!DOCTYPE html>
   <script src="js/facebook-qr.js"></script>
   <script src="js/drag-scroll.js"></script>
   <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
   <script src="js/page-common.js"></script>
 {extra_page_scripts}
 </body>
@@ -83,6 +81,18 @@ HEAD = """<!DOCTYPE html>
 
 HOME = """
           <div class="slide-inner hero hub">
+            <div class="hub-spotlight" aria-hidden="true">
+              <span class="hub-mesh"></span>
+              <span class="hub-aurora"></span>
+              <span class="hub-spotlight-orb hub-spotlight-orb-a"></span>
+              <span class="hub-spotlight-orb hub-spotlight-orb-b"></span>
+              <span class="hub-spotlight-orb hub-spotlight-orb-c"></span>
+              <span class="hub-radar-ring"></span>
+              <span class="hub-radar-ring hub-radar-ring-delay"></span>
+              <span class="hub-scanbeam"></span>
+            </div>
+            <div class="hub-vignette" aria-hidden="true"></div>
+            <div class="hub-film-grain" aria-hidden="true"></div>
             <div class="partner-logos mobile-snap" aria-label="Partner universities">
               <button type="button" class="partner-logo" data-partner-qr data-qr-url="https://www.uniten.edu.my/" data-qr-title="UNITEN — Universiti Tenaga Nasional" data-qr-label="uniten.edu.my" aria-label="Show UNITEN website QR code">
                 <img src="images/logos/uniten.png" alt="" width="160" height="113" loading="eager">
@@ -94,15 +104,45 @@ HOME = """
                 <img src="images/logos/kindai.svg" alt="" width="200" height="53" loading="eager">
               </button>
             </div>
-            <div class="mobile-snap mobile-snap-intro">
-              <div class="hero-badge">SATREPS · Malaysia–Japan Joint Research</div>
-              <h1 class="hero-title compact">
-                <span class="line">Real-Time Lightning</span>
-                <span class="line accent">3D Imaging &amp; Forecasting</span>
-              </h1>
-              <p class="hub-label">Choose a section to explore</p>
+            <div class="hub-cinema mobile-snap mobile-snap-intro">
+              <div class="hub-hero-panel liquid-glass hub-cinema-panel">
+                <div class="hero-badge hub-badge-glow">SATREPS · Malaysia–Japan Joint Research</div>
+                <p class="hub-hook is-ready">Where does the next strike land?</p>
+                <h1 class="hero-title hub-title" id="hub-title">
+                  <span class="line">Real-Time Lightning</span>
+                  <span class="line accent hub-shimmer">3D Imaging &amp; Forecasting</span>
+                </h1>
+                <p class="hero-sub hub-tagline hub-intro-lead">Peel back the thundercloud — watch charge build, flashes propagate, and risk close in on the grid before the storm arrives.</p>
+                <div class="hero-stats hub-stats" aria-label="Project highlights">
+                  <div class="stat">
+                    <span class="stat-num">3D</span>
+                    <span class="stat-label">Live imaging</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-num">MY–JP</span>
+                    <span class="stat-label">SATREPS</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-num">15+</span>
+                    <span class="stat-label">Sensor sites</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <nav id="section-nav" class="section-nav section-nav-stack" aria-label="Jump to section"></nav>
+            <div class="hub-lower">
+              <div class="hub-featured mobile-snap" aria-label="Featured interactive tools">
+                <p class="hub-section-label"><span class="hub-live-dot" aria-hidden="true"></span> Interactive previews</p>
+                <div class="hub-featured-roulette" id="hub-featured-roulette">
+                  <div class="hub-featured-viewport" id="hub-featured-viewport">
+                    <div class="hub-featured-track" id="hub-featured-track" aria-live="polite"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="hub-nav-wrap mobile-snap">
+                <p class="hub-section-label">Explore the research</p>
+                <nav id="section-nav" class="section-nav hub-bento" aria-label="Jump to section"></nav>
+              </div>
+            </div>
           </div>
 """
 
@@ -363,6 +403,10 @@ PARTNERS = """
           <div class="slide-inner">
             <span class="section-tag center">Collaboration</span>
             <h2 class="center-title">International research partnership</h2>
+            <div class="acknowledgement-block">
+              <h3 class="acknowledgement-title">Acknowledgements</h3>
+              <p class="satreps-note">This research work is supported by <strong>SATREPS Real-Time Lightning 3D Imaging and Forecasting Project for Sustainable and Reliable Supply of Energy and Storm Disaster Early Warning</strong> (20230901JICA, 20230902JICA, 20230903JICA, 20230904JICA, 20230905JICA), a collaboration between Japan Science and Technology Agency (<strong>JST</strong>, JPMJSA2210), Japan International Cooperation Agency (<strong>JICA</strong>), and the Ministry of Higher Education (<strong>MOHE</strong>) of Malaysia.</p>
+            </div>
             <div class="partners">
               <div class="partner-col">
                 <h4>🇯🇵 Japan</h4>
@@ -396,7 +440,6 @@ PARTNERS = """
                 </ul>
               </div>
             </div>
-            <p class="satreps-note">Supported by the <strong>SATREPS</strong> program — Science and Technology Research Partnership for Sustainable Development, promoting international joint research for disaster prevention, environment, and energy.</p>
           </div>
 """
 
@@ -421,7 +464,7 @@ CONTACT = """
 """
 
 PAGES = [
-    ("index.html", "home", "RTL3D — Real-Time Lightning 3D Imaging & Forecasting", "Real-Time Lightning 3D Imaging and Forecasting — SATREPS Malaysia-Japan research", "RTL3D", HOME, "", "  <script src=\"js/home-nav.js\"></script>\n  <script src=\"js/partner-logo-qr.js\"></script>"),
+    ("index.html", "home", "RTL3D — Real-Time Lightning 3D Imaging & Forecasting", "Real-Time Lightning 3D Imaging and Forecasting — SATREPS Malaysia-Japan research", "RTL3D", HOME, "", "  <script src=\"js/home-nav.js\"></script>\n  <script src=\"js/home-featured.js\"></script>\n  <script src=\"js/home-hub.js\"></script>\n  <script src=\"js/partner-logo-qr.js\"></script>"),
     ("our-mission.html", "mission", "Our Mission — RTL3D", "Our Mission — RTL3D lightning research", "RTL3D", MISSION, "", ""),
     ("research-framework.html", "framework", "Research Framework — RTL3D", "Research Framework — RTL3D", "RTL3D", FRAMEWORK, "", ""),
     ("observation-network.html", "network", "Observation Network — RTL3D", "Observation Network — RTL3D", "RTL3D", NETWORK, "", ""),

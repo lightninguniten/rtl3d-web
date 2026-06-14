@@ -168,6 +168,10 @@
         const body = el.querySelector('.lf-page-body');
         if (body) ro.observe(body);
       }
+      if (el.classList.contains('page-view')) {
+        const inner = el.querySelector('.slide-inner');
+        if (inner) ro.observe(inner);
+      }
     }
   }
 
@@ -216,6 +220,12 @@
 
   initAllDragScroll(document);
   observeDragScroll();
+
+  window.addEventListener('load', refreshAllDragScroll);
+  window.addEventListener('rtl3d:viewport-resize', refreshAllDragScroll);
+  requestAnimationFrame(function () {
+    requestAnimationFrame(refreshAllDragScroll);
+  });
 
   window.initDragScroll = initDragScroll;
   window.initAllDragScroll = initAllDragScroll;

@@ -5,9 +5,23 @@
   const extraPages = window.RTL3D_EXTRA || [];
   const pageId = document.body.dataset.page;
   const pageIndex = pages.findIndex((p) => p.id === pageId);
-  const fullscreenBtn = document.getElementById('fullscreen-btn');
   const backBtn = document.getElementById('back-btn');
   const homeBtn = document.getElementById('home-btn');
+
+  document.getElementById('fullscreen-btn')?.remove();
+  document.body.classList.remove('fullscreen');
+  document.documentElement.classList.remove('rtl3d-fs');
+  try {
+    sessionStorage.removeItem('rtl3d-fs');
+  } catch (_) {}
+
+  if (pageId && window.RTL3DPageVisits) {
+    if (window.RTL3DPageVisits.markVisitedPage) {
+      window.RTL3DPageVisits.markVisitedPage(pageId);
+    } else {
+      window.RTL3DPageVisits.markVisited(pageId);
+    }
+  }
 
   function sameOriginReferrer() {
     if (!document.referrer) return false;
@@ -65,25 +79,6 @@
     homeBtn.setAttribute('aria-disabled', 'true');
   }
 
-  function toggleFullscreen() {
-    try {
-      if (!document.fullscreenElement) {
-        const p = document.documentElement.requestFullscreen?.();
-        if (p && typeof p.catch === 'function') p.catch(function () {});
-      } else {
-        const p = document.exitFullscreen?.();
-        if (p && typeof p.catch === 'function') p.catch(function () {});
-      }
-    } catch (_) {}
-  }
-
-  if (fullscreenBtn) {
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', () => {
-      document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
-    });
-  }
-
   document.addEventListener('keydown', (e) => {
     if (e.target.closest('input, select, textarea, .leaflet-container, .study-area-map')) return;
     if (pageIndex < 0) return;
@@ -100,8 +95,6 @@
     } else if (e.key === 'End') {
       e.preventDefault();
       window.location.href = pages[pages.length - 1].file;
-    } else if (e.key === 'f' || e.key === 'F') {
-      toggleFullscreen();
     }
   });
 
@@ -155,6 +148,22 @@
     });
     if (Math.random() < 0.008 && bolts.length < 3) bolts.push(createBolt());
     requestAnimationFrame(drawBolts);
+  }
+
+  function flashBolts(count) {
+    const n = Math.min(count || 2, 5 - bolts.length);
+    for (let i = 0; i < n; i += 1) bolts.push(createBolt());
+  }
+
+  window.RTL3DLightningBg = {
+    flash: flashBolts,
+  };
+
+  if (document.body.dataset.page === 'home') {
+    const homeInterval = window.setInterval(() => {
+      if (Math.random() < 0.35) flashBolts(1);
+    }, 2200);
+    window.addEventListener('pagehide', () => window.clearInterval(homeInterval), { once: true });
   }
 
   resizeCanvas();

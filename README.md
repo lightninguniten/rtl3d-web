@@ -24,6 +24,10 @@ py -3 scripts\build_lf_data.py
 py -3 scripts\check_water_cache.py
 ```
 
+## Acknowledgements
+
+This research work is supported by **SATREPS Real-Time Lightning 3D Imaging and Forecasting Project for Sustainable and Reliable Supply of Energy and Storm Disaster Early Warning** (20230901JICA, 20230902JICA, 20230903JICA, 20230904JICA, 20230905JICA), a collaboration between Japan Science and Technology Agency (**JST**, JPMJSA2210), Japan International Cooperation Agency (**JICA**), and the Ministry of Higher Education (**MOHE**) of Malaysia.
+
 ## License
 
 [MIT License](LICENSE) — see file for third-party data notices (OpenStreetMap, Leaflet, etc.).

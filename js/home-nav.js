@@ -5,16 +5,27 @@
   const sectionNav = document.getElementById('section-nav');
   if (!sectionNav) return;
 
+  const glowIds = new Set(['network', 'imaging', 'impact', 'study-area']);
+
   pages.forEach((page, i) => {
     if (i === 0) return;
     const link = document.createElement('a');
     link.href = page.file;
-    link.className = 'nav-box';
-    link.setAttribute('aria-label', `Open ${page.title}`);
+    link.dataset.pageId = page.id;
+    link.className = 'nav-box nav-box-unvisited' + (glowIds.has(page.id) ? ' nav-box-glow' : '');
+    link.setAttribute('aria-label', page.desc ? `${page.title} — ${page.desc}` : `Open ${page.title}`);
     link.innerHTML =
+      '<span class="nav-box-head">' +
       `<span class="nav-box-icon">${page.icon || '•'}</span>` +
+      `<span class="nav-box-num">${String(i).padStart(2, '0')}</span>` +
+      '</span>' +
       `<span class="nav-box-title">${page.title}</span>` +
-      `<span class="nav-box-num">${String(i).padStart(2, '0')}</span>`;
+      (page.desc ? `<span class="nav-box-desc">${page.desc}</span>` : '');
     sectionNav.appendChild(link);
   });
+
+  window.dispatchEvent(new CustomEvent('rtl3d:home-nav-ready'));
+  if (window.RTL3DPageVisits?.refreshHome) {
+    window.RTL3DPageVisits.refreshHome();
+  }
 })();
