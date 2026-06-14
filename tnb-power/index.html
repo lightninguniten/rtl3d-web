@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E?%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="TNB — Stable electric power supply and lightning nowcasting map">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/tnb-power/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="TNB — Stable Electric Power Supply — RTL3D">
+  <meta property="og:description" content="TNB — Stable electric power supply and lightning nowcasting map">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/tnb-power/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TNB — Stable Electric Power Supply — RTL3D">
+  <meta name="twitter:description" content="TNB — Stable electric power supply and lightning nowcasting map">
+  <title>TNB — Stable Electric Power Supply — RTL3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="stylesheet" href="css/leaflet.fullscreen.css">
+</head>
+<body data-page="tnb">
+  <div class="viewport-shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="btn-label">Back</span>
+        </a>
+        <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          <span class="btn-label">Home</span>
+        </a>
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <span class="brand-text">RTL3D · TNB</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="viewport-frame" id="viewport-frame">
+      <div class="viewport-169" id="viewport-169">
+        <div class="lightning-bg" aria-hidden="true">
+          <canvas id="lightning-canvas"></canvas>
+          <div class="grid-overlay"></div>
+        </div>
+        <main class="page-view page-view-tnb">
+          <div class="slide-inner tnb-page tnb-page-split">
+            <aside class="tnb-page-sidebar-wrap">
+              <div class="tnb-lightning-toolbar" aria-label="Lightning source controls">
+                <div class="tnb-lightning-toolbar-head">
+                  <h3 class="tnb-lightning-title">Lightning sources (2D)</h3>
+                  <label class="tnb-flash-show">
+                    <input type="checkbox" id="tnb-flash-show" checked>
+                    Show on map
+                  </label>
+                </div>
+                <label class="tnb-flash-label" for="tnb-flash-select">Lightning event</label>
+                <select id="tnb-flash-select" class="tnb-flash-select" aria-label="Select lightning event"></select>
+                <div class="tnb-flash-colorbar-wrap" aria-hidden="true">
+                  <span id="tnb-flash-tmin" class="tnb-flash-tick">0 ms</span>
+                  <div id="tnb-flash-colorbar" class="tnb-flash-colorbar" title="Time (Jet)"></div>
+                  <span id="tnb-flash-tmax" class="tnb-flash-tick">0 ms</span>
+                </div>
+                <div class="tnb-radiation-legend" aria-hidden="true" title="Radiation distance levels">
+                  <span class="tnb-radiation-legend-item zone-black">≤5 km</span>
+                  <span class="tnb-radiation-legend-item zone-red">5–10 km</span>
+                  <span class="tnb-radiation-legend-item zone-yellow">10–15 km</span>
+                </div>
+                <p id="tnb-flash-status" class="tnb-flash-status" aria-live="polite"></p>
+                <div id="tnb-risk-warning" class="tnb-risk-warning" hidden aria-live="assertive"></div>
+              </div>
+              <div class="tnb-page-sidebar split-text" data-drag-scroll aria-label="TNB information — drag to read">
+              <span class="section-tag">Energy Sector</span>
+              <h2>TNB — Stable electric power supply</h2>
+              <p class="tnb-page-lead">Tenaga Nasional Berhad (TNB) is Malaysia’s national electricity utility and a primary energy-sector partner for RTL3D.</p>
+
+              <div class="tnb-detail">
+                <h3>About TNB</h3>
+                <p>TNB owns and operates the transmission and distribution network across Peninsular Malaysia, delivering power to homes, industry, hospitals, transport hubs, and critical infrastructure. High-voltage corridors—from 500&nbsp;kV backbone lines down to local distribution—must remain reliable through Malaysia’s frequent thunderstorm seasons.</p>
+              </div>
+
+              <div class="tnb-detail">
+                <h3>Why lightning matters for the grid</h3>
+                <p>Cloud-to-ground lightning can trip protection relays, damage insulators and transformers, and trigger wide-area outages. Substations and overhead lines are fixed targets in open terrain. Even brief interruptions affect manufacturing, water supply, communications, and public safety.</p>
+              </div>
+
+              <div class="tnb-detail">
+                <h3>How RTL3D supports TNB</h3>
+                <p>RTL3D combines a distributed LF/VHF observation network with real-time 3D charge imaging and nowcasting. Storm charge structure and lightning trends are estimated continuously, giving operations centres actionable lead time before strikes affect exposed assets.</p>
+                <ul class="site-list tnb-points">
+                  <li><span class="dot lf-vhf"></span> Advance alerts for grid control and field crews</li>
+                  <li><span class="dot lf"></span> Reduced outage risk on transmission corridors</li>
+                  <li><span class="dot lf-vhf"></span> Targeted protection for substations and switchyards</li>
+                  <li><span class="dot lf"></span> Joint workshops with TNB and MET</li>
+                </ul>
+              </div>
+
+              <div class="tnb-detail">
+                <h3>Importance of this system</h3>
+                <p>Stable electricity underpins economic activity and daily life. By linking nowcast information to the actual grid layout shown on the map, operators can see <strong>where</strong> storms are developing relative to <strong>which</strong> lines and stations are at risk—supporting faster switching decisions, maintenance planning, and disaster preparedness across the Straits of Malacca study region and beyond.</p>
+              </div>
+
+              <p class="tnb-map-note">Map: OSM power lines and infrastructure plus localized lightning sources (Jet colour = time). Zoom in to see substations (building footprints), plants, and other assets. Use <strong>Layers</strong> to filter grid data.</p>
+              </div>
+              <p class="tnb-drag-hint" aria-hidden="true">Drag to read</p>
+            </aside>
+            <div class="tnb-map-panel map-wrap tnb-map-wrap split-visual">
+              <div id="tnb-map-risk-banner" class="tnb-map-risk-banner" hidden aria-live="assertive"></div>
+              <div id="tnb-map" class="study-area-map tnb-map" data-osm-sites-map data-power-lines="true" data-lightning-map="true" data-lightning-prefix="tnb" role="img" aria-label="2D map of observation stations, power lines, and lightning sources"></div>
+              <div class="map-legend map-legend-power" data-drag-scroll aria-label="Power line legend"></div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/site-urls.js"></script>
+  <script src="js/site-pages.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/facebook-qr.js"></script>
+  <script src="js/leaflet.js"></script>
+  <script src="js/leaflet.fullscreen.js"></script>
+  <script src="js/lightning-map-layer.js"></script>
+  <script src="js/osm-sites-map.js"></script>
+  <script src="js/map-fullscreen.js"></script>
+  <script src="js/drag-scroll.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
+  <script src="js/page-common.js"></script>
+</body>
+</html>

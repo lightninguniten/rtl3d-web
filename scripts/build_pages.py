@@ -39,7 +39,7 @@ HEAD = """<!DOCTYPE html>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           <span class="btn-label">Back</span>
         </a>
-        <a id="home-btn" href="index.html" class="btn-icon btn-nav" title="Home" aria-label="Home">
+        <a id="home-btn" href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
           <span class="btn-label">Home</span>
         </a>
@@ -67,6 +67,7 @@ HEAD = """<!DOCTYPE html>
     </div>
   </div>
 {extra_scripts}
+  <script src="js/site-urls.js"></script>
   <script src="js/site-pages.js"></script>
   <script src="js/qrcode.min.js"></script>
   <script src="js/facebook-qr.js"></script>
@@ -483,7 +484,8 @@ PAGES = [
 def canonical_url(page_file: str) -> str:
     if page_file == "index.html":
         return f"{SITE_BASE}/"
-    return f"{SITE_BASE}/{page_file}"
+    slug = page_file.replace(".html", "")
+    return f"{SITE_BASE}/{slug}/"
 
 
 def seo_meta(page_file: str, page_title: str, desc: str) -> str:

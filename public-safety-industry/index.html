@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E?%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Public safety — Industry and tourism lightning movement and nowcasting with 5-minute updates">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/public-safety-industry/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="Public Safety — Industry &amp; Tourism — RTL3D">
+  <meta property="og:description" content="Industry and tourism lightning movement — 5 min live volumes and 30 min mock nowcast">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/public-safety-industry/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Public Safety — Industry &amp; Tourism — RTL3D">
+  <meta name="twitter:description" content="Industry and tourism lightning movement — 5 min live volumes and 30 min mock nowcast">
+  <title>Public Safety — Industry &amp; Tourism — RTL3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="stylesheet" href="css/leaflet.fullscreen.css">
+</head>
+<body data-page="public-safety-industry">
+  <div class="viewport-shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="btn-label">Back</span>
+        </a>
+        <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          <span class="btn-label">Home</span>
+        </a>
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <span class="brand-text">RTL3D · Industry &amp; Tourism</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="viewport-frame" id="viewport-frame">
+      <div class="viewport-169" id="viewport-169">
+        <div class="lightning-bg" aria-hidden="true">
+          <canvas id="lightning-canvas"></canvas>
+          <div class="grid-overlay"></div>
+        </div>
+        <main class="page-view page-view-tnb">
+          <div class="slide-inner tnb-page tnb-page-split">
+            <aside class="tnb-page-sidebar-wrap">
+              <div class="tnb-lightning-toolbar tnb-radar-toolbar" aria-label="Lightning movement controls">
+                <div class="tnb-lightning-toolbar-head">
+                  <h3 class="tnb-lightning-title">Lightning movement &amp; nowcast</h3>
+                  <label class="tnb-flash-show">
+                    <input type="checkbox" id="ps-industry-radar-show" checked>
+                    Show activity field
+                  </label>
+                </div>
+                <p class="tnb-radar-subtitle">Near-ground activity · 2 km · 5 min steps</p>
+                <div class="tnb-radar-controls">
+                  <button type="button" id="ps-industry-radar-play" class="tnb-radar-play-btn" aria-pressed="true">Pause</button>
+                  <span id="ps-industry-radar-frame" class="tnb-radar-frame-label">Volume —</span>
+                </div>
+                <p id="ps-industry-radar-time" class="tnb-radar-time-label" aria-live="polite">—</p>
+                <div class="tnb-flash-colorbar-wrap tnb-dbz-colorbar-wrap" aria-hidden="true">
+                  <span class="tnb-flash-tick">5 dBZ</span>
+                  <div class="tnb-flash-colorbar tnb-dbz-colorbar" title="Lightning activity intensity"></div>
+                  <span class="tnb-flash-tick">50 dBZ</span>
+                </div>
+                <div class="tnb-radar-legend" aria-hidden="true">
+                  <span class="tnb-radar-legend-item radar-dbz">Activity 5–50 dBZ</span>
+                  <span class="tnb-radar-legend-item radar-nowcast">Mock nowcast (+5–30 min)</span>
+                  <span class="tnb-radar-legend-item radar-step">All volumes LIVE · 5 min step</span>
+                </div>
+                <p id="ps-industry-radar-status" class="tnb-flash-status" aria-live="polite"></p>
+              </div>
+              <div class="tnb-page-sidebar split-text" data-drag-scroll aria-label="Industry and tourism public safety — drag to read">
+                <span class="section-tag">Society &amp; Economy</span>
+                <h2>Public safety — Industry &amp; tourism</h2>
+                <p class="tnb-page-lead">Construction sites, outdoor festivals, golf resorts, and coastal tourism need fast storm awareness. This view tracks <strong>lightning movement</strong> across the region and runs a <strong>mock nowcast</strong> forward in five-minute steps.</p>
+
+                <div class="tnb-detail">
+                  <h3>Live movement &amp; mock nowcast</h3>
+                  <p>Playback replays the mock <strong>~1 hour live feed</strong> in 5-minute volumes (actual UTC timestamps). Every volume is labelled <strong>LIVE</strong>; activity accumulates through the session so quiet intervals still show earlier strikes. After the last live volume (e.g. 22:30 UTC), a <strong>mock nowcast</strong> extrapolates storm motion forward by +5 through +30 minutes, then the loop restarts.</p>
+                </div>
+
+                <div class="tnb-detail">
+                  <h3>Activity field</h3>
+                  <p>Charge sources are gridded on a <strong>2 km</strong> near-ground plane and mapped to an activity scale from <strong>5 to 50 dBZ</strong> (blue → green → yellow → orange → magenta). Weak areas fade smoothly; the strongest clusters in each volume reach <strong>50 dBZ</strong>.</p>
+                </div>
+
+                <div class="tnb-detail">
+                  <h3>Who uses this</h3>
+                  <ul class="site-list tnb-points">
+                    <li><span class="dot lf-vhf"></span> Construction &amp; industrial open yards</li>
+                    <li><span class="dot lf"></span> Outdoor events, theme parks, golf courses</li>
+                    <li><span class="dot lf-vhf"></span> Coastal resorts &amp; tourism operators</li>
+                    <li><span class="dot lf"></span> Community organisers &amp; MET/DID partners</li>
+                  </ul>
+                </div>
+
+                <p class="tnb-map-note">Map: lightning activity (5–50 dBZ) at 2 km; time on the timeline bar. Volume advances every 5 min. Tap <strong>Tap for fullscreen map</strong> on phone to pan and zoom.</p>
+              </div>
+              <p class="tnb-drag-hint" aria-hidden="true">Drag to read</p>
+            </aside>
+            <div class="tnb-map-panel map-wrap tnb-map-wrap split-visual tnb-map-radar-wrap">
+              <div id="ps-industry-map" class="study-area-map tnb-map tnb-map-radar" data-osm-sites-map data-map-view="peninsular" data-lightning-radar="true" data-lightning-radar-prefix="ps-industry" role="img" aria-label="Lightning movement and nowcast map for industry and tourism public safety"></div>
+              <div class="map-legend map-legend-radar" data-drag-scroll aria-label="Lightning map legend">
+                <span><i class="leg lf-vhf"></i> Observation stations</span>
+                <span><i class="leg radar-dbz-swatch"></i> Activity 5–50 dBZ</span>
+                <span><i class="leg radar-nowcast-swatch"></i> Mock nowcast</span>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/site-urls.js"></script>
+  <script src="js/site-pages.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/facebook-qr.js"></script>
+  <script src="js/leaflet.js"></script>
+  <script src="js/leaflet.fullscreen.js"></script>
+  <script src="js/lightning-radar-layer.js"></script>
+  <script src="js/osm-sites-map.js"></script>
+  <script src="js/map-fullscreen.js"></script>
+  <script src="js/drag-scroll.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
+  <script src="js/page-common.js"></script>
+</body>
+</html>

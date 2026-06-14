@@ -13,6 +13,11 @@
     return page === 'efield' || page === 'gamma';
   }
 
+  function isScrollContentPage() {
+    const page = document.body.dataset.page;
+    return page === 'home' || isObservationDetailPage();
+  }
+
   function fitViewport() {
     if (document.body.classList.contains('map-leaflet-fs')) return;
 
@@ -30,10 +35,11 @@
     const availH = Math.max(vh - barH, 90);
 
     const portraitMobile = isPortraitMobile(availW, availH);
-    const observationDetail = isObservationDetailPage();
-    const fillFrame = portraitMobile || observationDetail;
+    const scrollContent = isScrollContentPage();
+    const fillFrame = portraitMobile || scrollContent;
     document.documentElement.classList.toggle('portrait-mobile', portraitMobile);
-    document.documentElement.classList.toggle('observation-detail-page', observationDetail);
+    document.documentElement.classList.toggle('observation-detail-page', isObservationDetailPage());
+    document.documentElement.classList.toggle('content-scroll-page', scrollContent);
 
     if (fillFrame) {
       vp.style.width = '100%';
