@@ -832,25 +832,38 @@
   let waterRiskPromise = null;
   let waterCanvasRenderer = null;
 
-  function startWaterPrefetch() {
-    if (waterCorePromise) return;
-    waterCorePromise = fetch(LOCAL_OSM_WATER_CORE_URL)
-      .then((resp) => (resp.ok ? resp.json() : null))
-      .catch(() => null);
-    waterDetailPromise = fetch(LOCAL_OSM_WATER_DETAIL_URL)
-      .then((resp) => (resp.ok ? resp.json() : null))
-      .catch(() => null);
-    waterRiskPromise = fetch(LOCAL_OSM_WATER_RISK_URL)
-      .then((resp) => (resp.ok ? resp.json() : null))
-      .catch(() => null);
+  function ensureWaterCorePromise() {
+    if (!waterCorePromise) {
+      waterCorePromise = fetch(LOCAL_OSM_WATER_CORE_URL)
+        .then((resp) => (resp.ok ? resp.json() : null))
+        .catch(() => null);
+    }
+    return waterCorePromise;
+  }
+
+  function ensureWaterRiskPromise() {
+    if (!waterRiskPromise) {
+      waterRiskPromise = fetch(LOCAL_OSM_WATER_RISK_URL)
+        .then((resp) => (resp.ok ? resp.json() : null))
+        .catch(() => null);
+    }
+    return waterRiskPromise;
+  }
+
+  function ensureWaterDetailPromise() {
+    if (!waterDetailPromise) {
+      waterDetailPromise = fetch(LOCAL_OSM_WATER_DETAIL_URL)
+        .then((resp) => (resp.ok ? resp.json() : null))
+        .catch(() => null);
+    }
+    return waterDetailPromise;
   }
 
   async function loadWaterData(bbox) {
-    startWaterPrefetch();
-    const coreData = await waterCorePromise;
+    const coreData = await ensureWaterCorePromise();
     const splitPayload = normalizeSplitCorePayload(coreData, null, bbox);
     if (splitPayload) {
-      splitPayload._riskPromise = waterRiskPromise;
+      splitPayload._needsDeferredRisk = true;
       return splitPayload;
     }
 
@@ -1060,7 +1073,18 @@
         }
       };
 
-      if (payload._riskPromise) {
+      if (payload._needsDeferredRisk) {
+        const loadRisk = () => {
+          ensureWaterRiskPromise()
+            .then(applyDeferredRisk)
+            .catch(() => publishRiskIndex(mapEl, null, waterByLayer));
+        };
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(() => { loadRisk(); }, { timeout: 800 });
+        } else {
+          setTimeout(loadRisk, 120);
+        }
+      } else if (payload._riskPromise) {
         payload._riskPromise.then(applyDeferredRisk).catch(() => publishRiskIndex(mapEl, null, waterByLayer));
       } else {
         publishRiskIndex(mapEl, payload.riskTargets, waterByLayer);
@@ -1074,7 +1098,7 @@
 
       if (payload._splitBundle) {
         const loadDetail = async () => {
-          const detailData = await waterDetailPromise;
+          const detailData = await ensureWaterDetailPromise();
           if (!detailData?.layers || !validateWaterMeta(detailData.meta, WATER_BBOX)) return;
 
           mergeLayerPayload(waterByLayer, detailData);
@@ -1111,8 +1135,6 @@
       if (onLoaded) onLoaded(null);
     }
   }
-
-  startWaterPrefetch();
 
   window.addWaterInfrastructureLayer = addWaterInfrastructureLayer;
   window.WATER_BBOX = WATER_BBOX;

@@ -12,14 +12,15 @@
   if (!items.length) return;
 
   const VISIBLE_MIN = 3;
-  const CARD_MIN_PX = 40;
+  const VISIBLE_MIN_COMPACT = 2;
+  const CARD_MIN_PX = 52;
+  const CARD_COMFORT_PX = 60;
   const TRANSITION_MS = 700;
   const GLIDE_MS_PER_ROW = 2000;
   const DRAG_THRESHOLD = 6;
   const FALLBACK_ROW_STEP = 44;
   const BOOT_MAX_FRAMES = 180;
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const glideMsPerRow = prefersReduced ? GLIDE_MS_PER_ROW * 2.5 : GLIDE_MS_PER_ROW;
+  const glideMsPerRow = GLIDE_MS_PER_ROW;
 
   let rowStep = 0;
   let count = items.length;
@@ -95,9 +96,17 @@
     totalOffset = full > 0 ? ((y % full) + full) % full : 0;
   }
 
-  function visibleCountForHeight(vpH, gap) {
-    const maxVisible = Math.max(VISIBLE_MIN, Math.min(count, Math.floor((vpH + gap) / (CARD_MIN_PX + gap))));
+  function visibleCountForHeight(vpH, gap, minVisible) {
+    const floor = minVisible || VISIBLE_MIN;
+    const maxVisible = Math.max(floor, Math.min(count, Math.floor((vpH + gap) / (CARD_MIN_PX + gap))));
     return maxVisible;
+  }
+
+  function measureNaturalCardHeight(card, gap) {
+    card.style.height = 'auto';
+    card.style.minHeight = `${CARD_COMFORT_PX}px`;
+    const natural = Math.ceil(card.getBoundingClientRect().height);
+    return Math.max(CARD_COMFORT_PX, natural);
   }
 
   function ensureLayout() {
@@ -109,8 +118,16 @@
     const vpH = viewport.clientHeight;
     if (vpH < 48) return false;
 
-    const visible = visibleCountForHeight(vpH, gap);
-    const cardH = Math.max(CARD_MIN_PX, (vpH - (visible - 1) * gap) / visible);
+    const naturalH = measureNaturalCardHeight(card, gap);
+    const minVisible = vpH < naturalH * 2.4 ? VISIBLE_MIN_COMPACT : VISIBLE_MIN;
+    let visible = visibleCountForHeight(vpH, gap, minVisible);
+    let cardH = Math.max(CARD_MIN_PX, (vpH - (visible - 1) * gap) / visible);
+
+    while (visible > minVisible && cardH < naturalH) {
+      visible -= 1;
+      cardH = Math.max(CARD_MIN_PX, (vpH - (visible - 1) * gap) / visible);
+    }
+    cardH = Math.max(naturalH, cardH);
     rowStep = cardH + gap;
 
     cards.forEach((el) => {

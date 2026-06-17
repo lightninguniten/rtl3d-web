@@ -218,6 +218,19 @@ def main():
     with open(os.path.join(out_dir, "sites.json"), "w", encoding="utf-8") as f:
         json.dump(sites_payload, f, indent=2)
 
+    source_keys = ("x", "y", "z", "t")
+    flash_index = []
+    sources_dir = os.path.join(out_dir, "flashes")
+    os.makedirs(sources_dir, exist_ok=True)
+    for flash in flashes:
+        flash_index.append({k: v for k, v in flash.items() if k not in source_keys})
+        source_path = os.path.join(sources_dir, f"{flash['id']}.json")
+        with open(source_path, "w", encoding="utf-8") as f:
+            json.dump({k: flash[k] for k in source_keys}, f, separators=(",", ":"))
+
+    with open(os.path.join(out_dir, "flashes-index.json"), "w", encoding="utf-8") as f:
+        json.dump({"flashes": flash_index, "count": len(flash_index)}, f, indent=2)
+
     with open(os.path.join(out_dir, "flashes.json"), "w", encoding="utf-8") as f:
         json.dump({"flashes": flashes, "count": len(flashes)}, f)
 
@@ -229,6 +242,7 @@ def main():
         f.write(";\n")
 
     print(f"Wrote {len(sites_out)} sites, {len(flashes)} flash groups to {out_dir}")
+    print(f"  + flashes-index.json + {len(flashes)} per-event files in flashes/")
     print(f"  + {js_path} (for file:// and offline use)")
 
 

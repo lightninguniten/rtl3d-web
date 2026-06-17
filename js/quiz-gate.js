@@ -1,9 +1,10 @@
 (function () {
   'use strict';
 
-  // On the home hub, intercept the "Lightning Quiz" tile: ask whether the
-  // visitor has watched the explainer first. If not, offer to play it.
-  if (document.body.dataset.page !== 'home') return;
+  // On the home hub and social-impact page, intercept quiz links: ask whether
+  // the visitor has watched the explainer first. If not, offer to play it.
+  var page = document.body.dataset.page;
+  if (page !== 'home' && page !== 'impact') return;
 
   var urlFn = (window.RTL3D_URL && window.RTL3D_URL.page) || function (s) { return s + '/'; };
   var QUIZ_URL = urlFn('quiz');

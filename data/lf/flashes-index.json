@@ -1,0 +1,333 @@
+{
+  "flashes": [
+    {
+      "id": 0,
+      "label": "Flash 1 \u2014 2025-07-22 22:02:33 \u2013 22:02:34 UTC (2 s)",
+      "utc": "2025-07-22 22:02:33 \u2013 22:02:34 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3133,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753221753.0,
+        1753221754.0
+      ],
+      "files": [
+        "auto3D_Corr_1753221753.0.dat",
+        "auto3D_Corr_1753221754.0.dat"
+      ]
+    },
+    {
+      "id": 1,
+      "label": "Flash 2 \u2014 2025-07-22 22:11:05 \u2013 22:11:06 UTC (2 s)",
+      "utc": "2025-07-22 22:11:05 \u2013 22:11:06 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 4228,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753222265.0,
+        1753222266.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222265.0.dat",
+        "auto3D_Corr_1753222266.0.dat"
+      ]
+    },
+    {
+      "id": 2,
+      "label": "Flash 3 \u2014 2025-07-22 22:11:48 \u2013 22:11:49 UTC (2 s)",
+      "utc": "2025-07-22 22:11:48 \u2013 22:11:49 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 1594,
+      "n_sources_plot": 1594,
+      "epochs": [
+        1753222308.0,
+        1753222309.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222308.0.dat",
+        "auto3D_Corr_1753222309.0.dat"
+      ]
+    },
+    {
+      "id": 3,
+      "label": "Flash 4 \u2014 2025-07-22 22:14:13 \u2013 22:14:14 UTC (2 s)",
+      "utc": "2025-07-22 22:14:13 \u2013 22:14:14 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3201,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753222453.0,
+        1753222454.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222453.0.dat",
+        "auto3D_Corr_1753222454.0.dat"
+      ]
+    },
+    {
+      "id": 4,
+      "label": "Flash 5 \u2014 2025-07-22 22:16:34 \u2013 22:16:35 UTC (2 s)",
+      "utc": "2025-07-22 22:16:34 \u2013 22:16:35 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3157,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753222594.0,
+        1753222595.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222594.0.dat",
+        "auto3D_Corr_1753222595.0.dat"
+      ]
+    },
+    {
+      "id": 5,
+      "label": "Flash 6 \u2014 2025-07-22 22:21:12 \u2013 22:21:13 UTC (2 s)",
+      "utc": "2025-07-22 22:21:12 \u2013 22:21:13 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 4766,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753222872.0,
+        1753222873.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222872.0.dat",
+        "auto3D_Corr_1753222873.0.dat"
+      ]
+    },
+    {
+      "id": 6,
+      "label": "Flash 7 \u2014 2025-07-22 22:22:39 UTC",
+      "utc": "2025-07-22 22:22:39 UTC",
+      "duration_s": 1,
+      "n_sources_total": 798,
+      "n_sources_plot": 798,
+      "epochs": [
+        1753222959.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222959.0.dat"
+      ]
+    },
+    {
+      "id": 7,
+      "label": "Flash 8 \u2014 2025-07-22 22:22:40 UTC",
+      "utc": "2025-07-22 22:22:40 UTC",
+      "duration_s": 1,
+      "n_sources_total": 623,
+      "n_sources_plot": 623,
+      "epochs": [
+        1753222960.0
+      ],
+      "files": [
+        "auto3D_Corr_1753222960.0.dat"
+      ]
+    },
+    {
+      "id": 8,
+      "label": "Flash 9 \u2014 2025-07-22 22:25:19 \u2013 22:25:20 UTC (2 s)",
+      "utc": "2025-07-22 22:25:19 \u2013 22:25:20 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3303,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753223119.0,
+        1753223120.0
+      ],
+      "files": [
+        "auto3D_Corr_1753223119.0.dat",
+        "auto3D_Corr_1753223120.0.dat"
+      ]
+    },
+    {
+      "id": 9,
+      "label": "Flash 10 \u2014 2025-07-22 22:29:06 \u2013 22:29:07 UTC (2 s)",
+      "utc": "2025-07-22 22:29:06 \u2013 22:29:07 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 2357,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753223346.0,
+        1753223347.0
+      ],
+      "files": [
+        "auto3D_Corr_1753223346.0.dat",
+        "auto3D_Corr_1753223347.0.dat"
+      ]
+    },
+    {
+      "id": 10,
+      "label": "Flash 11 \u2014 2025-07-22 22:30:03 \u2013 22:30:04 UTC (2 s)",
+      "utc": "2025-07-22 22:30:03 \u2013 22:30:04 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3906,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753223403.0,
+        1753223404.0
+      ],
+      "files": [
+        "auto3D_Corr_1753223403.0.dat",
+        "auto3D_Corr_1753223404.0.dat"
+      ]
+    },
+    {
+      "id": 11,
+      "label": "Flash 12 \u2014 2025-07-22 22:36:09 \u2013 22:36:10 UTC (2 s)",
+      "utc": "2025-07-22 22:36:09 \u2013 22:36:10 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 2372,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753223769.0,
+        1753223770.0
+      ],
+      "files": [
+        "auto3D_Corr_1753223769.0.dat",
+        "auto3D_Corr_1753223770.0.dat"
+      ]
+    },
+    {
+      "id": 12,
+      "label": "Flash 13 \u2014 2025-07-22 23:10:15 \u2013 23:10:17 UTC (3 s)",
+      "utc": "2025-07-22 23:10:15 \u2013 23:10:17 UTC (3 s)",
+      "duration_s": 3,
+      "n_sources_total": 3356,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753225815.0,
+        1753225816.0,
+        1753225817.0
+      ],
+      "files": [
+        "auto3D_Corr_1753225815.0.dat",
+        "auto3D_Corr_1753225816.0.dat",
+        "auto3D_Corr_1753225817.0.dat"
+      ]
+    },
+    {
+      "id": 13,
+      "label": "Flash 14 \u2014 2025-07-22 23:11:43 \u2013 23:11:44 UTC (2 s)",
+      "utc": "2025-07-22 23:11:43 \u2013 23:11:44 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3866,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753225903.0,
+        1753225904.0
+      ],
+      "files": [
+        "auto3D_Corr_1753225903.0.dat",
+        "auto3D_Corr_1753225904.0.dat"
+      ]
+    },
+    {
+      "id": 14,
+      "label": "Flash 15 \u2014 2025-07-22 23:18:55 \u2013 23:18:56 UTC (2 s)",
+      "utc": "2025-07-22 23:18:55 \u2013 23:18:56 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 4340,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226335.0,
+        1753226336.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226335.0.dat",
+        "auto3D_Corr_1753226336.0.dat"
+      ]
+    },
+    {
+      "id": 15,
+      "label": "Flash 16 \u2014 2025-07-22 23:21:20 UTC",
+      "utc": "2025-07-22 23:21:20 UTC",
+      "duration_s": 1,
+      "n_sources_total": 2102,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226480.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226480.0.dat"
+      ]
+    },
+    {
+      "id": 16,
+      "label": "Flash 17 \u2014 2025-07-22 23:21:21 UTC",
+      "utc": "2025-07-22 23:21:21 UTC",
+      "duration_s": 1,
+      "n_sources_total": 1250,
+      "n_sources_plot": 1250,
+      "epochs": [
+        1753226481.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226481.0.dat"
+      ]
+    },
+    {
+      "id": 17,
+      "label": "Flash 18 \u2014 2025-07-22 23:21:46 \u2013 23:21:47 UTC (2 s)",
+      "utc": "2025-07-22 23:21:46 \u2013 23:21:47 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3158,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226506.0,
+        1753226507.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226506.0.dat",
+        "auto3D_Corr_1753226507.0.dat"
+      ]
+    },
+    {
+      "id": 18,
+      "label": "Flash 19 \u2014 2025-07-22 23:22:50 UTC",
+      "utc": "2025-07-22 23:22:50 UTC",
+      "duration_s": 1,
+      "n_sources_total": 1839,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226570.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226570.0.dat"
+      ]
+    },
+    {
+      "id": 19,
+      "label": "Flash 20 \u2014 2025-07-22 23:23:00 \u2013 23:23:01 UTC (2 s)",
+      "utc": "2025-07-22 23:23:00 \u2013 23:23:01 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 2881,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226580.0,
+        1753226581.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226580.0.dat",
+        "auto3D_Corr_1753226581.0.dat"
+      ]
+    },
+    {
+      "id": 20,
+      "label": "Flash 21 \u2014 2025-07-22 23:23:20 \u2013 23:23:21 UTC (2 s)",
+      "utc": "2025-07-22 23:23:20 \u2013 23:23:21 UTC (2 s)",
+      "duration_s": 2,
+      "n_sources_total": 3853,
+      "n_sources_plot": 1800,
+      "epochs": [
+        1753226600.0,
+        1753226601.0
+      ],
+      "files": [
+        "auto3D_Corr_1753226600.0.dat",
+        "auto3D_Corr_1753226601.0.dat"
+      ]
+    }
+  ],
+  "count": 21
+}

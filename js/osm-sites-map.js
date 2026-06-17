@@ -30,7 +30,9 @@
 
   /** Offline cache — run scripts/build_osm_power_data.py to refresh */
   const LOCAL_OSM_POWER_URL = 'data/osm/power-infrastructure.json';
-  const OSM_CACHE_VERSION = 6;
+  const LOCAL_OSM_POWER_CORE_URL = 'data/osm/power-infrastructure-core.json';
+  const LOCAL_OSM_POWER_DETAIL_URL = 'data/osm/power-infrastructure-detail.json';
+  const OSM_CACHE_VERSION = 7;
 
   /** Overpass selector — keep in sync with scripts/build_osm_power_data.py */
   const POWER_OVERPASS_SELECTOR = 'nwr["power"]';
@@ -1328,7 +1330,41 @@
     return null;
   }
 
+  let powerCorePromise = null;
+  let powerDetailPromise = null;
+
+  function ensurePowerCorePromise() {
+    if (!powerCorePromise) {
+      powerCorePromise = fetch(LOCAL_OSM_POWER_CORE_URL, { cache: 'force-cache' })
+        .then((resp) => (resp.ok ? resp.json() : null))
+        .catch(() => null);
+    }
+    return powerCorePromise;
+  }
+
+  function ensurePowerDetailPromise() {
+    if (!powerDetailPromise) {
+      powerDetailPromise = fetch(LOCAL_OSM_POWER_DETAIL_URL, { cache: 'force-cache' })
+        .then((resp) => (resp.ok ? resp.json() : null))
+        .catch(() => null);
+    }
+    return powerDetailPromise;
+  }
+
   async function fetchLocalOsmPowerInfrastructure(bbox) {
+    const coreData = await ensurePowerCorePromise();
+    if (coreData?.elements?.length) {
+      const normalized = normalizeOsmPayload(coreData);
+      if (normalized && normalized.elements.length) {
+        const meta = normalized.meta;
+        if (meta) {
+          if (meta.cacheVersion && meta.cacheVersion !== OSM_CACHE_VERSION) return null;
+          if (!bboxMatchesCached(meta.bbox, bbox)) return null;
+        }
+        return { elements: normalized.elements, meta, _fromLocalFile: true, _splitBundle: true };
+      }
+    }
+
     try {
       const resp = await fetch(LOCAL_OSM_POWER_URL, { cache: 'force-cache' });
       if (!resp.ok) return null;
@@ -1340,7 +1376,7 @@
         if (meta.cacheVersion && meta.cacheVersion !== OSM_CACHE_VERSION) return null;
         if (!bboxMatchesCached(meta.bbox, bbox)) return null;
       }
-      return { elements: normalized.elements };
+      return { elements: normalized.elements, meta, _fromLocalFile: true, _splitBundle: false };
     } catch (_) {
       return null;
     }
@@ -1407,6 +1443,107 @@
     el.textContent = message;
   }
 
+  const CORE_INFRA_IDS = ['infra-substation', 'infra-plant', 'infra-generator', 'infra-transformer'];
+  const DETAIL_INFRA_IDS = ['infra-tower', 'infra-switch', 'infra-other'];
+
+  function mountPowerTierLayers(map, tiers, tierIds, ctx) {
+    let added = 0;
+    tierIds.forEach((tierId) => {
+      const features = tiers[tierId] || [];
+      if (!features.length) return;
+      if (!ctx.usedTierIds.includes(tierId)) ctx.usedTierIds.push(tierId);
+      added += features.length;
+      const layer = createGeoJsonLayer(features, tierId, true, ctx.infraPane);
+      if (!layer) return;
+      ctx.layerRefs[tierId] = layer;
+      ctx.layerMeta[tierId] = VOLTAGE_TIERS[tierId];
+      ctx.labelManager.collectFromTierLayer(tierId, layer);
+      ctx.bounds.extend(layer.getBounds());
+    });
+    return added;
+  }
+
+  function mountPowerInfraLayers(map, infra, infraIds, ctx) {
+    let added = 0;
+    infraIds.forEach((infraId) => {
+      const features = infra[infraId] || [];
+      if (!features.length) return;
+      added += features.length;
+      const meta = INFRA_LAYERS[infraId];
+
+      if (meta.kind === 'area') {
+        const { polygons, points } = splitInfraFeatures(features);
+        if (polygons.length) {
+          const layer = createInfraPolygonLayer(polygons, infraId, ctx.infraPane);
+          ctx.layerRefs[infraId] = layer;
+          ctx.layerMeta[infraId] = { minZoom: meta.minZoom };
+          ctx.bounds.extend(layer.getBounds());
+        }
+        if (points.length) {
+          const ptId = infraId + '-pt';
+          const layer = createInfraPointLayer(points, infraId, ctx.infraPane);
+          ctx.layerRefs[ptId] = layer;
+          ctx.layerMeta[ptId] = { minZoom: meta.minZoomPoint ?? meta.minZoom + 2 };
+          ctx.bounds.extend(layer.getBounds());
+        }
+      } else {
+        const layer = createInfraPointLayer(features, infraId, ctx.infraPane);
+        if (!layer) return;
+        ctx.layerRefs[infraId] = layer;
+        ctx.layerMeta[infraId] = { minZoom: meta.minZoom };
+        ctx.bounds.extend(layer.getBounds());
+      }
+    });
+    return added;
+  }
+
+  function buildPowerRenderData(osmData) {
+    const voltageCtx = buildPowerVoltageContext(osmData);
+    const tiers = osmWaysByTier(osmData, voltageCtx);
+    const infra = osmInfraByLayer(osmData);
+    const towerVoltageByNodeId = mergeNodeVoltageMaps(
+      buildTowerVoltageByNodeId(osmData),
+      voltageCtx.nodeVoltage
+    );
+    enrichInfraTowerVoltages(infra, towerVoltageByNodeId);
+    return { voltageCtx, tiers, infra };
+  }
+
+  function publishPowerRiskIndex(mapEl, infra, tiers) {
+    const riskIndex = buildInfraRiskIndex(infra, tiers);
+    mapEl._infraRiskTargets = riskIndex;
+    mapEl.dispatchEvent(
+      new CustomEvent('rtl3d:infra-risk-index', { detail: { targets: riskIndex } })
+    );
+  }
+
+  function schedulePowerDetailLoad(map, mapEl, osmData, ctx, onLoaded) {
+    const loadDetail = async () => {
+      const detailData = await ensurePowerDetailPromise();
+      if (!detailData?.elements?.length) return;
+
+      const merged = { elements: osmData.elements.concat(detailData.elements) };
+      const { tiers, infra } = buildPowerRenderData(merged);
+      const added =
+        mountPowerTierLayers(map, tiers, DIST_TIER_IDS, ctx) +
+        mountPowerInfraLayers(map, infra, DETAIL_INFRA_IDS, ctx);
+
+      if (!added) return;
+
+      ctx.visibilityCtrl.refresh();
+      updatePowerLegend(mapEl, ctx.usedTierIds);
+      ctx.labelManager.scheduleRefresh();
+      publishPowerRiskIndex(mapEl, infra, tiers);
+      if (ctx.bounds.isValid() && onLoaded) onLoaded(ctx.bounds);
+    };
+
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(() => { loadDetail().catch(() => {}); }, { timeout: 500 });
+    } else {
+      setTimeout(() => { loadDetail().catch(() => {}); }, 80);
+    }
+  }
+
   async function addPowerLinesLayer(map, mapEl, stationsLayer, onLoaded) {
     setPowerLoadStatus(mapEl, 'Loading OSM power infrastructure…');
     try {
@@ -1415,19 +1552,12 @@
         setPowerLoadStatus(mapEl, 'Loaded cached OSM power data.');
         setTimeout(() => setPowerLoadStatus(mapEl, null), 1200);
       }
-      const voltageCtx = buildPowerVoltageContext(osmData);
-      const tiers = osmWaysByTier(osmData, voltageCtx);
-      const infra = osmInfraByLayer(osmData);
-      const towerVoltageByNodeId = mergeNodeVoltageMaps(
-        buildTowerVoltageByNodeId(osmData),
-        voltageCtx.nodeVoltage
-      );
-      enrichInfraTowerVoltages(infra, towerVoltageByNodeId);
+
+      const { tiers, infra } = buildPowerRenderData(osmData);
       const bounds = L.latLngBounds([]);
       const layerRefs = {};
       const layerMeta = {};
       const usedTierIds = [];
-      let featureCount = 0;
       const labelManager = createPowerLineLabelManager(map, layerRefs);
       let infraPane = null;
       if (mapEl.dataset.lightningMap === 'true') {
@@ -1438,51 +1568,33 @@
         }
       }
 
+      const ctx = {
+        layerRefs,
+        layerMeta,
+        usedTierIds,
+        bounds,
+        labelManager,
+        infraPane,
+        visibilityCtrl: null,
+      };
+
       Object.keys(VOLTAGE_TIERS).forEach((tierId) => {
-        const features = tiers[tierId];
-        if (features.length) usedTierIds.push(tierId);
-        featureCount += features.length;
-        const layer = features.length
-          ? createGeoJsonLayer(features, tierId, true, infraPane)
-          : L.layerGroup([], { pane: infraPane || undefined });
-        if (!layer) return;
-        layerRefs[tierId] = layer;
+        layerRefs[tierId] = L.layerGroup([], { pane: infraPane || undefined });
         layerMeta[tierId] = VOLTAGE_TIERS[tierId];
-        if (features.length) {
-          labelManager.collectFromTierLayer(tierId, layer);
-          bounds.extend(layer.getBounds());
-        }
       });
-
       INFRA_LAYER_IDS.forEach((infraId) => {
-        const features = infra[infraId];
-        if (!features.length) return;
-        featureCount += features.length;
-        const meta = INFRA_LAYERS[infraId];
-
-        if (meta.kind === 'area') {
-          const { polygons, points } = splitInfraFeatures(features);
-          if (polygons.length) {
-            const layer = createInfraPolygonLayer(polygons, infraId, infraPane);
-            layerRefs[infraId] = layer;
-            layerMeta[infraId] = { minZoom: meta.minZoom };
-            bounds.extend(layer.getBounds());
-          }
-          if (points.length) {
-            const ptId = infraId + '-pt';
-            const layer = createInfraPointLayer(points, infraId, infraPane);
-            layerRefs[ptId] = layer;
-            layerMeta[ptId] = { minZoom: meta.minZoomPoint ?? meta.minZoom + 2 };
-            bounds.extend(layer.getBounds());
-          }
-        } else {
-          const layer = createInfraPointLayer(features, infraId, infraPane);
-          if (!layer) return;
-          layerRefs[infraId] = layer;
-          layerMeta[infraId] = { minZoom: meta.minZoom };
-          bounds.extend(layer.getBounds());
-        }
+        layerRefs[infraId] = L.layerGroup([], { pane: infraPane || undefined });
+        layerMeta[infraId] = { minZoom: INFRA_LAYERS[infraId].minZoom };
       });
+
+      let featureCount = mountPowerTierLayers(map, tiers, TX_TIER_IDS, ctx);
+      if (!osmData._splitBundle) {
+        featureCount += mountPowerTierLayers(map, tiers, DIST_TIER_IDS, ctx);
+      }
+      featureCount += mountPowerInfraLayers(map, infra, CORE_INFRA_IDS, ctx);
+      if (!osmData._splitBundle) {
+        featureCount += mountPowerInfraLayers(map, infra, DETAIL_INFRA_IDS, ctx);
+      }
 
       if (!featureCount) {
         setPowerLoadStatus(mapEl, 'No power infrastructure found in OSM for this area.');
@@ -1496,6 +1608,7 @@
       }
 
       const visibilityCtrl = createLayerVisibilityController(map, layerRefs, layerMeta);
+      ctx.visibilityCtrl = visibilityCtrl;
       visibilityCtrl.refresh();
 
       createPowerLayersControl(map, layerRefs, [
@@ -1507,14 +1620,13 @@
       updatePowerLegend(mapEl, usedTierIds);
       setPowerLoadStatus(mapEl, null);
       labelManager.scheduleRefresh();
-
-      const riskIndex = buildInfraRiskIndex(infra, tiers);
-      mapEl._infraRiskTargets = riskIndex;
-      mapEl.dispatchEvent(
-        new CustomEvent('rtl3d:infra-risk-index', { detail: { targets: riskIndex } })
-      );
+      publishPowerRiskIndex(mapEl, infra, tiers);
 
       if (onLoaded) onLoaded(bounds.isValid() ? bounds : null);
+
+      if (osmData._splitBundle) {
+        schedulePowerDetailLoad(map, mapEl, osmData, ctx, onLoaded);
+      }
     } catch (err) {
       console.warn('OSM power infrastructure:', err);
       setPowerLoadStatus(mapEl, 'Power infrastructure unavailable (network or Overpass API).');

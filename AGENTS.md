@@ -64,6 +64,8 @@ Page registry and nav URLs: `js/site-pages.js` + `js/site-urls.js`.
 | `js/efield-page.js` | Electric field guide carousel |
 | `js/gamma-radon-page.js` | Gamma/radon guide carousel |
 | `js/facebook-qr.js` | Facebook QR overlay |
+| `js/qrcode-loader.js` | Lazy-load `qrcode.min.js` on first QR open |
+| `js/plotly-loader.js` | Lazy-load self-hosted Plotly (LF/VHF) |
 
 ## Data files
 
@@ -104,7 +106,7 @@ $$\mathrm{lat} = \mathrm{lat}_0 + y_{\mathrm{km}}/111.32,\quad
 
 ## CSS
 
-Single stylesheet: `css/style.css`. TNB split layout: `.tnb-page-split`, toolbar `.tnb-lightning-toolbar`, sidebar `.tnb-page-sidebar`.
+Single stylesheet: edit `css/style.css`, then run `build-web-assets.bat` to regenerate `css/style.min.css` (linked by all pages). TNB split layout: `.tnb-page-split`, toolbar `.tnb-lightning-toolbar`, sidebar `.tnb-page-sidebar`.
 
 ## Conventions for edits
 

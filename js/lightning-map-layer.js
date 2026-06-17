@@ -662,14 +662,40 @@
     bar.style.visibility = flash.t && flash.t.length ? 'visible' : 'hidden';
   }
 
-  async function loadFlashes() {
+  async function loadFlashIndex() {
+    const loader = window.RTL3DFlashLoader;
+    if (loader) return loader.loadFlashIndex();
     if (window.LF_DATA && window.LF_DATA.flashes) {
-      return window.LF_DATA.flashes;
+      return window.LF_DATA.flashes.map((f) => {
+        const { x, y, z, t, ...meta } = f;
+        return meta;
+      });
     }
-    const response = await fetch('data/lf/flashes.json', { cache: 'force-cache' });
-    if (!response.ok) throw new Error('Lightning data unavailable');
-    const payload = await response.json();
-    return payload.flashes || [];
+    const response = await fetch('data/lf/flashes-index.json', { cache: 'force-cache' });
+    if (response.ok) {
+      const payload = await response.json();
+      if (payload.flashes) return payload.flashes;
+    }
+    const legacy = await fetch('data/lf/flashes.json', { cache: 'force-cache' });
+    if (!legacy.ok) throw new Error('Lightning data unavailable');
+    const payload = await legacy.json();
+    return (payload.flashes || []).map((f) => {
+      const { x, y, z, t, ...meta } = f;
+      return meta;
+    });
+  }
+
+  async function loadFlashEntry(meta) {
+    const loader = window.RTL3DFlashLoader;
+    if (loader) return loader.loadFlashEntry(meta);
+    if (window.LF_DATA && window.LF_DATA.flashes) {
+      const embedded = window.LF_DATA.flashes.find((f) => f.id === meta.id);
+      if (embedded) return embedded;
+    }
+    const response = await fetch(`data/lf/flashes/${meta.id}.json`, { cache: 'force-cache' });
+    if (!response.ok) throw new Error('Lightning sources unavailable');
+    const sources = await response.json();
+    return { ...meta, ...sources };
   }
 
   function populateFlashSelect(select, flashes) {
@@ -878,14 +904,25 @@
         return;
       }
 
-      const flash = flashes[currentIndex];
-      if (!flash || !flash.x || !flash.x.length) return;
+      const meta = flashes[currentIndex];
+      if (!meta) return;
 
-      updateRiskAssessment(flash);
-
-      currentLayer = flashToLayer(flash);
-      currentLayer.addTo(map);
-      updateTimeColorbar(flash, mapEl);
+      setStatus('Loading flash sources\u2026');
+      loadFlashEntry(meta)
+        .then((flash) => {
+          if (!flash || !flash.x || !flash.x.length) {
+            setStatus('No source points for this event.', true);
+            return;
+          }
+          updateRiskAssessment(flash);
+          currentLayer = flashToLayer(flash);
+          currentLayer.addTo(map);
+          updateTimeColorbar(flash, mapEl);
+        })
+        .catch((err) => {
+          console.warn('Lightning layer:', err);
+          setStatus('Could not load flash sources.', true);
+        });
     }
 
     function onFlashChange() {
@@ -925,7 +962,7 @@
 
     setStatus('Loading lightning events\u2026');
 
-    loadFlashes()
+    loadFlashIndex()
       .then((data) => {
         flashes = data;
         if (!flashes.length) {

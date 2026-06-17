@@ -1,0 +1,59 @@
+{
+  "version": "202606171659",
+  "items": [
+    {
+      "id": "midterm-evaluation-part-bukit-01",
+      "topic": "Rogowski coil",
+      "platform": "instagram",
+      "image": "images/mission/midterm-evaluation-part-bukit-01.jpg",
+      "caption": "Midterm Evaluation – Part 2 TM Bukit Gasing Inspection (Current Sensor) This time, Dr. Takeshi Kudo inspected each data logger for the Rogowski coil installed at the site. With his expertise, we ensured that the current…",
+      "width": 640,
+      "height": 639
+    },
+    {
+      "id": "rtl-campaign-melaka-malaysia-02",
+      "topic": "Rocket-triggered lightning",
+      "platform": "instagram",
+      "image": "images/mission/rtl-campaign-melaka-malaysia-02.jpg",
+      "caption": "RTL Campaign in Melaka, Malaysia – Part 1 On April 27, 2026, researchers from Kindai University arrived at the RTL site, UiTM Jasin Campus, for the campaign. This is to attempt the first time RTL in Malaysia. Today, we…",
+      "width": 640,
+      "height": 497
+    },
+    {
+      "id": "equipment-handed-over-batch-03",
+      "topic": "Observation network",
+      "platform": "instagram",
+      "image": "images/mission/equipment-handed-over-batch-03.jpg",
+      "caption": "Equipment Handed Over A batch of equipment which arrived recently has been handed over to UTeM. The equipment was Data Center, Current Sensors, as well as LF and VHF Receivers. Deputy Vice Chancellor of the university,…",
+      "width": 640,
+      "height": 640
+    },
+    {
+      "id": "night-time-lightning-flash-04",
+      "topic": "3D lightning mapping",
+      "platform": "facebook",
+      "image": "images/mission/night-time-lightning-flash-04.jpg",
+      "caption": "Night-time lightning flash over the RTL3D study region — natural cloud-to-ground activity in the research area.",
+      "width": 960,
+      "height": 560
+    },
+    {
+      "id": "from-may-june-2026-05",
+      "topic": "3D lightning mapping",
+      "platform": "instagram",
+      "image": "images/mission/from-may-june-2026-05.jpg",
+      "caption": "From 31 May to 5 June 2026, the International Conference on Lightning Protection (ICLP 2026) was held in Sapporo, Japan. A total of 10 papers from our project were presented at the conference: 4 from Kindai University,…",
+      "width": 640,
+      "height": 504
+    },
+    {
+      "id": "midterm-evaluation-part-the-06",
+      "topic": "Observation network",
+      "platform": "instagram",
+      "image": "images/mission/midterm-evaluation-part-the-06.jpg",
+      "caption": "Midterm Evaluation – Part 4 (The Day) Meetings with JST, JICA, MOHE & Site Visit to MET Kuala Pilah On 9 February, we were joined by two representatives from JST — Prof. Tamura and Mr. Furukawa for the first agenda of…",
+      "width": 640,
+      "height": 533
+    }
+  ]
+}

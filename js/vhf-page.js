@@ -20,9 +20,10 @@
 
   const plot2dIds = ['vhf-plot-plan', 'vhf-plot-time', 'vhf-plot-xz', 'vhf-plot-zy'];
   const plot3dId = 'vhf-plot-3d';
-  const PLAYBACK_SPEED = 0.5;
+  const PLAYBACK_SPEED = 0.25;
   const ROTATION_SPEED = 0.022 * PLAYBACK_SPEED;
   const MIN_PLAYBACK_MS = 2500;
+  const DEFAULT_3D_ZOOM = 0.58;
 
   const fixedCamera3d = {
     eye: { x: 42.5, y: -39, z: 20 },
@@ -134,7 +135,7 @@
     title: '',
   };
 
-  const plotFont = { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 13 };
+  const plotFont = { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 15 };
 
   const plotLayout = {
     paper_bgcolor: 'rgba(0,0,0,0)',
@@ -223,6 +224,13 @@
   }
 
   const planPlotId = 'vhf-plot-plan';
+  const plotKeys = { plan: 'vhf-plot-plan', time: 'vhf-plot-time', xz: 'vhf-plot-xz', zy: 'vhf-plot-zy' };
+  let lastFlashKey = null;
+  let deferred2dHandle = null;
+  let pending3d = null;
+  let pending3dReadyPromise = null;
+  let crossSectionObserver = null;
+  let pendingCross = null;
   let planZoom = {
     wide: null,
     tight: null,
@@ -248,6 +256,95 @@
   function togglePlanViewZoom() {
     planZoom.showingWide = !planZoom.showingWide;
     applyPlanViewAxes(planZoom.showingWide);
+  }
+
+  function ensureCrossSectionObserver() {
+    if (crossSectionObserver) return crossSectionObserver;
+    if (!window.IntersectionObserver) return null;
+
+    crossSectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || !pendingCross) return;
+        const key = entry.target.dataset.plotKey;
+        if (!key || pendingCross.flashKey !== lastFlashKey) return;
+        if (pendingCross.rendered.has(key)) return;
+        pendingCross.rendered.add(key);
+        const idx = key === 'xz' ? 2 : 3;
+        pendingCross.render2d(key, pendingCross.axes[idx], pendingCross.titles[idx]);
+        requestAnimationFrame(() => onPlotResize());
+      });
+    }, { root: null, rootMargin: '100px', threshold: 0.08 });
+
+    ['xz', 'zy'].forEach((key) => {
+      const el = document.getElementById(plotKeys[key]);
+      if (!el) return;
+      el.dataset.plotKey = key;
+      crossSectionObserver.observe(el);
+    });
+
+    return crossSectionObserver;
+  }
+
+  function scheduleCrossSectionPlots(flashKey, render2d, axes, titles) {
+    if (deferred2dHandle) {
+      if (typeof cancelIdleCallback === 'function') cancelIdleCallback(deferred2dHandle);
+      else clearTimeout(deferred2dHandle);
+      deferred2dHandle = null;
+    }
+
+    pendingCross = { flashKey, render2d, axes, titles, rendered: new Set() };
+
+    const renderAllCross = () => {
+      if (!pendingCross || pendingCross.flashKey !== lastFlashKey) return;
+      ['xz', 'zy'].forEach((key) => {
+        if (pendingCross.rendered.has(key)) return;
+        pendingCross.rendered.add(key);
+        const idx = key === 'xz' ? 2 : 3;
+        pendingCross.render2d(key, pendingCross.axes[idx], pendingCross.titles[idx]);
+      });
+      requestAnimationFrame(() => onPlotResize());
+    };
+
+    const observer = ensureCrossSectionObserver();
+    if (observer) {
+      ['xz', 'zy'].forEach((key) => {
+        const el = document.getElementById(plotKeys[key]);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 100 && rect.bottom > -100) {
+          if (!pendingCross.rendered.has(key)) {
+            pendingCross.rendered.add(key);
+            const idx = key === 'xz' ? 2 : 3;
+            render2d(key, pendingCross.axes[idx], titles[idx]);
+          }
+        }
+      });
+      deferred2dHandle = setTimeout(renderAllCross, 8000);
+      return;
+    }
+
+    if (typeof requestIdleCallback === 'function') {
+      deferred2dHandle = requestIdleCallback(renderAllCross, { timeout: 2000 });
+    } else {
+      deferred2dHandle = setTimeout(renderAllCross, 200);
+    }
+  }
+
+  function maybeAutoStart3d() {
+    if (anim3d.playing) return;
+    if (!anim3d.ready || !anim3d.timeData?.t?.length) return;
+    start3dAnimation();
+  }
+
+  function loadAndAutoPlay3d() {
+    if (!pending3d && !anim3d.ready) return Promise.resolve();
+    return ensure3dPlotReady().then(() => {
+      maybeAutoStart3d();
+    });
+  }
+
+  function schedule3dAutoplay() {
+    loadAndAutoPlay3d();
   }
 
   function bindPlanViewClick() {
@@ -316,7 +413,7 @@
     const yMax = percentile(y, 0.995);
     const zMin = Math.max(0, percentile(z, 0.005) - 0.5);
     const zMax = percentile(z, 0.995) + 0.5;
-    const side = Math.max(xMax - xMin, yMax - yMin, zMax - zMin, 1) + 4;
+    const side = Math.max(xMax - xMin, yMax - yMin, zMax - zMin, 1) + 2;
     const half = 0.5 * side;
     const xC = 0.5 * (xMin + xMax);
     const yC = 0.5 * (yMin + yMax);
@@ -456,7 +553,7 @@
   }
 
   function render3dPlot(flash, lim) {
-    if (!flash || !window.Plotly) return;
+    if (!flash || !window.Plotly) return Promise.resolve();
     const sites = VHF_SITES;
     const spanX = lim.x[1] - lim.x[0];
     const spanY = lim.y[1] - lim.y[0];
@@ -470,7 +567,7 @@
       cx: 0.5 * (lim.x[0] + lim.x[1]),
       cy: 0.5 * (lim.y[0] + lim.y[1]),
     };
-    anim3d.zoomFactor = 1;
+    anim3d.zoomFactor = DEFAULT_3D_ZOOM;
     anim3d.orbit = defaultOrbit();
     anim3d.pan = { x: 0, y: 0, z: 0 };
     anim3d.siteBase = {
@@ -510,7 +607,7 @@
       z: sites.map((s) => s.alt_km || 0),
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 12, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' },
       marker: {
         symbol: 'square',
         size: 4,
@@ -534,9 +631,9 @@
     const layout = {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(15,23,42,0.5)',
-      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 13 },
+      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 15 },
       margin: { l: 0, r: 0, t: 28, b: 0 },
-      title: { text: '3D view (rotating)', font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
+      title: { text: '3D view (rotating)', font: { family: 'DM Sans, sans-serif', size: 16, color: '#e2e8f0' } },
       showlegend: false,
       scene: {
         xaxis: { ...hiddenSceneAxis, range: lim.x },
@@ -550,7 +647,7 @@
       },
     };
 
-    Plotly.react(plot3dId, [sources3d, sites3d, box3d], layout, {
+    return Plotly.react(plot3dId, [sources3d, sites3d, box3d], layout, {
       responsive: true,
       displayModeBar: false,
       scrollZoom: false,
@@ -558,14 +655,53 @@
       .then(() => {
         anim3d.ready = true;
         apply3dCamera();
-        Plotly.Plots.resize(plot3dId);
-        start3dAnimation();
+        apply3dView();
+        requestAnimationFrame(() => {
+          resizePlot3d();
+          requestAnimationFrame(() => {
+            resizePlot3d();
+            setPlayButtonState(anim3d.playing);
+            maybeAutoStart3d();
+          });
+        });
       });
+  }
+
+  function resizePlot3d() {
+    const plot3dEl = document.getElementById(plot3dId);
+    if (plot3dEl?.querySelector('.plotly') && window.Plotly) {
+      Plotly.Plots.resize(plot3dId);
+    }
+  }
+
+  function ensure3dPlotReady() {
+    if (anim3d.ready) return Promise.resolve();
+    if (!pending3d) return Promise.resolve();
+    if (pending3dReadyPromise) return pending3dReadyPromise;
+
+    function go() {
+      return render3dPlot(pending3d.flash, pending3d.lim);
+    }
+
+    if (window.ensurePlotly3d) {
+      pending3dReadyPromise = window.ensurePlotly3d().then(go).finally(() => {
+        pending3dReadyPromise = null;
+      });
+    } else if (window.Plotly) {
+      pending3dReadyPromise = Promise.resolve(go()).finally(() => {
+        pending3dReadyPromise = null;
+      });
+    } else {
+      return Promise.resolve();
+    }
+    return pending3dReadyPromise;
   }
 
   function renderPlots(flash) {
     if (!flash || !window.Plotly) return;
     stop3dAnimation();
+    const flashKey = flash.id ?? flashesData.indexOf(flash);
+    lastFlashKey = flashKey;
     const { x, y, z, t } = flash;
     const xMin = percentile(x, 0.005);
     const xMax = percentile(x, 0.995);
@@ -602,7 +738,7 @@
       marker: { symbol: 'square', size: 10, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 11, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 13, color: '#e2e8f0' },
       hovertemplate: '%{text}<extra></extra>',
     };
 
@@ -626,12 +762,12 @@
       { key: 'zy', x: 'South-North (km)', y: 'Height (km)', equalKm: true, xRange: zyLim.h, yRange: zyLim.z },
     ];
 
-    plot2dIds.forEach((id, i) => {
-      const cfg = axes[i];
-      if (!cfg) return;
+    function render2d(key, cfg, titleText) {
+      const id = plotKeys[key];
+      if (!id) return;
       const layout = {
         ...plotLayout,
-        title: { text: titles[i], font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
+        title: { text: titleText, font: { family: 'DM Sans, sans-serif', size: 16, color: '#e2e8f0' } },
         xaxis: { ...plotLayout.xaxis, title: cfg.x, range: cfg.lim?.x || cfg.xRange },
         yaxis: { ...plotLayout.yaxis, title: cfg.y, range: cfg.lim?.y || cfg.yRange },
         showlegend: false,
@@ -648,10 +784,18 @@
         layout.yaxis.scaleratio = 1;
       }
       if (cfg.equalKm) applyEqualKmAxes(layout, cfg.xRange, cfg.yRange, crossTickStep);
-      Plotly.react(id, traces[cfg.key], layout, { responsive: true, displayModeBar: false });
-    });
+      Plotly.react(id, traces[key], layout, { responsive: true, displayModeBar: false });
+    }
 
-    render3dPlot(flash, lim);
+    render2d('plan', axes[0], titles[0]);
+    render2d('time', axes[1], titles[1]);
+    bindPlanViewClick();
+    scheduleCrossSectionPlots(flashKey, render2d, axes, titles);
+
+    pending3d = { flash, lim };
+    anim3d.ready = false;
+    pending3dReadyPromise = null;
+    setPlayButtonState(false);
 
     flashMeta.innerHTML =
       `<strong>${flash.utc}</strong> · ${flash.duration_s} s flash · ` +
@@ -659,6 +803,7 @@
       `showing ${flash.n_sources_plot.toLocaleString()} points`;
     requestAnimationFrame(() => {
       onPlotResize();
+      schedule3dAutoplay();
       window.RTL3DDragScroll?.refresh?.();
     });
   }
@@ -684,13 +829,13 @@
       marker: { symbol: 'square', size: 10, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 11, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 13, color: '#e2e8f0' },
       hovertemplate: '%{text}<extra></extra>',
     };
 
     const planLayout = {
       ...plotLayout,
-      title: { text: 'Network overview', font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
+      title: { text: 'Network overview', font: { family: 'DM Sans, sans-serif', size: 16, color: '#e2e8f0' } },
       xaxis: {
         ...plotLayout.xaxis, title: 'West-East (km)',
         range: netLim.x, tickmode: 'array', tickvals: ticksX, ticktext: ticksX.map(String),
@@ -717,7 +862,7 @@
     const spanZ = lim.z[1] - lim.z[0];
 
     anim3d.orbit = defaultOrbit();
-    anim3d.zoomFactor = 1;
+    anim3d.zoomFactor = DEFAULT_3D_ZOOM;
     anim3d.pan = { x: 0, y: 0, z: 0 };
     anim3d.pivot = { cx: 0.5 * (lim.x[0] + lim.x[1]), cy: 0.5 * (lim.y[0] + lim.y[1]) };
     anim3d.siteBase = {
@@ -737,7 +882,7 @@
       z: sites.map((s) => s.alt_km || 0),
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 12, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' },
       marker: { symbol: 'square', size: 4, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
       hovertemplate: '%{text}<extra></extra>',
     };
@@ -752,9 +897,9 @@
     const layout3d = {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(15,23,42,0.5)',
-      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 13 },
+      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 15 },
       margin: { l: 0, r: 0, t: 28, b: 0 },
-      title: { text: 'Network 3D view (rotating)', font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
+      title: { text: 'Network 3D view (rotating)', font: { family: 'DM Sans, sans-serif', size: 16, color: '#e2e8f0' } },
       showlegend: false,
       scene: {
         xaxis: { ...hiddenSceneAxis, range: lim.x },
@@ -788,8 +933,6 @@
   let siteRotRafId = null;
   function startSiteRotation() {
     if (siteRotRafId) cancelAnimationFrame(siteRotRafId);
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
     function tick() {
       if (!anim3d.ready || flashesData.length) return;
       anim3d.angle += ROTATION_SPEED;
@@ -806,8 +949,14 @@
   }
 
   function initPlots() {
-    if (flashesData.length) renderPlots(flashesData[0]);
-    else initSiteView();
+    if (flashesData.length) {
+      lastFlashKey = flashesData[0].id ?? 0;
+      renderPlots(flashesData[0]);
+    } else if (window.ensurePlotly3d) {
+      window.ensurePlotly3d().then(() => initSiteView());
+    } else {
+      initSiteView();
+    }
   }
 
   function onPlotResize() {
@@ -816,7 +965,7 @@
       if (document.getElementById(id)) Plotly.Plots.resize(id);
     });
     const plot3dEl = document.getElementById(plot3dId);
-    if (plot3dEl?.querySelector('.plotly')) Plotly.Plots.resize(plot3dId);
+    if (plot3dEl?.querySelector('.plotly')) resizePlot3d();
     window.RTL3DDragScroll?.refresh?.();
   }
 
@@ -825,7 +974,9 @@
   }
 
   function apply3dCamera() {
-    if (!window.Plotly || !anim3d.orbit) return;
+    if (!window.Plotly || !anim3d.orbit || !anim3d.ready) return;
+    const plot3dEl = document.getElementById(plot3dId);
+    if (!plot3dEl?.querySelector?.('.plotly')) return;
     const { radius, azimuth, elevation } = anim3d.orbit;
     const r = radius * anim3d.zoomFactor;
     const cosEl = Math.cos(elevation);
@@ -970,16 +1121,24 @@
     if (flashSelect) {
       flashSelect.addEventListener('change', () => {
         const idx = parseInt(flashSelect.value, 10);
-        if (!Number.isNaN(idx) && flashesData[idx]) renderPlots(flashesData[idx]);
+        if (!Number.isNaN(idx) && flashesData[idx]) {
+          lastFlashKey = flashesData[idx].id ?? idx;
+          renderPlots(flashesData[idx]);
+        }
       });
     }
 
     window.addEventListener('resize', onPlotResize);
-    window.addEventListener('rtl3d:viewport-resize', onPlotResize);
+    window.addEventListener('rtl3d:viewport-resize', () => {
+      onPlotResize();
+      if (pending3d || anim3d.ready) maybeAutoStart3d();
+    });
     const vp = document.getElementById('viewport-169');
     if (vp && window.ResizeObserver) new ResizeObserver(onPlotResize).observe(vp);
 
-    play3dBtn?.addEventListener('click', toggle3dAnimation);
+    play3dBtn?.addEventListener('click', () => {
+      ensure3dPlotReady().then(() => toggle3dAnimation());
+    });
     repeat3dBtn?.addEventListener('click', toggle3dRepeat);
     setRepeatButtonState(true);
     bind3dInteraction();
@@ -989,9 +1148,15 @@
   function start() {
     populateSiteList();
     populateFlashSelect();
-    if (window.Plotly) initPlots();
-    else window.addEventListener('load', initPlots, { once: true });
     bindEvents();
+    const plotlyReady = window.ensurePlotly2d
+      ? window.ensurePlotly2d()
+      : (window.Plotly ? Promise.resolve(window.Plotly) : new Promise((resolve) => {
+        window.addEventListener('load', () => resolve(window.Plotly), { once: true });
+      }));
+    plotlyReady.then((plotly) => {
+      if (plotly) initPlots();
+    });
   }
 
   start();

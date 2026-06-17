@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <base href="../">
@@ -18,10 +18,8 @@
   <meta name="twitter:title" content="Our Mission — RTL3D">
   <meta name="twitter:description" content="Our Mission — RTL3D lightning research">
   <title>Our Mission — RTL3D</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dm-sans.css">
+  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
 
 </head>
 <body data-page="mission">
@@ -59,7 +57,7 @@
         <main class="page-view">
 
           <div class="slide-inner split">
-            <div class="split-text">
+            <div class="split-text" aria-label="Mission overview">
               <span class="section-tag">Our Mission</span>
               <h2>Seeing lightning in three dimensions — in real time</h2>
               <p>For lightning activity in the Straits of Malacca, a <strong>3D lightning observation network</strong> reveals where a discharge initiates, how it progresses, and where it terminates.</p>
@@ -82,21 +80,23 @@
               </a>
             </div>
             <div class="split-visual">
-              <div class="cloud-viz">
-                <div class="cloud-layer"></div>
-                <div class="charge positive"></div>
-                <div class="charge negative"></div>
-                <svg class="flash-path" viewBox="0 0 200 300">
-                  <path d="M100 20 L120 100 L95 100 L130 200 L105 200 L115 280" fill="none" stroke="url(#flashGrad)" stroke-width="3"/>
-                  <defs>
-                    <linearGradient id="flashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#60a5fa"/>
-                      <stop offset="100%" stop-color="#fbbf24"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="viz-label top">Charge distribution</div>
-                <div class="viz-label bottom">Lightning channel</div>
+              <div class="mission-gallery" data-mission-gallery aria-label="Mission field gallery">
+                <div class="mission-gallery-viewport">
+                  <div class="mission-gallery-track"></div>
+                </div>
+                <figcaption class="mission-gallery-caption">
+                  <span class="mission-gallery-topic" hidden></span>
+                  <span class="mission-gallery-caption-text"></span>
+                </figcaption>
+                <div class="mission-gallery-controls">
+                  <button type="button" class="mission-gallery-nav mission-gallery-prev" aria-label="Previous image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                  </button>
+                  <div class="mission-gallery-dots" role="tablist" aria-label="Gallery images"></div>
+                  <button type="button" class="mission-gallery-nav mission-gallery-next" aria-label="Next image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -106,15 +106,16 @@
     </div>
   </div>
 
-  <script src="js/site-urls.js"></script>
-  <script src="js/site-pages.js"></script>
-  <script src="js/qrcode.min.js"></script>
-  <script src="js/facebook-qr.js"></script>
-  <script src="js/instagram-qr.js"></script>
-  <script src="js/drag-scroll.js"></script>
-  <script src="js/viewport.js"></script>
-  <script src="js/page-visits.js"></script>
-  <script src="js/page-common.js"></script>
+  <script defer src="js/site-urls.js"></script>
+  <script defer src="js/site-pages.js"></script>
+  <script defer src="js/qrcode-loader.js"></script>
+  <script defer src="js/facebook-qr.js"></script>
+  <script defer src="js/instagram-qr.js"></script>
+  <script defer src="js/drag-scroll.js"></script>
+  <script defer src="js/viewport.js"></script>
+  <script defer src="js/page-visits.js"></script>
+  <script defer src="js/page-common.js"></script>
+  <script defer src="js/mission-gallery.js"></script>
 
 </body>
 </html>

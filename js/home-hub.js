@@ -8,7 +8,6 @@
 
   const cinemaPanel = hub.querySelector('.hub-cinema-panel');
   const title = hub.querySelector('.hub-title');
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function flashLightning() {
     if (typeof window.RTL3DLightningBg?.flash === 'function') {
@@ -16,17 +15,15 @@
     }
   }
 
-  if (title && !prefersReduced) {
+  if (title) {
     title.classList.add('is-revealed');
     title.querySelectorAll('.line').forEach((line, i) => {
       line.style.animationDelay = `${0.18 + i * 0.14}s`;
     });
     window.setTimeout(flashLightning, 480);
-  } else if (title) {
-    title.classList.add('is-revealed');
   }
 
-  if (!prefersReduced && cinemaPanel) {
+  if (cinemaPanel) {
     hub.addEventListener('mousemove', (e) => {
       const rect = hub.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -41,7 +38,7 @@
   }
 
   const hook = hub.querySelector('.hub-hook');
-  if (hook && !prefersReduced) {
+  if (hook) {
     const phrases = [
       'Where does the next strike land?',
       'What is hidden inside the thundercloud?',
@@ -59,7 +56,5 @@
       });
     }, 4500);
     window.addEventListener('pagehide', () => window.clearInterval(hookInterval), { once: true });
-  } else if (hook) {
-    hook.classList.add('is-ready');
   }
 })();

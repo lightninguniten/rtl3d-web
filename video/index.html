@@ -13,13 +13,11 @@
   <meta property="og:title" content="Lightning in Malaysia — Animated Lesson">
   <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/video/">
   <title>Lightning in Malaysia — RTL3D</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dm-sans.css">
+  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
 
   <!-- GSAP (vendored locally, v3.12.5) for premium, spring-weighted scene transitions -->
-  <script src="js/gsap.min.js"></script>
+  <script defer src="js/gsap.min.js"></script>
 
   <style>
     /* Make the stage fill the fixed 16:9 viewport box exactly. */
@@ -534,11 +532,6 @@
     .vid-poster:hover .vid-poster-play { transform: translateY(-2px) scale(1.03); }
     .vid-poster-play-icon { font-size: 0.8em; }
 
-    @media (prefers-reduced-motion: reduce) {
-      .vid-flash::before, .vid-flash::after { animation: none; }
-      .vid-poster-bolt { animation: none; }
-    }
-
     /* Kiosk / screensaver mode (?kiosk=1): drop all chrome, fill the frame. */
     body.vid-kiosk .top-bar { display: none; }
     body.vid-kiosk .vid-poster { display: none; }
@@ -725,14 +718,14 @@
     </div>
   </div>
 
-  <script src="js/site-urls.js"></script>
-  <script src="js/site-pages.js"></script>
-  <script src="js/qrcode.min.js"></script>
-  <script src="js/facebook-qr.js"></script>
-  <script src="js/instagram-qr.js"></script>
-  <script src="js/viewport.js"></script>
-  <script src="js/page-visits.js"></script>
-  <script src="js/page-common.js"></script>
-  <script src="js/video-explainer.js"></script>
+  <script defer src="js/site-urls.js"></script>
+  <script defer src="js/site-pages.js"></script>
+  <script defer src="js/qrcode-loader.js"></script>
+  <script defer src="js/facebook-qr.js"></script>
+  <script defer src="js/instagram-qr.js"></script>
+  <script defer src="js/viewport.js"></script>
+  <script defer src="js/page-visits.js"></script>
+  <script defer src="js/page-common.js"></script>
+  <script defer src="js/video-explainer.js"></script>
 </body>
 </html>

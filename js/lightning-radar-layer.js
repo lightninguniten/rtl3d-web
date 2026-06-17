@@ -727,6 +727,8 @@
   }
 
   async function loadFlashes() {
+    const loader = window.RTL3DFlashLoader;
+    if (loader) return loader.loadAllFlashEntries();
     if (window.LF_DATA && window.LF_DATA.flashes) return window.LF_DATA.flashes;
     const response = await fetch('data/lf/flashes.json', { cache: 'force-cache' });
     if (!response.ok) throw new Error('Lightning data unavailable');

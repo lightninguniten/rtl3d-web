@@ -59,15 +59,22 @@
   }
 
   function openModal() {
-    createModal();
-    renderQr();
-    modal.hidden = false;
-    requestAnimationFrame(function () {
-      modal.classList.add('open');
-    });
-    document.body.classList.add('modal-open');
-    var closeBtn = modal.querySelector('.fb-qr-close');
-    if (closeBtn) closeBtn.focus();
+    var show = function () {
+      createModal();
+      renderQr();
+      modal.hidden = false;
+      requestAnimationFrame(function () {
+        modal.classList.add('open');
+      });
+      document.body.classList.add('modal-open');
+      var closeBtn = modal.querySelector('.fb-qr-close');
+      if (closeBtn) closeBtn.focus();
+    };
+    if (window.ensureQRCode) {
+      window.ensureQRCode().then(show);
+    } else {
+      show();
+    }
   }
 
   function closeModal() {
@@ -79,10 +86,14 @@
 
   function bindTriggers() {
     document.querySelectorAll('[data-ig-qr]').forEach(function (el) {
-      el.addEventListener('click', function (e) {
+      function open(e) {
         e.preventDefault();
         e.stopPropagation();
         openModal();
+      }
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') open(e);
       });
     });
   }

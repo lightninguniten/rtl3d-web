@@ -54,20 +54,27 @@
   }
 
   function openModal(opts) {
-    createModal();
-    titleEl.textContent = opts.title || 'University website';
-    nameEl.textContent = opts.label || opts.url || '';
-    logoEl.innerHTML = opts.logoSrc
-      ? '<img src="' + opts.logoSrc + '" alt="">'
-      : '';
-    renderQr(opts.url);
-    modal.hidden = false;
-    requestAnimationFrame(function () {
-      modal.classList.add('open');
-    });
-    document.body.classList.add('modal-open');
-    var closeBtn = modal.querySelector('.fb-qr-close');
-    if (closeBtn) closeBtn.focus();
+    var show = function () {
+      createModal();
+      titleEl.textContent = opts.title || 'University website';
+      nameEl.textContent = opts.label || opts.url || '';
+      logoEl.innerHTML = opts.logoSrc
+        ? '<img src="' + opts.logoSrc + '" alt="">'
+        : '';
+      renderQr(opts.url);
+      modal.hidden = false;
+      requestAnimationFrame(function () {
+        modal.classList.add('open');
+      });
+      document.body.classList.add('modal-open');
+      var closeBtn = modal.querySelector('.fb-qr-close');
+      if (closeBtn) closeBtn.focus();
+    };
+    if (window.ensureQRCode) {
+      window.ensureQRCode().then(show);
+    } else {
+      show();
+    }
   }
 
   function closeModal() {

@@ -102,6 +102,10 @@
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let bolts = [];
+  let rafId = null;
+  // Always animate the background bolts (the old behaviour) — the effect is
+  // subtle and is the signature look of the site.
+  let animating = true;
 
   function resizeCanvas() {
     const vp = document.getElementById('viewport-169');
@@ -128,26 +132,73 @@
   }
 
   function drawBolts() {
+    if (!animating) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    const prevComposite = ctx.globalCompositeOperation;
+    // Additive blending makes overlapping passes glow like glass, not stick.
+    ctx.globalCompositeOperation = 'lighter';
     bolts = bolts.filter((b) => {
       b.life -= 0.02;
       if (b.life <= 0) return false;
       const alpha = b.life / b.maxLife;
-      ctx.strokeStyle = `rgba(147, 197, 253, ${alpha * 0.6})`;
-      ctx.lineWidth = 1.5;
-      ctx.shadowColor = '#fbbf24';
-      ctx.shadowBlur = 12 * alpha;
-      b.segments.forEach((s) => {
+
+      // Trace the bolt path once, then stroke it in layered passes.
+      const trace = () => {
         ctx.beginPath();
-        ctx.moveTo(s.x1, s.y1);
-        ctx.lineTo(s.x2, s.y2);
-        ctx.stroke();
-      });
+        b.segments.forEach((s, i) => {
+          if (i === 0) ctx.moveTo(s.x1, s.y1);
+          ctx.lineTo(s.x2, s.y2);
+        });
+      };
+
+      // 1) Soft wide halo — the diffuse glow around the glass tube.
+      trace();
+      ctx.strokeStyle = `rgba(96, 165, 250, ${alpha * 0.16})`;
+      ctx.lineWidth = 7;
+      ctx.shadowColor = 'rgba(147, 197, 253, 0.9)';
+      ctx.shadowBlur = 18 * alpha;
+      ctx.stroke();
+
+      // 2) Translucent coloured body of the tube.
+      trace();
+      ctx.strokeStyle = `rgba(147, 197, 253, ${alpha * 0.5})`;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = 'rgba(191, 219, 254, 0.8)';
+      ctx.shadowBlur = 10 * alpha;
+      ctx.stroke();
+
+      // 3) Bright glossy white core highlight — gives the "glass" sheen.
+      trace();
+      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.92})`;
+      ctx.lineWidth = 1;
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+      ctx.shadowBlur = 6 * alpha;
+      ctx.stroke();
+
       ctx.shadowBlur = 0;
       return true;
     });
+    ctx.globalCompositeOperation = prevComposite;
     if (Math.random() < 0.008 && bolts.length < 3) bolts.push(createBolt());
-    requestAnimationFrame(drawBolts);
+    rafId = requestAnimationFrame(drawBolts);
+  }
+
+  function startBoltAnimation() {
+    if (animating) return;
+    animating = true;
+    drawBolts();
+  }
+
+  function stopBoltAnimation() {
+    animating = false;
+    if (rafId != null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bolts = [];
   }
 
   function flashBolts(count) {
@@ -159,17 +210,36 @@
     flash: flashBolts,
   };
 
-  if (document.body.dataset.page === 'home') {
-    const homeInterval = window.setInterval(() => {
-      if (Math.random() < 0.35) flashBolts(1);
-    }, 2200);
-    window.addEventListener('pagehide', () => window.clearInterval(homeInterval), { once: true });
-  }
+  // Periodic lightning flashes on every page (not just home) so the
+  // animated background stays visibly alive throughout the site.
+  const flashInterval = window.setInterval(() => {
+    if (animating && Math.random() < 0.35) flashBolts(1);
+  }, 2200);
+  window.addEventListener('pagehide', () => {
+    window.clearInterval(flashInterval);
+  }, { once: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopBoltAnimation();
+    else startBoltAnimation();
+  });
 
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
   const vp = document.getElementById('viewport-169');
   if (vp && window.ResizeObserver) new ResizeObserver(resizeCanvas).observe(vp);
   window.addEventListener('rtl3d:viewport-resize', resizeCanvas);
-  drawBolts();
+  if (animating) drawBolts();
+})();
+
+// Load the universal text auto-fit on every page (page-common.js is included
+// site-wide, so this keeps the behaviour in one place — no per-page edits).
+(function () {
+  'use strict';
+  if (window.__rtl3dFitLoaded) return;
+  window.__rtl3dFitLoaded = true;
+  const s = document.createElement('script');
+  s.src = 'js/auto-fit-text.js';
+  s.defer = true;
+  document.head.appendChild(s);
 })();

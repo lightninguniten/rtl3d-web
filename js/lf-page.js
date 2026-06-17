@@ -13,9 +13,10 @@
 
   const plot2dIds = ['lf-plot-plan', 'lf-plot-time', 'lf-plot-xz', 'lf-plot-zy'];
   const plot3dId = 'lf-plot-3d';
-  const PLAYBACK_SPEED = 0.5;
+  const PLAYBACK_SPEED = 0.25;
   const ROTATION_SPEED = 0.022 * PLAYBACK_SPEED;
   const MIN_PLAYBACK_MS = 2500;
+  const DEFAULT_3D_ZOOM = 0.58;
 
   const fixedCamera3d = {
     eye: { x: 42.5, y: -39, z: 20 },
@@ -57,6 +58,8 @@
     pan: { x: 0, y: 0, z: 0 },
     zoomFactor: 1,
     ready: false,
+    lastRevealCount: -1,
+    resumeOnVisible: false,
   };
 
   function rotateLineXY(xs, ys, angle, cx, cy) {
@@ -127,15 +130,20 @@
     title: '',
   };
 
-  const plotFont = { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 13 };
+  const plotFont = { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 11 };
+  // Compact axis fonts + automargin so titles never overlap the tick
+  // labels in the small subplots.
+  const axisTickFont = { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 10 };
+  const axisTitleFont = { family: 'DM Sans, sans-serif', color: '#cbd5e1', size: 11 };
+  const subplotTitleFont = { family: 'DM Sans, sans-serif', size: 13, color: '#e2e8f0' };
 
   const plotLayout = {
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(15,23,42,0.5)',
     font: plotFont,
-    margin: { l: 42, r: 12, t: 28, b: 36 },
-    xaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)' },
-    yaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)' },
+    margin: { l: 40, r: 10, t: 24, b: 28 },
+    xaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)', tickfont: axisTickFont, automargin: true },
+    yaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)', tickfont: axisTickFont, automargin: true },
   };
 
   function applyData(sites, flashes) {
@@ -163,7 +171,9 @@
 
     loadPromise = Promise.all([
       fetch('data/lf/sites.json').then((r) => r.json()),
-      fetch('data/lf/flashes.json').then((r) => r.json()),
+      window.RTL3DFlashLoader
+        ? window.RTL3DFlashLoader.loadAllFlashEntries().then((flashes) => ({ flashes }))
+        : fetch('data/lf/flashes.json').then((r) => r.json()),
     ]).then(([sites, payload]) => {
       applyData(sites, payload.flashes);
     }).catch(() => {
@@ -239,6 +249,13 @@
   }
 
   const planPlotId = 'lf-plot-plan';
+  const plotKeys = { plan: 'lf-plot-plan', time: 'lf-plot-time', xz: 'lf-plot-xz', zy: 'lf-plot-zy' };
+  let lastFlashId = null;
+  let pending3d = null;
+  let pending3dReadyPromise = null;
+  let deferred2dHandle = null;
+  let crossSectionObserver = null;
+  let pendingCross = null;
   let planZoom = {
     wide: null,
     tight: null,
@@ -264,6 +281,95 @@
   function togglePlanViewZoom() {
     planZoom.showingWide = !planZoom.showingWide;
     applyPlanViewAxes(planZoom.showingWide);
+  }
+
+  function ensureCrossSectionObserver() {
+    if (crossSectionObserver) return crossSectionObserver;
+    if (!window.IntersectionObserver) return null;
+
+    crossSectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || !pendingCross) return;
+        const key = entry.target.dataset.plotKey;
+        if (!key || pendingCross.flashId !== lastFlashId) return;
+        if (pendingCross.rendered.has(key)) return;
+        pendingCross.rendered.add(key);
+        const idx = key === 'xz' ? 2 : 3;
+        pendingCross.render2d(key, pendingCross.axes[idx], pendingCross.titles[idx]);
+        requestAnimationFrame(() => onPlotResize());
+      });
+    }, { root: null, rootMargin: '100px', threshold: 0.08 });
+
+    ['xz', 'zy'].forEach((key) => {
+      const el = document.getElementById(plotKeys[key]);
+      if (!el) return;
+      el.dataset.plotKey = key;
+      crossSectionObserver.observe(el);
+    });
+
+    return crossSectionObserver;
+  }
+
+  function scheduleCrossSectionPlots(flash, render2d, axes, titles) {
+    if (deferred2dHandle) {
+      if (typeof cancelIdleCallback === 'function') cancelIdleCallback(deferred2dHandle);
+      else clearTimeout(deferred2dHandle);
+      deferred2dHandle = null;
+    }
+
+    pendingCross = { flashId: flash.id, render2d, axes, titles, rendered: new Set() };
+
+    const renderAllCross = () => {
+      if (!pendingCross || pendingCross.flashId !== lastFlashId) return;
+      ['xz', 'zy'].forEach((key) => {
+        if (pendingCross.rendered.has(key)) return;
+        pendingCross.rendered.add(key);
+        const idx = key === 'xz' ? 2 : 3;
+        pendingCross.render2d(key, pendingCross.axes[idx], pendingCross.titles[idx]);
+      });
+      requestAnimationFrame(() => onPlotResize());
+    };
+
+    const observer = ensureCrossSectionObserver();
+    if (observer) {
+      ['xz', 'zy'].forEach((key) => {
+        const el = document.getElementById(plotKeys[key]);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 100 && rect.bottom > -100) {
+          if (!pendingCross.rendered.has(key)) {
+            pendingCross.rendered.add(key);
+            const idx = key === 'xz' ? 2 : 3;
+            render2d(key, pendingCross.axes[idx], titles[idx]);
+          }
+        }
+      });
+      deferred2dHandle = setTimeout(renderAllCross, 8000);
+      return;
+    }
+
+    if (typeof requestIdleCallback === 'function') {
+      deferred2dHandle = requestIdleCallback(renderAllCross, { timeout: 2000 });
+    } else {
+      deferred2dHandle = setTimeout(renderAllCross, 200);
+    }
+  }
+
+  function maybeAutoStart3d() {
+    if (anim3d.playing) return;
+    if (!anim3d.ready || !anim3d.timeData?.t?.length) return;
+    start3dAnimation();
+  }
+
+  function loadAndAutoPlay3d() {
+    if (!pending3d && !anim3d.ready) return Promise.resolve();
+    return ensure3dPlotReady().then(() => {
+      maybeAutoStart3d();
+    });
+  }
+
+  function schedule3dAutoplay() {
+    loadAndAutoPlay3d();
   }
 
   function bindPlanViewClick() {
@@ -332,7 +438,7 @@
     const yMax = percentile(y, 0.995);
     const zMin = Math.max(0, percentile(z, 0.005) - 0.5);
     const zMax = percentile(z, 0.995) + 0.5;
-    const side = Math.max(xMax - xMin, yMax - yMin, zMax - zMin, 1) + 4;
+    const side = Math.max(xMax - xMin, yMax - yMin, zMax - zMin, 1) + 2;
     const half = 0.5 * side;
     const xC = 0.5 * (xMin + xMax);
     const yC = 0.5 * (yMin + yMax);
@@ -421,31 +527,39 @@
     play3dBtn.setAttribute('aria-label', playing ? 'Pause 3D animation' : 'Play 3D animation');
   }
 
-  function apply3dView() {
-    if (!anim3d.ready || !anim3d.pivot || !anim3d.boxBase || !window.Plotly) return;
+  function apply3dSources() {
+    if (!anim3d.ready || !window.Plotly) return;
+    if (anim3d.revealCount === anim3d.lastRevealCount) return;
+    anim3d.lastRevealCount = anim3d.revealCount;
     const revealed = getRevealedSlice();
-    const { x, y, z, t } = revealed;
-    const { cx, cy } = anim3d.pivot;
-    const src = rotateAroundVertical(x, y, anim3d.angle, cx, cy);
-    const sites = rotateAroundVertical(anim3d.siteBase.x, anim3d.siteBase.y, anim3d.angle, cx, cy);
-    const boxLines = rotateLineXY(anim3d.boxBase.lines.x, anim3d.boxBase.lines.y, anim3d.angle, cx, cy);
+    const patch = {
+      x: [revealed.x],
+      y: [revealed.y],
+      z: [revealed.z],
+    };
+    if (revealed.t.length) patch['marker.color'] = [revealed.t];
+    Plotly.restyle(plot3dId, patch, [0]);
+  }
 
-    Plotly.restyle(plot3dId, {
-      x: [src.x, sites.x, boxLines.x],
-      y: [src.y, sites.y, boxLines.y],
-      z: [z, anim3d.siteBase.z, anim3d.boxBase.lines.z],
-    }, [0, 1, 2]);
-    if (t.length) {
-      Plotly.restyle(plot3dId, { 'marker.color': [t] }, [0]);
-    }
+  function apply3dView() {
+    apply3dSources();
+    apply3dCamera();
   }
 
   function tick3dAnimation(now) {
     if (!anim3d.playing) return;
 
-    updateTimeReveal(now);
-    anim3d.angle += ROTATION_SPEED;
-    apply3dView();
+    try {
+      updateTimeReveal(now || performance.now());
+      anim3d.angle += ROTATION_SPEED;
+      apply3dSources();
+      apply3dCamera();
+    } catch (err) {
+      console.error('LF 3D animation error:', err);
+      stop3dAnimation();
+      return;
+    }
+
     anim3d.rafId = requestAnimationFrame(tick3dAnimation);
   }
 
@@ -477,21 +591,23 @@
   }
 
   function render3dPlot(flash, lim) {
-    if (!flash || !window.Plotly || !sitesData?.sites) return;
+    if (!flash || !window.Plotly || !sitesData?.sites) return Promise.resolve();
     const sites = sitesData.sites;
     const spanX = lim.x[1] - lim.x[0];
     const spanY = lim.y[1] - lim.y[0];
     const spanZ = lim.z[1] - lim.z[0];
 
+    stop3dAnimation();
     anim3d.angle = 0;
     anim3d.revealCount = 0;
     anim3d.playbackStartMs = 0;
+    anim3d.lastRevealCount = -1;
     anim3d.ready = false;
     anim3d.pivot = {
       cx: 0.5 * (lim.x[0] + lim.x[1]),
       cy: 0.5 * (lim.y[0] + lim.y[1]),
     };
-    anim3d.zoomFactor = 1;
+    anim3d.zoomFactor = DEFAULT_3D_ZOOM;
     anim3d.orbit = defaultOrbit();
     anim3d.pan = { x: 0, y: 0, z: 0 };
     anim3d.siteBase = {
@@ -531,7 +647,7 @@
       z: sites.map((s) => s.alt_km || 0),
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 12, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 10, color: '#e2e8f0' },
       marker: {
         symbol: 'square',
         size: 4,
@@ -555,9 +671,9 @@
     const layout = {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(15,23,42,0.5)',
-      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 13 },
-      margin: { l: 0, r: 0, t: 28, b: 0 },
-      title: { text: '3D view (rotating)', font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
+      font: { family: 'DM Sans, sans-serif', color: '#94a3b8', size: 11 },
+      margin: { l: 0, r: 0, t: 24, b: 0 },
+      title: { text: '3D view (rotating)', font: subplotTitleFont },
       showlegend: false,
       scene: {
         xaxis: { ...hiddenSceneAxis, range: lim.x },
@@ -571,17 +687,58 @@
       },
     };
 
-    Plotly.react(plot3dId, [sources3d, sites3d, box3d], layout, {
+    return Plotly.react(plot3dId, [sources3d, sites3d, box3d], layout, {
       responsive: true,
       displayModeBar: false,
       scrollZoom: false,
     })
       .then(() => {
+        if (flash.id !== lastFlashId) return;
         anim3d.ready = true;
-        apply3dCamera();
-        Plotly.Plots.resize(plot3dId);
-        start3dAnimation();
+        apply3dView();
+        requestAnimationFrame(() => {
+          resizePlot3d();
+          requestAnimationFrame(() => {
+            resizePlot3d();
+            setPlayButtonState(anim3d.playing);
+            maybeAutoStart3d();
+          });
+        });
       });
+  }
+
+  function resizePlot3d() {
+    const plot3dEl = document.getElementById(plot3dId);
+    if (plot3dEl?.querySelector('.plotly') && window.Plotly) {
+      Plotly.Plots.resize(plot3dId);
+    }
+  }
+
+  function ensure3dPlotReady() {
+    if (anim3d.ready) return Promise.resolve();
+    if (!pending3d) return Promise.resolve();
+    if (pending3dReadyPromise) return pending3dReadyPromise;
+
+    function go() {
+      return render3dPlot(pending3d.flash, pending3d.lim);
+    }
+
+    if (window.ensurePlotlyFull) {
+      pending3dReadyPromise = window.ensurePlotlyFull().then(go).finally(() => {
+        pending3dReadyPromise = null;
+      });
+    } else if (window.ensurePlotly3d) {
+      pending3dReadyPromise = window.ensurePlotly3d().then(go).finally(() => {
+        pending3dReadyPromise = null;
+      });
+    } else if (window.Plotly) {
+      pending3dReadyPromise = Promise.resolve(go()).finally(() => {
+        pending3dReadyPromise = null;
+      });
+    } else {
+      return Promise.resolve();
+    }
+    return pending3dReadyPromise;
   }
 
   function renderPlots(flash) {
@@ -620,10 +777,10 @@
       y: sites.map((s) => s.y_km),
       mode: 'markers+text', type: 'scatter', name: 'LF sites',
       showlegend: false,
-      marker: { symbol: 'square', size: 10, color: '#fbbf24', line: { color: '#0f172a', width: 1 } },
+      marker: { symbol: 'square', size: 8, color: '#fbbf24', line: { color: '#0f172a', width: 1 } },
       text: sites.map((s) => s.code),
       textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 11, color: '#e2e8f0' },
+      textfont: { family: 'DM Sans, sans-serif', size: 10, color: '#e2e8f0' },
       hovertemplate: '%{text}<extra></extra>',
     };
 
@@ -647,14 +804,14 @@
       { key: 'zy', x: 'South-North (km)', y: 'Height (km)', equalKm: true, xRange: zyLim.h, yRange: zyLim.z },
     ];
 
-    plot2dIds.forEach((id, i) => {
-      const cfg = axes[i];
-      if (!cfg) return;
+    function render2d(key, cfg, titleText) {
+      const id = plotKeys[key];
+      if (!id) return;
       const layout = {
         ...plotLayout,
-        title: { text: titles[i], font: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' } },
-        xaxis: { ...plotLayout.xaxis, title: cfg.x, range: cfg.lim?.x || cfg.xRange },
-        yaxis: { ...plotLayout.yaxis, title: cfg.y, range: cfg.lim?.y || cfg.yRange },
+        title: { text: titleText, font: subplotTitleFont },
+        xaxis: { ...plotLayout.xaxis, title: { text: cfg.x, font: axisTitleFont }, range: cfg.lim?.x || cfg.xRange },
+        yaxis: { ...plotLayout.yaxis, title: { text: cfg.y, font: axisTitleFont }, range: cfg.lim?.y || cfg.yRange },
         showlegend: false,
       };
       if (cfg.plan) {
@@ -669,10 +826,19 @@
         layout.yaxis.scaleratio = 1;
       }
       if (cfg.equalKm) applyEqualKmAxes(layout, cfg.xRange, cfg.yRange, crossTickStep);
-      Plotly.react(id, traces[cfg.key], layout, { responsive: true, displayModeBar: false });
-    });
+      Plotly.react(id, traces[key], layout, { responsive: true, displayModeBar: false });
+    }
 
-    render3dPlot(flash, lim);
+    // Fast first paint: plan + time.
+    render2d('plan', axes[0], titles[0]);
+    render2d('time', axes[1], titles[1]);
+    bindPlanViewClick();
+    scheduleCrossSectionPlots(flash, render2d, axes, titles);
+
+    pending3d = { flash, lim };
+    anim3d.ready = false;
+    pending3dReadyPromise = null;
+    setPlayButtonState(false);
 
     flashMeta.innerHTML =
       `<strong>${flash.utc}</strong> · ${flash.duration_s} s flash · ` +
@@ -680,12 +846,16 @@
       `showing ${flash.n_sources_plot.toLocaleString()} points`;
     requestAnimationFrame(() => {
       onPlotResize();
+      schedule3dAutoplay();
       window.RTL3DDragScroll?.refresh?.();
     });
   }
 
   function initPlots() {
-    if (flashesData?.length) renderPlots(flashesData[0]);
+    if (flashesData?.length) {
+      lastFlashId = flashesData[0].id;
+      renderPlots(flashesData[0]);
+    }
     else if (flashMeta) flashMeta.textContent = 'No lightning events available.';
   }
 
@@ -695,7 +865,7 @@
       if (document.getElementById(id)) Plotly.Plots.resize(id);
     });
     const plot3dEl = document.getElementById(plot3dId);
-    if (plot3dEl?.querySelector('.plotly')) Plotly.Plots.resize(plot3dId);
+    if (plot3dEl?.querySelector('.plotly')) resizePlot3d();
     window.RTL3DDragScroll?.refresh?.();
   }
 
@@ -706,14 +876,15 @@
   function apply3dCamera() {
     if (!window.Plotly || !anim3d.orbit) return;
     const { radius, azimuth, elevation } = anim3d.orbit;
+    const az = azimuth + anim3d.angle;
     const r = radius * anim3d.zoomFactor;
     const cosEl = Math.cos(elevation);
     const p = anim3d.pan;
     Plotly.relayout(plot3dId, {
       'scene.camera.center': { x: p.x, y: p.y, z: p.z },
       'scene.camera.eye': {
-        x: p.x + r * cosEl * Math.cos(azimuth),
-        y: p.y + r * cosEl * Math.sin(azimuth),
+        x: p.x + r * cosEl * Math.cos(az),
+        y: p.y + r * cosEl * Math.sin(az),
         z: p.z + r * Math.sin(elevation),
       },
       'scene.camera.up': fixedCamera3d.up,
@@ -848,27 +1019,69 @@
   function bindEvents() {
     flashSelect.addEventListener('change', () => {
       const idx = parseInt(flashSelect.value, 10);
-      if (!Number.isNaN(idx) && flashesData?.[idx]) renderPlots(flashesData[idx]);
+      if (!Number.isNaN(idx) && flashesData?.[idx]) {
+        lastFlashId = flashesData[idx].id;
+        renderPlots(flashesData[idx]);
+      }
     });
 
     window.addEventListener('resize', onPlotResize);
-    window.addEventListener('rtl3d:viewport-resize', onPlotResize);
+    window.addEventListener('rtl3d:viewport-resize', () => {
+      onPlotResize();
+      if (pending3d || anim3d.ready) maybeAutoStart3d();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (anim3d.playing) {
+          anim3d.resumeOnVisible = true;
+          stop3dAnimation();
+        }
+        return;
+      }
+      if (anim3d.resumeOnVisible && anim3d.ready) {
+        anim3d.resumeOnVisible = false;
+        start3dAnimation();
+      }
+    });
     const vp = document.getElementById('viewport-169');
     if (vp && window.ResizeObserver) new ResizeObserver(onPlotResize).observe(vp);
 
-    play3dBtn?.addEventListener('click', toggle3dAnimation);
+    play3dBtn?.addEventListener('click', () => {
+      ensure3dPlotReady().then(() => toggle3dAnimation());
+    });
     repeat3dBtn?.addEventListener('click', toggle3dRepeat);
     setRepeatButtonState(true);
     bind3dInteraction();
     bindPlanViewClick();
+
+    // Auto-play the 3D view whenever it scrolls into view (it may lazy-load
+    // below the fold, so the initial autoplay call can miss it).
+    const plot3dEl = document.getElementById(plot3dId);
+    if (plot3dEl && window.IntersectionObserver) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !anim3d.playing) {
+            loadAndAutoPlay3d();
+          }
+        });
+      }, { threshold: 0.35 });
+      io.observe(plot3dEl);
+    }
   }
 
   function start() {
-    loadData().then(() => {
-      if (window.Plotly) initPlots();
-      else window.addEventListener('load', initPlots, { once: true });
-    });
     bindEvents();
+    const plotlyReady = window.ensurePlotlyFull
+      ? window.ensurePlotlyFull()
+      : window.ensurePlotly2d
+        ? window.ensurePlotly2d()
+        : (window.Plotly ? Promise.resolve(window.Plotly) : new Promise((resolve) => {
+          window.addEventListener('load', () => resolve(window.Plotly), { once: true });
+        }));
+    Promise.all([loadData(), plotlyReady]).then((results) => {
+      const plotly = results[1];
+      if (plotly) initPlots();
+    });
   }
 
   start();
