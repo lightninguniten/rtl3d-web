@@ -332,7 +332,7 @@ body[data-page="home"] .lightning-bg::before {
   inset: 0;
   background:
     linear-gradient(to bottom, rgba(0, 26, 58, 0.55) 0%, rgba(0, 26, 58, 0.32) 50%, rgba(0, 26, 58, 0.62) 100%),
-    url('images/gallery/lightning-strike.png') center / cover no-repeat;
+    url('../images/gallery/lightning-strike.png') center / cover no-repeat;
   z-index: 0;
 }
 

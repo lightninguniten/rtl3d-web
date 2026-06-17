@@ -512,7 +512,7 @@
   function syncExternalTime(t) {
     if (!timeline || t == null || isNaN(t)) return;
     t = Math.max(0, Math.min(TOTAL, t));
-    if (Math.abs(timeline.time() - t) > 0.15) timeline.time(t);
+    if (Math.abs(timeline.time() - t) > 0.2) timeline.time(t);
   }
 
   function bootSilentKiosk() {

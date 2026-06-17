@@ -33,9 +33,11 @@
   var bgmEl = null;
   var currentLang = 'en';
   var cycleAdvanceLock = false;
-  var syncRaf = null;
+  var syncTimer = null;
   var syncBasePerf = 0;
   var syncBaseTime = 0;
+  var lastPostedSync = -1;
+  var SYNC_INTERVAL_MS = 100;
 
   var TAP_HINT =
     'Click to explore / Tekan untuk lanjut / タップして探索';
@@ -133,24 +135,28 @@
       syncBasePerf = performance.now();
       t = narrationEl.currentTime;
     }
-    postToIframe({ type: 'rtl3d-sync', t: t });
+    if (lastPostedSync < 0 || Math.abs(t - lastPostedSync) >= 0.06) {
+      postToIframe({ type: 'rtl3d-sync', t: t });
+      lastPostedSync = t;
+    }
     if (t >= langDuration(currentLang) - 0.05) {
       if (!narrationEl || narrationEl.paused || narrationEl.ended) {
         advanceLangCycle();
       }
     }
-    syncRaf = requestAnimationFrame(syncTick);
   }
 
   function startVisualSync() {
     stopVisualSync();
     resetSyncClock(0);
-    syncRaf = requestAnimationFrame(syncTick);
+    lastPostedSync = -1;
+    syncTick();
+    syncTimer = window.setInterval(syncTick, SYNC_INTERVAL_MS);
   }
 
   function stopVisualSync() {
-    if (syncRaf) cancelAnimationFrame(syncRaf);
-    syncRaf = null;
+    if (syncTimer) window.clearInterval(syncTimer);
+    syncTimer = null;
   }
 
   function setParentLang(lang, autoplay) {
