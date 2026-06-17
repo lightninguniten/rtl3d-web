@@ -115,6 +115,16 @@
     canvas.height = h;
   }
 
+  let resizeCanvasQueued = false;
+  function scheduleResizeCanvas() {
+    if (resizeCanvasQueued) return;
+    resizeCanvasQueued = true;
+    requestAnimationFrame(function () {
+      resizeCanvasQueued = false;
+      resizeCanvas();
+    });
+  }
+
   function createBolt() {
     const x = Math.random() * canvas.width;
     const segments = [];
@@ -224,11 +234,11 @@
     else startBoltAnimation();
   });
 
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  scheduleResizeCanvas();
+  window.addEventListener('resize', scheduleResizeCanvas);
   const vp = document.getElementById('viewport-169');
-  if (vp && window.ResizeObserver) new ResizeObserver(resizeCanvas).observe(vp);
-  window.addEventListener('rtl3d:viewport-resize', resizeCanvas);
+  if (vp && window.ResizeObserver) new ResizeObserver(scheduleResizeCanvas).observe(vp);
+  window.addEventListener('rtl3d:viewport-resize', scheduleResizeCanvas);
   if (animating) drawBolts();
 })();
 
@@ -237,9 +247,19 @@
 (function () {
   'use strict';
   if (window.__rtl3dFitLoaded) return;
-  window.__rtl3dFitLoaded = true;
-  const s = document.createElement('script');
-  s.src = 'js/auto-fit-text.js';
-  s.defer = true;
-  document.head.appendChild(s);
+
+  function loadFitText() {
+    if (window.__rtl3dFitLoaded) return;
+    window.__rtl3dFitLoaded = true;
+    const s = document.createElement('script');
+    s.src = 'js/auto-fit-text.js?v=2';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  if (document.body.dataset.page === 'home' && 'requestIdleCallback' in window) {
+    requestIdleCallback(loadFitText, { timeout: 3000 });
+  } else {
+    loadFitText();
+  }
 })();

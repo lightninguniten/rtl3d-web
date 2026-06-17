@@ -9,25 +9,23 @@
     'h1,h2,h3,h4,h5,h6,p,li,figcaption,blockquote,button,label,dt,dd,td,th,caption,legend,summary';
   const LEAF_SEL = 'span,a,small,strong,em,b,i,time,code,cite,abbr,mark';
 
-  // Min shrink ratio — never go below this fraction of the CSS-preferred size.
   const MIN_RATIO = 0.45;
   const ABS_MIN_PX = 8;
-  const STEPS = 7; // binary-search steps → ~0.8% resolution
+  const STEPS = 5;
+  const CHUNK_SIZE = 6;
 
   let frame = null;
   let scheduled = false;
+  let debounce = null;
 
   function isSkippable(el) {
     if (!el || el.nodeType !== 1) return true;
-    // Plotly / SVG / media manage their own text.
     if (el.closest('svg, .js-plotly-plot, .modebar, canvas')) return true;
     if (el.hasAttribute('data-no-fit')) return true;
     if (el.closest('[data-no-fit]')) return true;
     return false;
   }
 
-  // Nearest ancestor that CLIPS (overflow hidden) — that is the box text
-  // must fit inside. Scroll containers (auto/scroll) are allowed to scroll.
   function clipAncestor(el) {
     let p = el.parentElement;
     while (p && p !== document.body && p !== document.documentElement) {
@@ -38,14 +36,13 @@
     return null;
   }
 
-  function overflows(el, clip, clipRect) {
-    // Own horizontal overflow (nowrap titles / long unbreakable words).
+  function overflows(el, clip, clipRect, clipH) {
     if (el.scrollWidth > el.clientWidth + 1) return true;
-    if (clip && clipRect) {
-      const r = el.getBoundingClientRect();
-      if (r.bottom > clipRect.bottom + 1) return true;
-      if (r.right > clipRect.right + 1) return true;
-    }
+    if (!clip || !clipRect) return false;
+    if (el.scrollHeight <= clipH) return false;
+    const r = el.getBoundingClientRect();
+    if (r.bottom > clipRect.bottom + 1) return true;
+    if (r.right > clipRect.right + 1) return true;
     return false;
   }
 
@@ -53,7 +50,6 @@
     if (isSkippable(el)) return;
     if (!el.textContent || !el.textContent.trim()) return;
 
-    // Reset to the CSS-preferred (big) size first so we re-evaluate on grow.
     el.style.fontSize = '';
 
     const base = parseFloat(getComputedStyle(el).fontSize);
@@ -61,8 +57,9 @@
 
     const clip = clipAncestor(el);
     const clipRect = clip ? clip.getBoundingClientRect() : null;
+    const clipH = clip ? clip.clientHeight : 0;
 
-    if (!overflows(el, clip, clipRect)) return; // fits big — leave it.
+    if (!overflows(el, clip, clipRect, clipH)) return;
 
     const min = Math.max(ABS_MIN_PX, base * MIN_RATIO);
     let lo = min;
@@ -72,7 +69,7 @@
     for (let i = 0; i < STEPS; i += 1) {
       const mid = (lo + hi) / 2;
       el.style.fontSize = mid + 'px';
-      if (overflows(el, clip, clipRect)) {
+      if (overflows(el, clip, clipRect, clipH)) {
         hi = mid;
       } else {
         best = mid;
@@ -86,10 +83,8 @@
     const blocks = Array.from(root.querySelectorAll(BLOCK_SEL));
     const blockSet = new Set(blocks);
 
-    // Standalone leaf text (e.g. label spans, .stat-num) not already inside
-    // a fitted block — those inherit the block's fitted size instead.
     const leaves = Array.from(root.querySelectorAll(LEAF_SEL)).filter((el) => {
-      if (el.querySelector('*')) return false; // not a leaf
+      if (el.querySelector('*')) return false;
       if (!el.textContent || !el.textContent.trim()) return false;
       let p = el.parentElement;
       while (p) {
@@ -102,42 +97,53 @@
     return blocks.concat(leaves);
   }
 
+  function fitChunk(targets, start) {
+    const end = Math.min(start + CHUNK_SIZE, targets.length);
+    for (let i = start; i < end; i += 1) fitOne(targets[i]);
+    if (end < targets.length) {
+      frame = requestAnimationFrame(function () { fitChunk(targets, end); });
+    }
+  }
+
   function fitAll() {
     scheduled = false;
     const targets = collectTargets(document.body);
-    // Innermost first so shrinking children relieves parent clip boxes.
     targets.sort((a, b) => {
       if (a.contains(b)) return 1;
       if (b.contains(a)) return -1;
       return 0;
     });
-    for (let i = 0; i < targets.length; i += 1) fitOne(targets[i]);
+    fitChunk(targets, 0);
   }
 
   function schedule() {
     if (scheduled) return;
     scheduled = true;
     if (frame) cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => {
-      // Two rAFs: let layout settle (clamp/cqh recompute) before measuring.
+    frame = requestAnimationFrame(function () {
       frame = requestAnimationFrame(fitAll);
     });
   }
 
-  let debounce = null;
   function scheduleDebounced() {
     if (debounce) clearTimeout(debounce);
-    debounce = setTimeout(schedule, 160);
+    debounce = setTimeout(schedule, 200);
   }
 
-  // Initial run + after web fonts load (metrics change once DM Sans is ready).
-  schedule();
+  function boot() {
+    if (document.body.dataset.page === 'home' && 'requestIdleCallback' in window) {
+      requestIdleCallback(schedule, { timeout: 2500 });
+    } else {
+      schedule();
+    }
+  }
+
+  boot();
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(schedule).catch(function () {});
+    document.fonts.ready.then(scheduleDebounced).catch(function () {});
   }
-  window.addEventListener('load', schedule);
+  window.addEventListener('load', scheduleDebounced);
 
-  // Re-fit on any size change.
   window.addEventListener('resize', scheduleDebounced);
   window.addEventListener('rtl3d:viewport-resize', scheduleDebounced);
   window.addEventListener('orientationchange', scheduleDebounced);
@@ -147,9 +153,8 @@
     new ResizeObserver(scheduleDebounced).observe(vp);
   }
 
-  // Re-fit when JS injects content (home carousel/nav, network cards, lists…).
   if (window.MutationObserver) {
-    const mo = new MutationObserver((muts) => {
+    const mo = new MutationObserver(function (muts) {
       for (let i = 0; i < muts.length; i += 1) {
         if (muts[i].addedNodes && muts[i].addedNodes.length) {
           scheduleDebounced();
