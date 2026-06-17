@@ -18,9 +18,11 @@
 
   var FALLBACK_NARRATION = 'video/narration.mp3';
 
+  var BGM_SRC = 'bgmusic.mp3';
+
   var BGM_LANGS = { ms: true, ja: true };
 
-  var AUDIO_CACHE = '14';
+  var AUDIO_CACHE = '15';
 
 
 
@@ -70,15 +72,24 @@
 
 
 
+  function assignBgmSrc(bgm) {
+    if (!bgm) return;
+    var path = BGM_SRC.split('/').pop();
+    if (bgm.dataset.srcName === path && bgm.src) return;
+    bgm.src = BGM_SRC + '?v=' + AUDIO_CACHE;
+    bgm.dataset.srcName = path;
+    try { bgm.load(); } catch (_) {}
+  }
+
   function prepareBgm() {
 
     var bgm = document.getElementById('vid-bgm');
 
     if (!bgm) return Promise.resolve(false);
 
-    if (bgm.preload === 'none') bgm.preload = 'auto';
+    assignBgmSrc(bgm);
 
-    try { bgm.load(); } catch (_) {}
+    if (bgm.preload === 'none') bgm.preload = 'auto';
 
     return whenCanPlay(bgm, 8000);
 
@@ -423,6 +434,20 @@
       audioEl.load();
 
       audioEl.play().catch(function () {});
+
+    });
+
+  }
+
+
+
+  var bgmEl = document.getElementById('vid-bgm');
+
+  if (bgmEl) {
+
+    bgmEl.addEventListener('error', function () {
+
+      console.error('[video-i18n] BGM failed to load:', bgmEl.src);
 
     });
 
