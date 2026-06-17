@@ -44,18 +44,23 @@
     return api ? api.lang : 'en';
   }
 
+  var LOCKED_LANGS = { en: true, ms: true, ja: true };
+
   function kfPack(sceneType) {
     var all = window.RTL3D_VIDEO_KEYFRAMES;
     var lang = animLang();
     if (all && all[lang] && all[lang][sceneType]) return all[lang][sceneType];
-    if (all && all.en && all.en[sceneType]) return all.en[sceneType];
+    if (!LOCKED_LANGS[lang] && all && all.en && all.en[sceneType]) return all.en[sceneType];
     return {};
   }
 
-  /** MS/JA scenes 6+ use factMid keyframes (middle of lesson). */
+  /** Scenes 6–9: use each language's own factMid pack when defined. */
   function factKeyframeId() {
     var lang = animLang();
-    if ((lang === 'ms' || lang === 'ja') && _sceneIdx >= 5) return 'factMid';
+    if (_sceneIdx >= 5) {
+      var all = window.RTL3D_VIDEO_KEYFRAMES;
+      if (all && all[lang] && all[lang].factMid) return 'factMid';
+    }
     return 'fact';
   }
 
@@ -80,7 +85,12 @@
   }
 
   function applySceneDurations(lang) {
-    var durs = SCENE_DUR[lang] || SCENE_DUR.en;
+    var durs = SCENE_DUR[lang];
+    if (!durs && LOCKED_LANGS[lang]) {
+      console.warn('[video] Missing scene timing for locked lang:', lang);
+      return;
+    }
+    durs = durs || SCENE_DUR.en;
     for (var i = 0; i < SCENES.length && i < durs.length; i++) {
       SCENES[i].dur = durs[i];
     }

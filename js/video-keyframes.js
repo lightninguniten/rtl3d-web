@@ -4,8 +4,7 @@
   /**
    * Per-language keyframe timing as fractions of each scene's duration (0–1).
    *
-   * LOCKED (do not edit): `en`, `ms` — approved sync with narration.
-   * Active tuning: `ja` only.
+   * LOCKED (do not edit): `en`, `ms`, `ja` — approved sync with narration.
    */
   window.RTL3D_VIDEO_KEYFRAMES = {
     en: {
@@ -78,7 +77,7 @@
       }
     },
     ja: {
-      /* JA — synced to per-scene narration-ja.mp3 (157.28s) */
+      /* LOCKED — do not modify */
       intro: {
         flash: 0.010, bolt: 0.028, boltDur: 0.130, kicker: 0.068, kickerDur: 0.11,
         titleK: 0.092, title: 0.090, titleDur: 0.140, titleStagger: 0.020,
