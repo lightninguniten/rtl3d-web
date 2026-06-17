@@ -326,16 +326,6 @@ html, body {
   background: var(--bg);
 }
 
-body[data-page="home"] .lightning-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(0, 26, 58, 0.55) 0%, rgba(0, 26, 58, 0.32) 50%, rgba(0, 26, 58, 0.62) 100%),
-    url('../images/gallery/lightning-strike.png') center / cover no-repeat;
-  z-index: 0;
-}
-
 #lightning-canvas {
   width: 100%;
   height: 100%;
