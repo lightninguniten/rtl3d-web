@@ -2,17 +2,22 @@
 
 ## Lightning lesson — background music
 
-The animated lesson (`/video/`) uses **“Cinematic Trailer”** by **Hans Williamson**.
+The animated lesson (`/video/`) uses **“Epic Trailer”** (also published as **“Cinematic Trailer”**) by **Hans Williamson**, via the **Music for Video Library** creator channel.
 
 | Field | Detail |
 |-------|--------|
 | **Composer** | Hans Williamson |
-| **Track** | Cinematic Trailer |
-| **Source channel** | Music for Video Library (YouTube) |
-| **YouTube** | https://www.youtube.com/watch?v=knRAM6AHcKI |
+| **Track** | Epic Trailer / Cinematic Trailer |
+| **Creator** | [Music for Video Library](https://www.patreon.com/no_copyrightmusic) (Patreon) |
+| **Download source** | [520. Epic Trailer — Patreon post](https://www.patreon.com/no_copyrightmusic/posts/520-epic-trailer-41895373) (member download) |
+| **Public reference** | [YouTube — Cinematic Trailer](https://www.youtube.com/watch?v=knRAM6AHcKI) |
 | **File in repo** | `bgmusic.mp3` (project root) |
 
-### How it is used
+### License / usage
+
+The audio file was downloaded through an active **Patreon membership** to Music for Video Library, per that post’s member terms. Retain your Patreon access and any download receipts if you need to confirm usage later.
+
+### How it is used in this project
 
 | Language | Implementation |
 |----------|----------------|
@@ -20,11 +25,9 @@ The animated lesson (`/video/`) uses **“Cinematic Trailer”** by **Hans Willi
 | **Bahasa Melayu** | Looped via `bgmusic.mp3` alongside `video/narration-ms.mp3` |
 | **Japanese** | Looped via `bgmusic.mp3` alongside `video/narration-ja.mp3` |
 
-The track was obtained from the YouTube upload titled *ROYALTY FREE Cinematic Trailer Music | Cinematic Trailer by Hans Williamson*. Check that video’s description for the license terms that applied when you downloaded it.
-
 Suggested attribution (plain text):
 
-> Background music: “Cinematic Trailer” by Hans Williamson — Music for Video Library (YouTube)
+> Background music: “Epic Trailer” (“Cinematic Trailer”) by Hans Williamson — Music for Video Library (Patreon)
 
 ## Other third-party notices
 
