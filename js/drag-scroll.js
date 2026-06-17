@@ -222,14 +222,48 @@
     });
   }
 
-  initAllDragScroll(document);
-  observeDragScroll();
+  let booted = false;
+  let refreshQueued = false;
 
-  window.addEventListener('load', refreshAllDragScroll);
-  window.addEventListener('rtl3d:viewport-resize', refreshAllDragScroll);
-  requestAnimationFrame(function () {
-    requestAnimationFrame(refreshAllDragScroll);
+  function bootDragScroll() {
+    if (booted) return;
+    booted = true;
+    initAllDragScroll(document);
+    observeDragScroll();
+    refreshAllDragScroll();
+  }
+
+  function scheduleBoot() {
+    const run = function () {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(bootDragScroll);
+      });
+    };
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(run, { timeout: 1500 });
+    } else if (document.readyState === 'complete') {
+      run();
+    } else {
+      window.addEventListener('load', run, { once: true });
+    }
+  }
+
+  function scheduleRefreshAllDragScroll() {
+    if (!booted) return;
+    if (refreshQueued) return;
+    refreshQueued = true;
+    requestAnimationFrame(function () {
+      refreshQueued = false;
+      refreshAllDragScroll();
+    });
+  }
+
+  scheduleBoot();
+
+  window.addEventListener('load', function () {
+    if (booted) scheduleRefreshAllDragScroll();
   });
+  window.addEventListener('rtl3d:viewport-resize', scheduleRefreshAllDragScroll);
 
   window.initDragScroll = initDragScroll;
   window.initAllDragScroll = initAllDragScroll;

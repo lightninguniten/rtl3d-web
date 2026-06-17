@@ -298,7 +298,14 @@
         fill.style.width = (p * 100) + '%';
       },
       onComplete: function () {
-        if (silentParam) return;
+        if (silentParam) {
+          if (cycleParam) {
+            try {
+              window.parent.postMessage({ type: 'rtl3d-lesson-ended' }, window.location.origin);
+            } catch (_) {}
+          }
+          return;
+        }
         if (cycleParam) advanceCycle();
         else finishLesson();
       }
@@ -505,14 +512,14 @@
     show(SCENES[0].id);
     if (timeline) {
       timeline.time(0);
-      timeline.pause();
+      timeline.play();
     }
   }
 
   function syncExternalTime(t) {
     if (!timeline || t == null || isNaN(t)) return;
     t = Math.max(0, Math.min(TOTAL, t));
-    if (Math.abs(timeline.time() - t) > 0.2) timeline.time(t);
+    if (Math.abs(timeline.time() - t) > 0.35) timeline.time(t);
   }
 
   function bootSilentKiosk() {
@@ -523,7 +530,7 @@
     show(SCENES[0].id);
     if (timeline) {
       timeline.time(0);
-      timeline.pause();
+      timeline.play();
     }
   }
 

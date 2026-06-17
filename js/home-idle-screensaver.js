@@ -36,8 +36,7 @@
   var syncTimer = null;
   var syncBasePerf = 0;
   var syncBaseTime = 0;
-  var lastPostedSync = -1;
-  var SYNC_INTERVAL_MS = 100;
+  var CYCLE_CHECK_MS = 500;
 
   var TAP_HINT =
     'Click to explore / Tekan untuk lanjut / タップして探索';
@@ -79,6 +78,7 @@
 
     narrationEl.addEventListener('timeupdate', function () {
       syncParentBgm();
+      postToIframe({ type: 'rtl3d-sync', t: narrationEl.currentTime });
     });
 
     narrationEl.addEventListener('ended', function () {
@@ -127,31 +127,19 @@
     window.setTimeout(function () { cycleAdvanceLock = false; }, 400);
   }
 
-  function syncTick() {
+  function cycleCheck() {
     if (!active) return;
+    if (narrationEl && !narrationEl.paused && !narrationEl.ended) return;
     var t = currentSyncTime();
-    if (narrationEl && !narrationEl.paused && !narrationEl.ended) {
-      syncBaseTime = narrationEl.currentTime;
-      syncBasePerf = performance.now();
-      t = narrationEl.currentTime;
-    }
-    if (lastPostedSync < 0 || Math.abs(t - lastPostedSync) >= 0.06) {
-      postToIframe({ type: 'rtl3d-sync', t: t });
-      lastPostedSync = t;
-    }
     if (t >= langDuration(currentLang) - 0.05) {
-      if (!narrationEl || narrationEl.paused || narrationEl.ended) {
-        advanceLangCycle();
-      }
+      advanceLangCycle();
     }
   }
 
   function startVisualSync() {
     stopVisualSync();
     resetSyncClock(0);
-    lastPostedSync = -1;
-    syncTick();
-    syncTimer = window.setInterval(syncTick, SYNC_INTERVAL_MS);
+    syncTimer = window.setInterval(cycleCheck, CYCLE_CHECK_MS);
   }
 
   function stopVisualSync() {
@@ -179,7 +167,6 @@
     }
     resetSyncClock(0);
     postToIframe({ type: 'rtl3d-set-lang', lang: lang });
-    postToIframe({ type: 'rtl3d-sync', t: 0 });
   }
 
   function startParentAudio() {
@@ -230,7 +217,6 @@
     iframe.addEventListener('load', function () {
       if (!active) return;
       postToIframe({ type: 'rtl3d-set-lang', lang: currentLang });
-      postToIframe({ type: 'rtl3d-sync', t: narrationEl ? narrationEl.currentTime : 0 });
     });
 
     var explore = overlay.querySelector('.idle-explore');
@@ -346,6 +332,13 @@
   });
 
   window.addEventListener('keydown', wake, { passive: true, capture: true });
+
+  window.addEventListener('message', function (e) {
+    if (!active || !e.data || e.data.type !== 'rtl3d-lesson-ended') return;
+    if (e.origin !== window.location.origin) return;
+    if (narrationEl && !narrationEl.paused && !narrationEl.ended) return;
+    advanceLangCycle();
+  });
 
   arm();
 
