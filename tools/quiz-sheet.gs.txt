@@ -1,0 +1,93 @@
+================================================================
+ RTL3D Lightning Quiz → Google Sheet  (setup, ~5 minutes)
+================================================================
+
+This connects the quiz to a Google Sheet so every attempt is recorded
+as a row: Timestamp | Name | School/University | Score | Total | Percent.
+
+----------------------------------------------------------------
+STEP 1 — Create the Sheet
+----------------------------------------------------------------
+1. Go to https://sheets.google.com and create a new blank spreadsheet.
+2. Name it e.g. "RTL3D Quiz Results".
+   (You do NOT need to add header rows — the script does it.)
+
+----------------------------------------------------------------
+STEP 2 — Add the Apps Script
+----------------------------------------------------------------
+1. In that sheet, click  Extensions ▸ Apps Script.
+2. Delete whatever code is there and paste EVERYTHING between the
+   >>> BEGIN and <<< END lines below.
+3. Click the disk icon to save.
+
+>>> BEGIN -------------------------------------------------------
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+
+    // Write a header row once.
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['Timestamp', 'Name', 'School/University', 'Score', 'Total', 'Percent']);
+    }
+
+    var p = (e && e.parameter) ? e.parameter : {};
+    sheet.appendRow([
+      p.timestamp || new Date().toISOString(),
+      p.name || '',
+      p.school || '',
+      p.score || '',
+      p.total || '',
+      (p.percent || '') + (p.percent ? '%' : '')
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function doGet() {
+  return ContentService.createTextOutput('RTL3D quiz endpoint is live.');
+}
+<<< END ---------------------------------------------------------
+
+----------------------------------------------------------------
+STEP 3 — Deploy as a Web App
+----------------------------------------------------------------
+1. Click  Deploy ▸ New deployment.
+2. Click the gear ⚙ next to "Select type" and choose  Web app.
+3. Set:
+      Description:        RTL3D quiz
+      Execute as:         Me
+      Who has access:     Anyone            <-- important
+4. Click  Deploy.  Authorise when prompted (allow your own account).
+5. Copy the  Web app URL.  It looks like:
+      https://script.google.com/macros/s/AKfycb..................../exec
+
+----------------------------------------------------------------
+STEP 4 — Paste the URL into the website
+----------------------------------------------------------------
+1. Open  js/quiz-config.js  in this project.
+2. Put the URL between the quotes:
+      window.RTL3D_QUIZ_ENDPOINT = 'https://script.google.com/macros/s/AKfyc..../exec';
+3. Save, commit, and push.
+
+That's it. Take the quiz once — a new row should appear in the Sheet.
+
+----------------------------------------------------------------
+Notes
+----------------------------------------------------------------
+• To export the Sheet as CSV/Excel: File ▸ Download ▸ CSV (or .xlsx).
+• Results are ALSO saved in the visitor's browser as a backup. On a kiosk
+  machine you can dump them anytime by opening the browser console on the
+  quiz page and running:   RTL3D_QUIZ.exportCsv()
+• If you ever change the script, use Deploy ▸ Manage deployments ▸ Edit ▸
+  New version so the same URL keeps working.

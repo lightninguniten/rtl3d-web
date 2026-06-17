@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.88em' x='.12em' font-size='82'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Lightning Safety Quiz — RTL3D">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lightninguniten.github.io/rtl3d-web/quiz/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RTL3D">
+  <meta property="og:title" content="Lightning Safety Quiz — RTL3D">
+  <meta property="og:description" content="Test your lightning safety knowledge. 10 questions for students.">
+  <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/quiz/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lightning Safety Quiz — RTL3D">
+  <meta name="twitter:description" content="Test your lightning safety knowledge. 10 questions for students.">
+  <title>Lightning Safety Quiz — RTL3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .quiz-wrap {
+      width: 100%;
+      max-width: min(94cqw, 700px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.45rem, 1.1cqh, 0.8rem);
+      background: rgba(0, 26, 58, 0.72);
+      border: 1px solid rgba(255, 199, 44, 0.18);
+      border-radius: 16px;
+      padding: clamp(0.75rem, 2cqh, 1.25rem) clamp(0.75rem, 2.5cqw, 1.5rem);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Intake form (name + school) shown before the quiz */
+    .quiz-intake {
+      width: 100%;
+      max-width: min(94cqw, 460px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1.6cqh, 0.95rem);
+      background: rgba(0, 26, 58, 0.72);
+      border: 1px solid rgba(255, 199, 44, 0.18);
+      border-radius: 16px;
+      padding: clamp(1rem, 3cqh, 1.75rem) clamp(1rem, 3cqw, 1.9rem);
+      backdrop-filter: blur(8px);
+      text-align: left;
+    }
+    .quiz-intake[hidden] { display: none; }
+    .quiz-intake-title {
+      font-size: clamp(1.1rem, 3cqh, 1.5rem);
+      font-weight: 800;
+      color: var(--text);
+    }
+    .quiz-intake-sub {
+      font-size: clamp(0.78rem, 1.9cqh, 0.92rem);
+      color: var(--text-muted);
+      margin-top: -0.2rem;
+    }
+    .quiz-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .quiz-field-label {
+      font-size: clamp(0.72rem, 1.7cqh, 0.85rem);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+    .quiz-field input {
+      width: 100%;
+      padding: 0.62rem 0.8rem;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255, 199, 44, 0.25);
+      background: rgba(0, 20, 48, 0.8);
+      color: var(--text);
+      font-family: inherit;
+      font-size: clamp(0.85rem, 2cqh, 1rem);
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .quiz-field input::placeholder { color: rgba(143, 168, 204, 0.6); }
+    .quiz-field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(0, 26, 58, 0.95);
+    }
+    .quiz-intake-error {
+      font-size: clamp(0.74rem, 1.7cqh, 0.85rem);
+      color: #f87171;
+      font-weight: 600;
+    }
+    .quiz-intake-error[hidden] { display: none; }
+    .quiz-intake-start { margin-top: 0.2rem; align-self: stretch; }
+
+    .quiz-result-save {
+      font-size: clamp(0.74rem, 1.7cqh, 0.85rem);
+      color: var(--text-muted);
+      min-height: 1.2em;
+    }
+
+    .quiz-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .quiz-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .quiz-progress-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .quiz-score-live {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .quiz-progress-bar {
+      height: 6px;
+      background: rgba(255, 199, 44, 0.12);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .quiz-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFC72C, #FFE07A);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 8px rgba(255, 199, 44, 0.5);
+    }
+
+    .quiz-question {
+      font-size: clamp(0.92rem, 2.1cqh, 1.12rem);
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .quiz-opt {
+      width: 100%;
+      text-align: left;
+      padding: clamp(0.5rem, 1.1cqh, 0.7rem) clamp(0.65rem, 2cqw, 1rem);
+      border: 1.5px solid rgba(255, 199, 44, 0.18);
+      border-radius: 10px;
+      background: rgba(0, 20, 48, 0.7);
+      color: var(--text);
+      font-size: clamp(0.8rem, 1.75cqh, 0.92rem);
+      font-weight: 500;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, color 0.18s, transform 0.12s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .quiz-opt-letter {
+      width: 1.6em;
+      height: 1.6em;
+      border-radius: 50%;
+      background: rgba(255, 199, 44, 0.12);
+      border: 1px solid rgba(255, 199, 44, 0.3);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.18s, border-color 0.18s;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(255, 199, 44, 0.08);
+      color: var(--accent-bright);
+      transform: translateX(3px);
+    }
+
+    .quiz-opt:hover:not(:disabled) .quiz-opt-letter {
+      background: rgba(255, 199, 44, 0.22);
+      border-color: var(--accent);
+    }
+
+    .quiz-opt:active:not(:disabled) { transform: scale(0.98) translateX(2px); }
+
+    .quiz-opt-correct {
+      border-color: #4ade80 !important;
+      background: rgba(74, 222, 128, 0.1) !important;
+      color: #bbf7d0 !important;
+    }
+
+    .quiz-opt-correct .quiz-opt-letter {
+      background: rgba(74, 222, 128, 0.25) !important;
+      border-color: #4ade80 !important;
+      color: #4ade80 !important;
+    }
+
+    .quiz-opt-wrong {
+      border-color: #f87171 !important;
+      background: rgba(248, 113, 113, 0.1) !important;
+      color: #fecaca !important;
+    }
+
+    .quiz-opt-wrong .quiz-opt-letter {
+      background: rgba(248, 113, 113, 0.2) !important;
+      border-color: #f87171 !important;
+      color: #f87171 !important;
+    }
+
+    .quiz-explain {
+      padding: clamp(0.45rem, 1cqh, 0.65rem) clamp(0.65rem, 2cqw, 0.9rem);
+      border-left: 3px solid var(--accent);
+      background: rgba(255, 199, 44, 0.06);
+      border-radius: 0 8px 8px 0;
+      font-size: clamp(0.76rem, 1.55cqh, 0.86rem);
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    .quiz-next-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .quiz-result[hidden],
+    .quiz-wrap[hidden] { display: none !important; }
+
+    .quiz-result {
+      width: 100%;
+      max-width: min(94cqw, 540px);
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(0.45rem, 1.1cqh, 0.85rem);
+      background: rgba(0, 26, 58, 0.72);
+      border: 1px solid rgba(255, 199, 44, 0.2);
+      border-radius: 16px;
+      padding: clamp(1rem, 2.5cqh, 1.75rem) clamp(1rem, 3cqw, 2rem);
+      backdrop-filter: blur(8px);
+    }
+
+    .quiz-result-bolt {
+      font-size: clamp(2.2rem, 5.5cqh, 3.5rem);
+      filter: drop-shadow(0 0 20px rgba(255, 199, 44, 0.7));
+      line-height: 1;
+    }
+
+    .quiz-result-score {
+      font-size: clamp(2rem, 5cqh, 3.5rem);
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(255, 199, 44, 0.45);
+    }
+
+    .quiz-result-pct {
+      font-size: clamp(0.95rem, 2.2cqh, 1.25rem);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .quiz-result-grade {
+      font-size: clamp(1rem, 2.5cqh, 1.45rem);
+      font-weight: 800;
+      color: #FFC72C;
+      letter-spacing: 0.02em;
+    }
+
+    .quiz-result-msg {
+      font-size: clamp(0.8rem, 1.75cqh, 0.92rem);
+      color: var(--text-muted);
+      max-width: 36ch;
+      line-height: 1.55;
+    }
+
+    .quiz-result-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    @media (max-height: 540px) {
+      .quiz-result-bolt { display: none; }
+      .quiz-wrap { padding: 0.5rem 0.75rem; }
+    }
+  </style>
+</head>
+<body data-page="quiz">
+  <div class="viewport-shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="btn-label">Back</span>
+        </a>
+        <a id="home-btn" href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+          <span class="btn-label">Home</span>
+        </a>
+        <div class="brand">
+          <span class="brand-icon">⚡</span>
+          <span class="brand-text">RTL3D</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-icon" data-fb-qr title="Facebook" aria-label="Show Facebook QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </button>
+        <button type="button" class="btn-icon" data-ig-qr title="Instagram" aria-label="Show Instagram QR code">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="viewport-frame" id="viewport-frame">
+      <div class="viewport-169" id="viewport-169">
+        <div class="lightning-bg" aria-hidden="true">
+          <canvas id="lightning-canvas"></canvas>
+          <div class="grid-overlay"></div>
+        </div>
+        <main class="page-view">
+
+          <div class="slide-inner hero" style="align-items:center;">
+            <span class="section-tag center">⚡ Lightning Safety Quiz</span>
+
+            <!-- Intake form — collected before the quiz starts -->
+            <form class="quiz-intake" id="quiz-intake" autocomplete="on">
+              <h3 class="quiz-intake-title">Let’s get started</h3>
+              <p class="quiz-intake-sub">Enter your details so we can record your score.</p>
+              <label class="quiz-field">
+                <span class="quiz-field-label">Your name</span>
+                <input type="text" id="quiz-name" name="name" required maxlength="80" placeholder="e.g. Aisyah binti Ahmad" autocomplete="name">
+              </label>
+              <label class="quiz-field">
+                <span class="quiz-field-label">School / University</span>
+                <input type="text" id="quiz-school" name="school" required maxlength="120" placeholder="e.g. SMK Subang Jaya / UNITEN" autocomplete="organization">
+              </label>
+              <p class="quiz-intake-error" id="quiz-intake-error" hidden>Please enter both your name and your school or university.</p>
+              <button type="submit" class="btn primary quiz-intake-start">Start quiz →</button>
+            </form>
+
+            <div class="quiz-wrap" id="quiz-body" hidden>
+              <div class="quiz-header">
+                <div class="quiz-progress-row">
+                  <div class="quiz-progress-label" id="quiz-progress">Question 1 of 10</div>
+                  <div class="quiz-score-live" id="quiz-score-live">Score: 0</div>
+                </div>
+                <div class="quiz-progress-bar">
+                  <div class="quiz-progress-bar-fill" id="quiz-progress-bar-fill" style="width:0%"></div>
+                </div>
+              </div>
+              <p class="quiz-question" id="quiz-question"></p>
+              <div class="quiz-options" id="quiz-options" role="list"></div>
+              <p class="quiz-explain" id="quiz-explain" hidden></p>
+              <div class="quiz-next-row">
+                <button type="button" class="btn primary" id="quiz-next" hidden>Next →</button>
+              </div>
+            </div>
+
+            <div class="quiz-result" id="quiz-result" hidden>
+              <div class="quiz-result-bolt" aria-hidden="true">⚡</div>
+              <div class="quiz-result-score" id="quiz-result-score"></div>
+              <div class="quiz-result-pct" id="quiz-result-pct"></div>
+              <div class="quiz-result-grade" id="quiz-result-grade"></div>
+              <p class="quiz-result-msg" id="quiz-result-msg"></p>
+              <p class="quiz-result-save" id="quiz-result-save" aria-live="polite"></p>
+              <div class="quiz-result-actions">
+                <button type="button" class="btn primary" id="quiz-restart">Try again</button>
+                <a href="video/" class="btn secondary">▶ Watch the lesson</a>
+                <a href="./" class="btn secondary">← Home</a>
+              </div>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/site-urls.js"></script>
+  <script src="js/site-pages.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/facebook-qr.js"></script>
+  <script src="js/instagram-qr.js"></script>
+  <script src="js/drag-scroll.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/page-visits.js"></script>
+  <script src="js/quiz-config.js"></script>
+  <script src="js/page-common.js"></script>
+  <script src="js/quiz-page.js"></script>
+
+</body>
+</html>

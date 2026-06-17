@@ -34,6 +34,9 @@ desktop.ini
 *.tmp
 ~$*
 
+# Audio build intermediates (final mix lives at video/narration.mp3)
+tools/_voiceover.wav
+
 # Optional: uncomment to shrink the repo (run build-osm-data.bat after clone)
 # data/osm/power-infrastructure.json
 # data/osm/water-infrastructure.json

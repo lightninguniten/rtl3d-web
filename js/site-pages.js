@@ -11,9 +11,12 @@
     { id: 'study-area', slug: 'study-area', title: 'Study Area Map', icon: '🗺️', desc: 'Interactive site map' },
     { id: 'partners', slug: 'partners', title: 'Partners', icon: '🤝', desc: 'Malaysia–Japan collaboration' },
     { id: 'contact', slug: 'contact', title: 'Contact', icon: '📬', desc: 'Connect with the team' },
+    { id: 'quiz', slug: 'quiz', title: 'Lightning Quiz', icon: '🧠', desc: 'Test your lightning safety knowledge' },
+    { id: 'social', slug: 'social', title: 'Follow Us', icon: '📱', desc: 'Facebook & Instagram feeds' },
   ];
 
   window.RTL3D_EXTRA = [
+    { id: 'video', slug: 'video', title: 'Lightning in Malaysia — Animated Lesson', parent: 'quiz' },
     { id: 'lf', slug: 'lf', title: 'LF Network', parent: 'network' },
     { id: 'vhf', slug: 'vhf', title: 'VHF Network', parent: 'network' },
     { id: 'efield', slug: 'electric-field', title: 'Electric Field', parent: 'network' },
@@ -26,6 +29,7 @@
   ];
 
   window.RTL3D_INTERACTIVE = [
+    { id: 'video', slug: 'video', title: 'Watch: Lightning in Malaysia', desc: '1-minute animated lesson', icon: '🎬', theme: 'did-met' },
     { id: 'tnb', slug: 'tnb-power', title: 'TNB Grid Risk Map', desc: 'Flashes × power lines in real time', icon: '⚡', theme: 'power' },
     { id: 'study-area', slug: 'study-area', title: 'Study Area Map', desc: 'Observation network sites', icon: '🗺️', theme: 'map' },
     { id: 'lf', slug: 'lf', title: 'LF Network', desc: 'Animate a flash in 3D space', icon: '📡', theme: 'lf' },
