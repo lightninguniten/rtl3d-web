@@ -27,11 +27,11 @@
       <div class="top-left">
         <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          <span class="btn-label">Back</span>
+          <span class="btn-label" data-i18n="ui.back">Back</span>
         </a>
         <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-          <span class="btn-label">Home</span>
+          <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
           <span class="brand-icon">⚡</span>
@@ -55,85 +55,86 @@
           <div class="grid-overlay"></div>
         </div>
 
-        <main class="lf-page efield-page hsv-page hsv-theater-active" data-drag-scroll aria-label="High-speed video — drag to scroll">
+        <main class="lf-page efield-page hsv-page hsv-theater-active" data-drag-scroll data-i18n-attr="aria-label:hsv.aria.pageScroll" aria-label="High-speed video — drag to scroll">
           <header class="efield-header hsv-page-header">
             <div class="efield-header-text">
-              <span class="section-tag">Observation Network</span>
-              <h1>High-Speed Video of Lightning</h1>
+              <span class="section-tag" data-i18n="tag.observationNetwork">Observation Network</span>
+              <h1 data-i18n="sub.hsv.h1">High-Speed Video of Lightning</h1>
             </div>
           </header>
 
-          <section class="hsv-theater" id="hsv-theater" aria-label="High-speed lightning footage">
+          <section class="hsv-theater" id="hsv-theater" data-i18n-attr="aria-label:hsv.aria.footage" aria-label="High-speed lightning footage">
             <div class="hsv-theater-stage">
               <div class="hsv-video-box" id="hsv-video-box">
-                <video id="hsv-video" controls autoplay muted preload="metadata" playsinline title="High-speed lightning footage">
+                <video id="hsv-video" controls autoplay muted preload="metadata" playsinline data-i18n-attr="title:hsv.video.title" title="High-speed lightning footage">
                   <source id="hsv-video-source" src="videos/highspeedvideos/Y20260515H152823_CINE1_427_CC_2RL.mp4" type="video/mp4">
                 </video>
               </div>
               <div class="hsv-theater-bar">
                 <div class="hsv-theater-controls">
-                  <label class="hsv-video-label" for="hsv-clip-select">Recording</label>
-                  <select id="hsv-clip-select" class="hsv-clip-select" aria-label="Select high-speed recording"></select>
+                  <label class="hsv-video-label" for="hsv-clip-select" data-i18n="hsv.recording">Recording</label>
+                  <select id="hsv-clip-select" class="hsv-clip-select" data-i18n-attr="aria-label:hsv.aria.selectClip" aria-label="Select high-speed recording"></select>
                 </div>
                 <button type="button" id="hsv-theater-toggle" class="hsv-theater-btn" aria-pressed="true" aria-label="Exit theater mode" title="Exit theater mode">
                   <svg class="hsv-theater-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M3 7h4V3"/><path d="M17 3h4v4"/><path d="M21 17v4h-4"/><path d="M7 21H3v-4"/>
                   </svg>
-                  <span class="hsv-theater-btn-label">Theater</span>
+                  <span class="hsv-theater-btn-label" data-i18n="hsv.theater">Theater</span>
                 </button>
               </div>
             </div>
-            <p class="hsv-video-caption" id="hsv-video-caption">Cloud-to-cloud flash showing recoil leaders propagating along decaying leader channels — Phantom T2410, RTL3D observation network.</p>
+            <p class="hsv-video-caption" id="hsv-video-caption" data-i18n="hsv.caption">Cloud-to-cloud flash showing recoil leaders propagating along decaying leader channels — Phantom T2410, RTL3D observation network.</p>
           </section>
 
           <div class="efield-body">
-            <p class="efield-lead hsv-lead">The human eye sees a lightning flash as a single instantaneous burst. Two Vision Research Phantom T2410 cameras record at up to 525,000 frames per second — revealing stepped leaders probing downward, a bright return stroke racing upward, and dart leaders re-igniting spent channels in milliseconds.</p>
+            <p class="efield-lead hsv-lead" data-i18n="sub.hsv.lead">The human eye sees a lightning flash as a single instantaneous burst. Two Vision Research Phantom T2410 cameras record at up to 525,000 frames per second — revealing stepped leaders probing downward, a bright return stroke racing upward, and dart leaders re-igniting spent channels in milliseconds.</p>
 
-            <div class="efield-stats hsv-stats" aria-label="Key camera metrics">
-              <div class="efield-stat"><span class="efield-stat-val">2</span><span class="efield-stat-label">T2410 units</span></div>
-              <div class="efield-stat"><span class="efield-stat-val">525k</span><span class="efield-stat-label">fps max</span></div>
-              <div class="efield-stat"><span class="efield-stat-val">24k</span><span class="efield-stat-label">fps @ 1 Mpx</span></div>
-              <div class="efield-stat"><span class="efield-stat-val">24</span><span class="efield-stat-label">Gpx/s</span></div>
+            <div class="efield-stats hsv-stats" data-i18n-attr="aria-label:hsv.aria.stats" aria-label="Key camera metrics">
+              <div class="efield-stat"><span class="efield-stat-val">2</span><span class="efield-stat-label" data-i18n="hsv.stat.units">T2410 units</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">525k</span><span class="efield-stat-label" data-i18n="hsv.stat.fpsMax">fps max</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">24k</span><span class="efield-stat-label" data-i18n="hsv.stat.fps1mpx">fps @ 1 Mpx</span></div>
+              <div class="efield-stat"><span class="efield-stat-val">24</span><span class="efield-stat-label" data-i18n="hsv.stat.gpxs">Gpx/s</span></div>
             </div>
             <section class="efield-info-row">
               <article class="efield-card">
-                <h3>How it works</h3>
-                <p>The Phantom T2410 uses a back-side illuminated (BSI) CMOS sensor with a global electronic shutter and 24 Gpx/s throughput. At 24,270 fps (1280 × 800) each frame lasts ~41 μs — enough to resolve stepped-leader structure. In binned mode at 100,000 fps (640 × 384) the return-stroke luminosity wave, travelling at roughly one-third the speed of light, can be tracked frame by frame up the channel.</p>
+                <h3 data-i18n="hsv.how.h3">How it works</h3>
+                <p data-i18n="hsv.how.p">The Phantom T2410 uses a back-side illuminated (BSI) CMOS sensor with a global electronic shutter and 24 Gpx/s throughput. At 24,270 fps (1280 × 800) each frame lasts ~41 μs — enough to resolve stepped-leader structure. In binned mode at 100,000 fps (640 × 384) the return-stroke luminosity wave, travelling at roughly one-third the speed of light, can be tracked frame by frame up the channel.</p>
               </article>
               <article class="efield-card">
-                <h3>What is captured</h3>
-                <p><strong>Stepped leaders</strong> — the invisible-to-eye downward-propagating discharge that branches and pauses in 50 μs steps. <strong>Return stroke</strong> — the bright upward-propagating wave triggered when a leader contacts ground. <strong>Dart leaders</strong> — fast restrikes that follow the existing channel in subsequent strokes. <strong>Corona and recoil leaders</strong> visible in upper branches.</p>
+                <h3 data-i18n="hsv.captured.h3">What is captured</h3>
+                <p data-i18n-html="hsv.captured.p"><strong>Stepped leaders</strong> — the invisible-to-eye downward-propagating discharge that branches and pauses in 50 μs steps. <strong>Return stroke</strong> — the bright upward-propagating wave triggered when a leader contacts ground. <strong>Dart leaders</strong> — fast restrikes that follow the existing channel in subsequent strokes. <strong>Corona and recoil leaders</strong> visible in upper branches.</p>
               </article>
               <article class="efield-card">
-                <h3>Role in RTL3D</h3>
-                <p>Two Phantom T2410 units provide visual ground truth for the 3D source locations produced by the LF and VHF networks. Frame-by-frame channel images are IRIG/GPS time-stamped and overlaid on the 3D point cloud, confirming that mapped sources trace the actual visible channel geometry and branching structure.</p>
+                <h3 data-i18n="efield.role.h3">Role in RTL3D</h3>
+                <p data-i18n="hsv.role.p">Two Phantom T2410 units provide visual ground truth for the 3D source locations produced by the LF and VHF networks. Frame-by-frame channel images are IRIG/GPS time-stamped and overlaid on the 3D point cloud, confirming that mapped sources trace the actual visible channel geometry and branching structure.</p>
               </article>
             </section>
 
             <section class="hsv-camera-section" aria-labelledby="hsv-camera-title">
               <div class="hsv-camera-head">
-                <h2 id="hsv-camera-title" class="efield-section-title">Camera platform</h2>
-                <p class="efield-visual-sub">Vision Research Phantom T2410 — compact T-Series high-speed camera with BSI sensor for light-starved outdoor capture.</p>
+                <h2 id="hsv-camera-title" class="efield-section-title" data-i18n="hsv.camera.title">Camera platform</h2>
+                <p class="efield-visual-sub" data-i18n="hsv.camera.sub">Vision Research Phantom T2410 — compact T-Series high-speed camera with BSI sensor for light-starved outdoor capture.</p>
               </div>
               <div class="hsv-camera-layout">
                 <figure class="hsv-camera-figure">
                   <img
                     src="images/hsv/phantom-t2410-front.jpg"
+                    data-i18n-attr="alt:hsv.camera.alt"
                     alt="Vision Research Phantom T2410 high-speed camera, front view"
                     width="800"
                     height="800"
                     loading="lazy"
                     decoding="async">
-                  <figcaption>Phantom T2410 — 1280 × 800 BSI sensor, 24 Gpx/s throughput, global shutter.</figcaption>
+                  <figcaption data-i18n="hsv.camera.figcaption">Phantom T2410 — 1280 × 800 BSI sensor, 24 Gpx/s throughput, global shutter.</figcaption>
                 </figure>
                 <article class="efield-card hsv-camera-card">
-                  <h3>Phantom T2410 highlights</h3>
+                  <h3 data-i18n="hsv.highlights.h3">Phantom T2410 highlights</h3>
                   <ul class="efield-points">
-                    <li><strong>Throughput</strong> — 24 Gpx/s; 24,270 fps at full 1-Mpx resolution (1280 × 800).</li>
-                    <li><strong>Peak frame rate</strong> — up to 525,000 fps in standard or binned mode at reduced resolution; 100,000 fps at 640 × 384 binned.</li>
-                    <li><strong>Light sensitivity</strong> — BSI CMOS with 84.3% quantum efficiency (mono); suited to night-time lightning against a dark sky.</li>
-                    <li><strong>Exposure</strong> — 1.1 μs minimum (190 ns with FAST option); Extreme Dynamic Range (EDR) for saturated return-stroke cores.</li>
-                    <li><strong>Sync &amp; trigger</strong> — IRIG in/out, hardware BNC trigger, image-based auto-trigger, and programmable pre/post-trigger capture.</li>
+                    <li data-i18n-html="hsv.hl1"><strong>Throughput</strong> — 24 Gpx/s; 24,270 fps at full 1-Mpx resolution (1280 × 800).</li>
+                    <li data-i18n-html="hsv.hl2"><strong>Peak frame rate</strong> — up to 525,000 fps in standard or binned mode at reduced resolution; 100,000 fps at 640 × 384 binned.</li>
+                    <li data-i18n-html="hsv.hl3"><strong>Light sensitivity</strong> — BSI CMOS with 84.3% quantum efficiency (mono); suited to night-time lightning against a dark sky.</li>
+                    <li data-i18n-html="hsv.hl4"><strong>Exposure</strong> — 1.1 μs minimum (190 ns with FAST option); Extreme Dynamic Range (EDR) for saturated return-stroke cores.</li>
+                    <li data-i18n-html="hsv.hl5"><strong>Sync &amp; trigger</strong> — IRIG in/out, hardware BNC trigger, image-based auto-trigger, and programmable pre/post-trigger capture.</li>
                   </ul>
                 </article>
               </div>
@@ -141,33 +142,33 @@
 
             <section class="efield-bottom">
               <article class="efield-card efield-spec-card">
-                <h3>Camera specifications</h3>
+                <h3 data-i18n="hsv.spec.h3">Camera specifications</h3>
                 <dl class="efield-spec-grid">
-                  <div><dt>Model</dt><dd>Vision Research Phantom T2410</dd></div>
-                  <div><dt>Number of cameras</dt><dd>2 units</dd></div>
-                  <div><dt>Max resolution</dt><dd>1280 × 800 px (1 Mpx)</dd></div>
-                  <div><dt>Frame rate @ 1 Mpx</dt><dd>24,270 fps</dd></div>
-                  <div><dt>Max frame rate</dt><dd>525,000 fps (reduced res.)</dd></div>
-                  <div><dt>Throughput</dt><dd>24 Gpx/s</dd></div>
-                  <div><dt>Sensor</dt><dd>CMOS BSI, global shutter, 12-bit</dd></div>
-                  <div><dt>Pixel size</dt><dd>18.5 μm (37 μm binned)</dd></div>
-                  <div><dt>Min exposure</dt><dd>1.1 μs (190 ns FAST option)</dd></div>
-                  <div><dt>Quantum efficiency</dt><dd>84.3% mono; 77% color</dd></div>
-                  <div><dt>Memory</dt><dd>64 / 128 / 256 GB RAM</dd></div>
-                  <div><dt>Lens mount</dt><dd>Nikon F (standard)</dd></div>
-                  <div><dt>Synchronisation</dt><dd>IRIG in/out, GPS time-stamp</dd></div>
-                  <div><dt>Trigger</dt><dd>BNC hardware, image auto-trigger, LF event</dd></div>
-                  <div><dt>Coupled sensors</dt><dd>LF, VHF networks</dd></div>
+                  <div><dt data-i18n="hsv.spec.model">Model</dt><dd>Vision Research Phantom T2410</dd></div>
+                  <div><dt data-i18n="hsv.spec.numCameras">Number of cameras</dt><dd data-i18n="hsv.spec.numCamerasVal">2 units</dd></div>
+                  <div><dt data-i18n="hsv.spec.maxRes">Max resolution</dt><dd>1280 × 800 px (1 Mpx)</dd></div>
+                  <div><dt data-i18n="hsv.spec.fpsAt1mpx">Frame rate @ 1 Mpx</dt><dd>24,270 fps</dd></div>
+                  <div><dt data-i18n="hsv.spec.maxFps">Max frame rate</dt><dd>525,000 fps (reduced res.)</dd></div>
+                  <div><dt data-i18n="hsv.spec.throughput">Throughput</dt><dd>24 Gpx/s</dd></div>
+                  <div><dt data-i18n="hsv.spec.sensor">Sensor</dt><dd>CMOS BSI, global shutter, 12-bit</dd></div>
+                  <div><dt data-i18n="hsv.spec.pixelSize">Pixel size</dt><dd>18.5 μm (37 μm binned)</dd></div>
+                  <div><dt data-i18n="hsv.spec.minExp">Min exposure</dt><dd>1.1 μs (190 ns FAST option)</dd></div>
+                  <div><dt data-i18n="hsv.spec.qe">Quantum efficiency</dt><dd>84.3% mono; 77% color</dd></div>
+                  <div><dt data-i18n="hsv.spec.memory">Memory</dt><dd>64 / 128 / 256 GB RAM</dd></div>
+                  <div><dt data-i18n="hsv.spec.lensMount">Lens mount</dt><dd>Nikon F (standard)</dd></div>
+                  <div><dt data-i18n="hsv.spec.sync">Synchronisation</dt><dd>IRIG in/out, GPS time-stamp</dd></div>
+                  <div><dt data-i18n="hsv.spec.trigger">Trigger</dt><dd>BNC hardware, image auto-trigger, LF event</dd></div>
+                  <div><dt data-i18n="hsv.spec.coupled">Coupled sensors</dt><dd>LF, VHF networks</dd></div>
                 </dl>
               </article>
 
               <article class="efield-card efield-context-card">
-                <h3>Why frame rate matters</h3>
+                <h3 data-i18n="hsv.why.h3">Why frame rate matters</h3>
                 <ul class="efield-points">
-                  <li><strong>30 fps (standard video)</strong> — the entire lightning event collapses into one or two saturated white frames. Channel structure, branching, and stroke sequence are completely lost.</li>
-                  <li><strong>1,000–10,000 fps</strong> — individual strokes become separable; stepped-leader tip luminosity becomes visible as a faint advancing point in each frame.</li>
-                  <li><strong>50,000–525,000 fps</strong> — the return-stroke luminosity wave can be tracked upward frame by frame; dart-leader propagation speed can be measured directly from the footage.</li>
-                  <li>Overlaying the frame sequence on RTL3D 3D source maps confirms spatial accuracy of the time-of-arrival solution to within the channel width.</li>
+                  <li data-i18n-html="hsv.why1"><strong>30 fps (standard video)</strong> — the entire lightning event collapses into one or two saturated white frames. Channel structure, branching, and stroke sequence are completely lost.</li>
+                  <li data-i18n-html="hsv.why2"><strong>1,000–10,000 fps</strong> — individual strokes become separable; stepped-leader tip luminosity becomes visible as a faint advancing point in each frame.</li>
+                  <li data-i18n-html="hsv.why3"><strong>50,000–525,000 fps</strong> — the return-stroke luminosity wave can be tracked upward frame by frame; dart-leader propagation speed can be measured directly from the footage.</li>
+                  <li data-i18n="hsv.why4">Overlaying the frame sequence on RTL3D 3D source maps confirms spatial accuracy of the time-of-arrival solution to within the channel width.</li>
                 </ul>
               </article>
             </section>
@@ -176,6 +177,10 @@
       </div>
     </div>
   </div>
+
+  <script defer src="js/i18n-strings.js"></script>
+
+  <script defer src="js/i18n.js"></script>
 
   <script defer src="js/site-urls.js"></script>
   <script defer src="js/site-pages.js"></script>

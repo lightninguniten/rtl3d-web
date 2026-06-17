@@ -4,28 +4,28 @@
   const CLIPS = [
     {
       file: 'Y20260515H152823_CINE1_427_CC_2RL.mp4',
-      label: '15 May 2026 — Cloud-To-Cloud Flash With Recoil Leaders',
-      caption: 'Cloud-to-cloud flash showing recoil leaders propagating along decaying leader channels — Phantom T2410, RTL3D observation network.',
+      labelKey: 'hsv.clip0.label',
+      captionKey: 'hsv.caption',
     },
     {
       file: 'Y202606 6H065544_CINE24_447_cloudactivity.mp4',
-      label: '6 Jun 2026 — Preliminary Breakdown',
-      caption: 'Preliminary breakdown in the cloud before stepped-leader initiation — RTL3D observation network.',
+      labelKey: 'hsv.clip1.label',
+      captionKey: 'hsv.clip1.caption',
     },
     {
       file: 'Y20260612H184527_CINE4_450_NCGDL.mp4',
-      label: '12 Jun 2026 18:45 — Negative Cloud-To-Ground Dart Leader And Return Stroke',
-      caption: 'Subsequent stroke of a negative cloud-to-ground flash — dart leader followed by return stroke.',
+      labelKey: 'hsv.clip2.label',
+      captionKey: 'hsv.clip2.caption',
     },
     {
       file: 'Y20260612H184902_CINE7_451_NCGDL.mp4',
-      label: '12 Jun 2026 18:49 — Negative Cloud-To-Ground Dart Leader And Return Stroke',
-      caption: 'Dart leader and return stroke in a negative cloud-to-ground flash — stepped-leader structure resolved at 30 fps playback.',
+      labelKey: 'hsv.clip3.label',
+      captionKey: 'hsv.clip3.caption',
     },
     {
       file: 'Y20260612H185048_CINE9_453_NCGDL.mp4',
-      label: '12 Jun 2026 18:50 — Negative Cloud-To-Ground Dart Leader And Return Stroke',
-      caption: 'Negative cloud-to-ground flash with dart leader, return stroke, and channel branching — RTL3D observation network, Peninsular Malaysia.',
+      labelKey: 'hsv.clip4.label',
+      captionKey: 'hsv.clip4.caption',
     },
   ];
 
@@ -39,17 +39,39 @@
   if (!select || !video || !source || !caption) return;
 
   const THEATER_KEY = 'rtl3d-hsv-theater';
-
   const base = 'videos/highspeedvideos/';
+
+  function t(key) {
+    if (window.RTL3Di18n) {
+      const v = window.RTL3Di18n.t(key);
+      if (v != null) return v;
+    }
+    return null;
+  }
+
+  function clipLabel(index) {
+    const clip = CLIPS[index];
+    if (!clip) return '';
+    return t(clip.labelKey) || clip.labelKey;
+  }
+
+  function clipCaption(index) {
+    const clip = CLIPS[index];
+    if (!clip) return '';
+    return t(clip.captionKey) || clip.captionKey;
+  }
 
   function clipUrl(file) {
     return base + encodeURI(file);
   }
 
   function populateSelect() {
+    const idx = Number(select.value);
+    const current = Number.isFinite(idx) ? idx : 0;
     select.innerHTML = CLIPS.map(function (clip, i) {
-      return '<option value="' + i + '">' + clip.label + '</option>';
+      return '<option value="' + i + '">' + clipLabel(i) + '</option>';
     }).join('');
+    select.value = String(current);
   }
 
   function playWhenReady() {
@@ -63,29 +85,44 @@
     }
   }
 
-  function loadClip(index) {
+  function loadClip(index, reloadVideo) {
     const clip = CLIPS[index];
     if (!clip) return;
-    video.pause();
-    source.src = clipUrl(clip.file);
-    video.load();
-    caption.textContent = clip.caption;
-    playWhenReady();
+    if (reloadVideo) {
+      video.pause();
+      source.src = clipUrl(clip.file);
+      video.load();
+      playWhenReady();
+    }
+    caption.textContent = clipCaption(index);
   }
 
-  populateSelect();
-  loadClip(0);
+  function syncTheaterLabels() {
+    if (!theaterToggle || !page) return;
+    const active = page.classList.contains('hsv-theater-active');
+    const label = t(active ? 'hsv.theater.exit' : 'hsv.theater.enter');
+    if (label != null) {
+      theaterToggle.setAttribute('aria-label', label);
+      theaterToggle.title = label;
+    }
+  }
+
+  function refreshClipUi(reloadVideo) {
+    const idx = Number(select.value);
+    populateSelect();
+    loadClip(Number.isFinite(idx) ? idx : 0, reloadVideo);
+    syncTheaterLabels();
+  }
 
   select.addEventListener('change', function () {
-    loadClip(Number(select.value));
+    loadClip(Number(select.value), true);
   });
 
   function setTheater(active) {
     if (!page || !theaterToggle) return;
     page.classList.toggle('hsv-theater-active', active);
     theaterToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
-    theaterToggle.setAttribute('aria-label', active ? 'Exit theater mode' : 'Expand theater mode');
-    theaterToggle.title = active ? 'Exit theater mode' : 'Theater mode';
+    syncTheaterLabels();
     try {
       sessionStorage.setItem(THEATER_KEY, active ? '1' : '0');
     } catch (e) {}
@@ -108,4 +145,16 @@
       setTheater(!page.classList.contains('hsv-theater-active'));
     });
   }
+
+  let clipUiReady = false;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    refreshClipUi(true);
+    clipUiReady = true;
+  });
+
+  document.addEventListener('rtl3d:langchange', function () {
+    if (!clipUiReady) return;
+    refreshClipUi(false);
+  });
 })();

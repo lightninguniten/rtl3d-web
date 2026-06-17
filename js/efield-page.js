@@ -15,9 +15,19 @@
   var current = 0;
   var titles = [];
 
+  var titleKeys = [];
   slides.forEach(function (slide, i) {
+    titleKeys[i] = slide.getAttribute('data-title-key') || '';
     titles[i] = slide.getAttribute('data-title') || ('Step ' + (i + 1));
   });
+
+  function slideTitle(i) {
+    if (titleKeys[i] && window.RTL3Di18n) {
+      var v = window.RTL3Di18n.t(titleKeys[i]);
+      if (v != null) return v;
+    }
+    return titles[i];
+  }
 
   function setSlide(index) {
     if (!slides.length) return;
@@ -30,7 +40,7 @@
       dot.classList.toggle('is-active', i === current);
       dot.setAttribute('aria-selected', i === current ? 'true' : 'false');
     });
-    if (titleEl) titleEl.textContent = titles[current];
+    if (titleEl) titleEl.textContent = slideTitle(current);
     if (counterEl) counterEl.textContent = (current + 1) + ' / ' + slides.length;
     if (prevBtn) prevBtn.disabled = slides.length <= 1;
     if (nextBtn) nextBtn.disabled = slides.length <= 1;
@@ -83,4 +93,10 @@
   });
 
   setSlide(0);
+
+  // Refresh the modal title when the language changes (the carousel title is
+  // set from JS, so the engine's DOM pass won't catch it).
+  document.addEventListener('rtl3d:langchange', function () {
+    if (titleEl) titleEl.textContent = slideTitle(current);
+  });
 })();

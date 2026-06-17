@@ -41,10 +41,10 @@
       '<span class="hub-featured-glow" aria-hidden="true"></span>' +
       `<span class="hub-featured-icon-wrap"><span class="hub-featured-icon" aria-hidden="true">${item.icon || '•'}</span></span>` +
       '<span class="hub-featured-copy">' +
-      `<span class="hub-featured-title">${item.title}</span>` +
-      `<span class="hub-featured-desc">${item.desc || ''}</span>` +
+      `<span class="hub-featured-title" data-i18n="featured.${item.id}.title">${item.title}</span>` +
+      `<span class="hub-featured-desc" data-i18n="featured.${item.id}.desc">${item.desc || ''}</span>` +
       '</span>' +
-      '<span class="hub-featured-cta">Enter <span class="hub-arrow" aria-hidden="true">→</span></span>'
+      '<span class="hub-featured-cta"><span data-i18n="hub.enter">Enter</span> <span class="hub-arrow" aria-hidden="true">→</span></span>'
     );
   }
 

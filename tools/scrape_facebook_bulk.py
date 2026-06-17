@@ -589,6 +589,7 @@ def merge_posts(*groups: list[dict]) -> list[dict]:
 
 def save_images(posts: list[dict]) -> list[dict]:
     fb_items: list[dict] = []
+    seen_bytes: set[str] = set()
     for post in posts:
         if len(fb_items) >= MAX_IMAGES:
             break
@@ -596,6 +597,12 @@ def save_images(posts: list[dict]) -> list[dict]:
         size = download(post["image_url"], local)
         if not size:
             continue
+        digest = hashlib.md5(local.read_bytes()).hexdigest()
+        if digest in seen_bytes:
+            local.unlink(missing_ok=True)
+            log(f"  skip duplicate image bytes [{post.get('source', '')}]")
+            continue
+        seen_bytes.add(digest)
         hi = " HD" if size >= MIN_HI_RES_BYTES else ""
         path = str(local.relative_to(ROOT)).replace("\\", "/")
         caption = caption_or_fallback(post, len(fb_items) + 1)
@@ -747,19 +754,20 @@ def scrape_all(page) -> list[dict]:
     photo_posts = scrape_photo_pages(page, all_photo_links)
     log(f"  photo-page scrapes: {len(photo_posts)}")
 
-    # Network-captured CDN URLs not yet tied to a post page.
+    # Network CDN only when photo pages yielded little (avoids hundreds of duplicate thumbs).
     cdn_posts: list[dict] = []
-    for i, src in enumerate(unique(cdn_network)):
-        cdn_posts.append({
-            "image_url": src,
-            "text": "",
-            "caption": "",
-            "score": 1,
-            "topic": "3D lightning mapping",
-            "source": "network",
-            "post_id": f"net-{hashlib.md5(src.encode()).hexdigest()[:10]}",
-        })
-    log(f"  network CDN URLs: {len(cdn_network)}")
+    if len(photo_posts) < 8:
+        for src in unique(cdn_network):
+            cdn_posts.append({
+                "image_url": src,
+                "text": "",
+                "caption": "",
+                "score": 1,
+                "topic": "3D lightning mapping",
+                "source": "network",
+                "post_id": f"net-{hashlib.md5(src.encode()).hexdigest()[:10]}",
+            })
+    log(f"  network CDN URLs: {len(cdn_network)} (using {len(cdn_posts)} for merge)")
 
     # Timeline pass (may overlap — merge dedupes).
     log("  loading timeline (final pass)…")

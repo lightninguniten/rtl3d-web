@@ -19,8 +19,8 @@
       `<span class="nav-box-icon">${page.icon || '•'}</span>` +
       `<span class="nav-box-num">${String(i).padStart(2, '0')}</span>` +
       '</span>' +
-      `<span class="nav-box-title">${page.title}</span>` +
-      (page.desc ? `<span class="nav-box-desc">${page.desc}</span>` : '');
+      `<span class="nav-box-title" data-i18n="page.${page.id}.title">${page.title}</span>` +
+      (page.desc ? `<span class="nav-box-desc" data-i18n="page.${page.id}.desc">${page.desc}</span>` : '');
     sectionNav.appendChild(link);
   });
 

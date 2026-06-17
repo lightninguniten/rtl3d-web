@@ -28,11 +28,11 @@
       <div class="top-left">
         <a id="back-btn" class="btn-icon btn-nav" href="#" title="Back" aria-label="Previous page">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          <span class="btn-label">Back</span>
+          <span class="btn-label" data-i18n="ui.back">Back</span>
         </a>
         <a id="home-btn" href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-          <span class="btn-label">Home</span>
+          <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
           <span class="brand-icon">⚡</span>
@@ -57,37 +57,37 @@
         <main class="page-view">
 
           <div class="slide-inner">
-            <span class="section-tag center">Research Framework</span>
-            <h2 class="center-title">Three pillars of inquiry</h2>
+            <span class="section-tag center" data-i18n="page.framework.title">Research Framework</span>
+            <h2 class="center-title" data-i18n="framework.h2">Three pillars of inquiry</h2>
             <div class="cards three">
               <article class="card">
                 <div class="card-num">01</div>
-                <h3>What kind of lightning?</h3>
-                <p>High-resolution observation of lightning channel development through electromagnetic measurement across multiple frequency bands.</p>
+                <h3 data-i18n="framework.c1.h3">What kind of lightning?</h3>
+                <p data-i18n="framework.c1.p">High-resolution observation of lightning channel development through electromagnetic measurement across multiple frequency bands.</p>
                 <ul>
-                  <li>LF network — channel imaging &gt;100 km</li>
-                  <li>VHF network — leader development</li>
-                  <li>E-field, γ-ray &amp; video sensors</li>
+                  <li data-i18n-html="framework.c1.li1">LF network — channel imaging &gt;100 km</li>
+                  <li data-i18n="framework.c1.li2">VHF network — leader development</li>
+                  <li data-i18n-html="framework.c1.li3">E-field, γ-ray &amp; video sensors</li>
                 </ul>
               </article>
               <article class="card featured">
                 <div class="card-num">02</div>
-                <h3>What kind of thundercloud?</h3>
-                <p>Real-time 3D imaging and estimation of charge distribution inside thunderclouds — location and quantity of charge.</p>
+                <h3 data-i18n="framework.c2.h3">What kind of thundercloud?</h3>
+                <p data-i18n="framework.c2.p">Real-time 3D imaging and estimation of charge distribution inside thunderclouds — location and quantity of charge.</p>
                 <ul>
-                  <li>500 m spatial resolution in 5 min</li>
-                  <li>0.01 C charge resolution</li>
-                  <li>Validated via RTL experiments</li>
+                  <li data-i18n="framework.c2.li1">500 m spatial resolution in 5 min</li>
+                  <li data-i18n="framework.c2.li2">0.01 C charge resolution</li>
+                  <li data-i18n="framework.c2.li3">Validated via RTL experiments</li>
                 </ul>
               </article>
               <article class="card">
                 <div class="card-num">03</div>
-                <h3>What will happen next?</h3>
-                <p>Short-time forecasting of cloud-to-ground (CG) lightning and correlation between lightning activity and heavy rainfall.</p>
+                <h3 data-i18n="framework.c3.h3">What will happen next?</h3>
+                <p data-i18n="framework.c3.p">Short-time forecasting of cloud-to-ground (CG) lightning and correlation between lightning activity and heavy rainfall.</p>
                 <ul>
-                  <li>CG forecast: 50% hit rate, 5 min lead</li>
-                  <li>Heavy rain (&gt;50 mm/h) alert: 15 min</li>
-                  <li>IoT lightning protection systems</li>
+                  <li data-i18n="framework.c3.li1">CG forecast: 50% hit rate, 5 min lead</li>
+                  <li data-i18n-html="framework.c3.li2">Heavy rain (&gt;50 mm/h) alert: 15 min</li>
+                  <li data-i18n="framework.c3.li3">IoT lightning protection systems</li>
                 </ul>
               </article>
             </div>
@@ -97,6 +97,10 @@
       </div>
     </div>
   </div>
+
+  <script defer src="js/i18n-strings.js"></script>
+
+  <script defer src="js/i18n.js"></script>
 
   <script defer src="js/site-urls.js"></script>
   <script defer src="js/site-pages.js"></script>

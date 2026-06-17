@@ -10,7 +10,7 @@
   // Point at index.html explicitly so it works both over HTTP and from file://
   // (a bare "video/" path shows a directory listing on the file: scheme).
   var urlFn = (window.RTL3D_URL && window.RTL3D_URL.page) || function (s) { return s + '/'; };
-  var VIDEO_SRC = urlFn('video') + 'index.html?loop=1&kiosk=1';
+  var VIDEO_SRC = urlFn('video') + 'index.html?kiosk=1&cycle=1&lang=en';
 
   var EXPLORE_DISMISS_MS = 5000;  // glass auto-hides back to the video after 5s
 

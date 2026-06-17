@@ -82,12 +82,27 @@
 
   var LETTERS = ['A', 'B', 'C', 'D'];
 
+  // Pull a UI string from the shared i18n dictionary, with {placeholder} fill.
+  function tt(key, vars) {
+    var s = (window.RTL3Di18n && window.RTL3Di18n.t(key));
+    if (s == null) s = key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.replace('{' + k + '}', vars[k]); });
+    return s;
+  }
+
+  // Return the question set for the active language, falling back to English.
+  function getQuestions() {
+    var lang = window.RTL3Di18n && window.RTL3Di18n.lang;
+    var loc = lang && window.RTL3D_QUIZ_I18N && window.RTL3D_QUIZ_I18N[lang];
+    return (loc && loc.length === QUESTIONS.length) ? loc : QUESTIONS;
+  }
+
   function render() {
-    var q = QUESTIONS[state.current];
-    el('quiz-progress').textContent = 'Question ' + (state.current + 1) + ' of ' + QUESTIONS.length;
+    var q = getQuestions()[state.current];
+    el('quiz-progress').textContent = tt('quiz.progress', { n: state.current + 1, total: QUESTIONS.length });
     el('quiz-progress-bar-fill').style.width = (((state.current) / QUESTIONS.length) * 100) + '%';
     var scoreLive = el('quiz-score-live');
-    if (scoreLive) scoreLive.textContent = 'Score: ' + state.score;
+    if (scoreLive) scoreLive.textContent = tt('quiz.scoreLive', { n: state.score });
     el('quiz-question').textContent = q.q;
     var optsEl = el('quiz-options');
     optsEl.innerHTML = '';
@@ -131,7 +146,7 @@
     var nextBtn = el('quiz-next');
     if (state.answered) {
       nextBtn.hidden = false;
-      nextBtn.textContent = (state.current + 1 < QUESTIONS.length) ? 'Next question →' : 'See results →';
+      nextBtn.textContent = (state.current + 1 < QUESTIONS.length) ? tt('quiz.next') : tt('quiz.seeResults');
     } else {
       nextBtn.hidden = true;
     }
@@ -141,7 +156,7 @@
     if (state.answered) return;
     state.answered = true;
     state.userAns = i;
-    if (i === QUESTIONS[state.current].ans) state.score++;
+    if (i === getQuestions()[state.current].ans) state.score++;
     render();
   }
 
@@ -156,31 +171,30 @@
     render();
   }
 
+  function gradeKeys(pct) {
+    if (pct === 100) return { grade: 'quiz.grade.expert', msg: 'quiz.msg.expert' };
+    if (pct >= 70) return { grade: 'quiz.grade.smart', msg: 'quiz.msg.smart' };
+    if (pct >= 40) return { grade: 'quiz.grade.learning', msg: 'quiz.msg.learning' };
+    return { grade: 'quiz.grade.indoors', msg: 'quiz.msg.indoors' };
+  }
+
+  // Fill the result panel text from current state (re-runnable on lang change).
+  function renderResult() {
+    var pct = Math.round((state.score / QUESTIONS.length) * 100);
+    var keys = gradeKeys(pct);
+    el('quiz-result-score').textContent = state.score + ' / ' + QUESTIONS.length;
+    el('quiz-result-pct').textContent = pct + '%';
+    el('quiz-result-grade').textContent = tt(keys.grade);
+    el('quiz-result-msg').textContent = tt(keys.msg);
+  }
+
   function showResult() {
     state.finished = true;
     var pct = Math.round((state.score / QUESTIONS.length) * 100);
-    var grade, msg;
-    if (pct === 100) {
-      grade = 'Lightning Expert!';
-      msg = 'Perfect score — you are ready to weather any storm!';
-    } else if (pct >= 70) {
-      grade = 'Storm-Smart';
-      msg = 'Great job! Review the questions you missed to stay safe.';
-    } else if (pct >= 40) {
-      grade = 'Learning the Ropes';
-      msg = 'Good effort! Lightning safety is serious — keep practising.';
-    } else {
-      grade = 'Stay Indoors!';
-      msg = 'Lightning is dangerous — please review the safety tips and try again.';
-    }
 
     el('quiz-body').hidden = true;
-    var res = el('quiz-result');
-    res.hidden = false;
-    el('quiz-result-score').textContent = state.score + ' / ' + QUESTIONS.length;
-    el('quiz-result-pct').textContent = pct + '%';
-    el('quiz-result-grade').textContent = grade;
-    el('quiz-result-msg').textContent = msg;
+    el('quiz-result').hidden = false;
+    renderResult();
     el('quiz-progress-bar-fill').style.width = '100%';
 
     submitResult(pct);
@@ -207,11 +221,11 @@
 
     var endpoint = window.RTL3D_QUIZ_ENDPOINT;
     if (!endpoint) {
-      if (saveEl) saveEl.textContent = 'Result saved on this device.';
+      if (saveEl) saveEl.textContent = tt('quiz.save.local');
       return;
     }
 
-    if (saveEl) saveEl.textContent = 'Saving your result…';
+    if (saveEl) saveEl.textContent = tt('quiz.save.saving');
     // Apps Script web-apps don't send CORS headers, so use no-cors: the POST
     // still reaches the script; we just can't read the response. URL-encoded
     // body avoids a CORS preflight.
@@ -225,9 +239,9 @@
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       body: body
     }).then(function () {
-      if (saveEl) saveEl.textContent = '✓ Result saved.';
+      if (saveEl) saveEl.textContent = tt('quiz.save.done');
     }).catch(function () {
-      if (saveEl) saveEl.textContent = 'Saved on this device (could not reach the server).';
+      if (saveEl) saveEl.textContent = tt('quiz.save.offline');
     });
   }
 
@@ -280,6 +294,16 @@
     render();
     el('quiz-next').addEventListener('click', next);
     el('quiz-restart').addEventListener('click', restart);
+  });
+
+  // Re-render the active view when the language changes so questions, options,
+  // and result text update in place.
+  document.addEventListener('rtl3d:langchange', function () {
+    if (state.finished) {
+      renderResult();
+    } else if (!el('quiz-body').hidden) {
+      render();
+    }
   });
 
   window.RTL3D_QUIZ = { exportCsv: exportCsv };
