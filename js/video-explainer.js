@@ -222,7 +222,9 @@
   var kioskParam = false;
   var cycleParam = false;
   var autoplayParam = false;
+  var silentParam = false;
   var langParam = null;
+  var externalSync = false;
 
   try {
     var q = new URLSearchParams(window.location.search);
@@ -230,6 +232,7 @@
     kioskParam = q.get('kiosk') === '1';
     cycleParam = q.get('cycle') === '1' || (kioskParam && q.get('cycle') !== '0');
     autoplayParam = q.get('autoplay') === '1';
+    silentParam = q.get('silent') === '1';
     langParam = q.get('lang');
   } catch (_) {}
 
@@ -295,6 +298,7 @@
         fill.style.width = (p * 100) + '%';
       },
       onComplete: function () {
+        if (silentParam) return;
         if (cycleParam) advanceCycle();
         else finishLesson();
       }
@@ -373,7 +377,7 @@
     if (bgm.preload === 'none') bgm.preload = 'auto';
     bgm.volume = bgmVolumeFor();
     bgm.loop = true;
-    bgm.muted = !!(audio && audio.muted);
+    bgm.muted = false;
     if (bgm.readyState < 2) {
       try { bgm.load(); } catch (_) {}
     }
@@ -421,8 +425,14 @@
     });
     audio.addEventListener('ended', function () {
       stopBgm();
+      if (silentParam) return;
       if (cycleParam) advanceCycle();
     });
+  }
+
+  function unlockAudio() {
+    if (audio) audio.muted = false;
+    if (bgm) bgm.muted = false;
   }
 
   function beginPlayback() {
@@ -434,8 +444,12 @@
       console.error('[video] Narration not available', audio.error, audio.src);
       return;
     }
-    audio.play().catch(function (err) {
-      console.warn('[video] Narration play failed', err);
+    audio.play().then(null, function () {
+      var tries = 0;
+      (function retry() {
+        if (++tries > 80 || !audioOn) return;
+        audio.play().then(null, function () { window.setTimeout(retry, 80); });
+      })();
     });
     if (usesBgm()) startBgm();
     else stopBgm();
@@ -451,10 +465,7 @@
     var api = vi18n();
     var ready = api && api.prepareAudio ? api.prepareAudio(lang) : Promise.resolve(true);
     ready.then(function (ok) {
-      if (!ok) {
-        console.error('[video] Audio not ready for', lang);
-        return;
-      }
+      if (!ok) console.error('[video] Audio not ready for', lang);
       beginPlayback();
     });
   }
@@ -488,12 +499,45 @@
     if (timeline) timeline.pause();
   }
 
+  function applyExternalLang(lang) {
+    applyVideoLang(lang);
+    resetAll();
+    show(SCENES[0].id);
+    if (timeline) {
+      timeline.time(0);
+      timeline.pause();
+    }
+  }
+
+  function syncExternalTime(t) {
+    if (!timeline || t == null || isNaN(t)) return;
+    t = Math.max(0, Math.min(TOTAL, t));
+    if (Math.abs(timeline.time() - t) > 0.15) timeline.time(t);
+  }
+
+  function bootSilentKiosk() {
+    externalSync = true;
+    audioOn = false;
+    if (poster) poster.classList.add('is-hidden');
+    resetAll();
+    show(SCENES[0].id);
+    if (timeline) {
+      timeline.time(0);
+      timeline.pause();
+    }
+  }
+
   window.addEventListener('message', function (e) {
-    if (!e || !e.data || e.data.type !== 'rtl3d-video-stop') return;
-    stopAllPlayback();
+    if (!e || !e.data) return;
+    if (e.data.type === 'rtl3d-video-stop') stopAllPlayback();
+    if (e.data.type === 'rtl3d-video-play') playWithAudio();
+    if (silentParam && e.data.type === 'rtl3d-sync') syncExternalTime(e.data.t);
+    if (silentParam && e.data.type === 'rtl3d-set-lang' && e.data.lang) {
+      applyExternalLang(e.data.lang);
+    }
   });
 
-  if (cycleParam) {
+  if (cycleParam && !silentParam) {
     onLessonComplete = advanceCycle;
   }
 
@@ -550,12 +594,8 @@
           seekTo(parseFloat(seekParam));
         } else if (kioskParam || cycleParam) {
           if (poster) poster.classList.add('is-hidden');
-          var inIframe = window.self !== window.top;
-          if (inIframe) {
-            playWithAudio();
-          } else {
-            playWithAudio();
-          }
+          if (silentParam) bootSilentKiosk();
+          else playWithAudio();
         } else if (autoplayParam) {
           if (poster) poster.classList.add('is-hidden');
           playWithAudio();
@@ -583,6 +623,7 @@
     setLang: applyVideoLang,
     usesBgm: usesBgm,
     stopBgm: stopBgm,
-    stopAll: stopAllPlayback
+    stopAll: stopAllPlayback,
+    unlockAudio: unlockAudio
   };
 })();
