@@ -10,9 +10,9 @@
     { id: 'impact', slug: 'social-impact', title: 'Social Impact', icon: '⚡', desc: 'Energy, warning & public safety' },
     { id: 'study-area', slug: 'study-area', title: 'Study Area Map', icon: '🗺️', desc: 'Interactive site map' },
     { id: 'partners', slug: 'partners', title: 'Partners', icon: '🤝', desc: 'Malaysia–Japan collaboration' },
-    { id: 'contact', slug: 'contact', title: 'Contact', icon: '📬', desc: 'Connect with the team' },
     { id: 'quiz', slug: 'quiz', title: 'Lightning Quiz', icon: '🧠', desc: 'Test your lightning safety knowledge' },
     { id: 'social', slug: 'social', title: 'Follow Us', icon: '📱', desc: 'Facebook & Instagram feeds' },
+    { id: 'contact', slug: 'contact', title: 'Contact', icon: '📬', desc: 'Connect with the team' },
   ];
 
   window.RTL3D_EXTRA = [

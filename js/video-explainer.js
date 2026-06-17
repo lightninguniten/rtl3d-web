@@ -235,6 +235,17 @@
     }
   }
 
+  function playMutedAudio() {
+    resetAll();
+    audioOn = true;
+    timeline.restart();
+    if (audio) {
+      audio.currentTime = 0;
+      audio.muted = true;
+      audio.play().catch(function () {/* muted autoplay blocked in some embeds */});
+    }
+  }
+
   function playSilent() {
     resetAll();
     audioOn = false;
@@ -284,11 +295,20 @@
       if (seekParam !== null && !isNaN(parseFloat(seekParam))) {
         seekTo(parseFloat(seekParam));
       } else if (kioskParam) {
-        // screensaver: autoplay + loop, no poster. Try WITH audio (the home
-        // page had a prior user gesture); if the browser blocks it, the
-        // visuals still loop and we fall back to silent.
+        // Screensaver / attract-loop: no poster. Visuals always start; audio
+        // may be blocked until a tap (especially inside an iframe with no
+        // prior gesture). Try unmuted first, then muted, then silent.
         if (poster) poster.classList.add('is-hidden');
-        playWithAudio();
+        var inIframe = window.self !== window.top;
+        if (inIframe) {
+          playMutedAudio();
+          if (audio) {
+            audio.muted = false;
+            audio.play().catch(function () { /* keep muted timeline */ });
+          }
+        } else {
+          playWithAudio();
+        }
       } else if (autoplayParam) {
         // opened from the quiz prompt → start immediately WITH audio
         // (the modal button click satisfies the autoplay gesture rule).

@@ -27,12 +27,14 @@
     overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML =
       '<div class="idle-screensaver-frame">' +
-        '<iframe title="Lightning in Malaysia — attract loop" ' +
-          'tabindex="-1" aria-hidden="true" scrolling="no" ' +
-          'allow="autoplay; fullscreen"></iframe>' +
+        '<div class="idle-screensaver-video">' +
+          '<iframe title="Lightning in Malaysia — attract loop" ' +
+            'tabindex="-1" aria-hidden="true" scrolling="no" ' +
+            'allow="autoplay; fullscreen; encrypted-media" ' +
+            'referrerpolicy="same-origin"></iframe>' +
+        '</div>' +
+        '<button type="button" class="idle-tap-hint">Click to explore</button>' +
       '</div>' +
-      // Transparent "glass" prompt — appears on first hover/click; clicking it
-      // returns to the main page.
       '<button type="button" class="idle-explore" aria-label="Return to the home page">' +
         '<span class="idle-explore-glass">' +
           '<span class="idle-explore-bolt" aria-hidden="true">⚡</span>' +
@@ -44,19 +46,37 @@
     iframe = overlay.querySelector('iframe');
 
     var explore = overlay.querySelector('.idle-explore');
-    // First interaction surfaces the glass prompt; the next click on it leaves.
-    overlay.addEventListener('pointermove', promptExplore, true);
-    overlay.addEventListener('pointerdown', function (e) {
+    var tapHint = overlay.querySelector('.idle-tap-hint');
+
+    function onExploreTap(e) {
       e.preventDefault();
       e.stopPropagation();
-      if (prompting) { hide(); }      // already prompting → go to main page
-      else { promptExplore(); }       // first tap → reveal glass
+      if (prompting) { hide(); }
+      else { promptExplore(); }
+    }
+
+    if (tapHint) {
+      tapHint.addEventListener('click', onExploreTap);
+    }
+
+    overlay.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.idle-tap-hint') || e.target.closest('.idle-explore-glass')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (prompting) { hide(); }
+      else { promptExplore(); }
     }, true);
-    overlay.addEventListener('wheel', function (e) { e.stopPropagation(); promptExplore(); },
-      { capture: true, passive: true });
+
+    overlay.addEventListener('wheel', function (e) {
+      e.stopPropagation();
+      if (!prompting) promptExplore();
+    }, { capture: true, passive: true });
+
     if (explore) {
       explore.addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation(); hide();
+        e.preventDefault();
+        e.stopPropagation();
+        hide();
       });
     }
   }
@@ -112,23 +132,34 @@
     idleTimer = window.setTimeout(show, IDLE_MS);
   }
 
-  // Global interaction:
-  //  - screensaver up  → reveal the "Let's explore" glass (don't leave yet);
-  //                      a key press goes straight back to the hub.
-  //  - screensaver off → just reset the idle countdown.
+  // Only deliberate interactions reset the idle countdown while the
+  // screensaver is off. pointermove is intentionally excluded — on desktop
+  // Chrome, simply moving the mouse over the page would otherwise reset the
+  // timer forever and the attract-loop would never start.
+  function resetIdle() {
+    if (!active) arm();
+  }
+
+  // Global interaction while screensaver is showing:
+  //  - keydown → go straight back to the hub
+  //  - anything else → reveal the "Let's explore" glass (don't leave yet)
   function wake(e) {
     if (active) {
       if (e && e.type === 'keydown') { hide(); return; }
       promptExplore();
       return;
     }
-    arm();
+    resetIdle();
   }
 
-  var EVENTS = ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'];
-  EVENTS.forEach(function (ev) {
-    window.addEventListener(ev, wake, { passive: true, capture: true });
+  var IDLE_RESET_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
+  IDLE_RESET_EVENTS.forEach(function (ev) {
+    window.addEventListener(ev, resetIdle, { passive: true, capture: true });
   });
+
+  // Scroll only when the visitor actually scrolls page content (not ambient
+  // pointer drift). Capture phase so nested .page-view scroll counts.
+  window.addEventListener('scroll', resetIdle, { passive: true, capture: true });
 
   // Pause the countdown when the tab is hidden; restart it when visible again.
   document.addEventListener('visibilitychange', function () {
@@ -139,6 +170,9 @@
       arm();
     }
   });
+
+  // While the screensaver is up, key presses dismiss immediately.
+  window.addEventListener('keydown', wake, { passive: true, capture: true });
 
   arm();
 

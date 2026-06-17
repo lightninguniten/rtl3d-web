@@ -47,7 +47,7 @@
       text: url,
       width: 200,
       height: 200,
-      colorDark: '#0f172a',
+      colorDark: '#001A3A',
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M,
     });
