@@ -459,6 +459,19 @@
       background: linear-gradient(90deg, #FFC72C, #FFE07A);
       box-shadow: 0 0 12px rgba(255, 199, 44, 0.7);
     }
+    .vid-music-credit {
+      position: absolute;
+      left: clamp(0.5rem, 2cqw, 1rem);
+      bottom: clamp(0.45rem, 1.5cqh, 0.85rem);
+      z-index: 4;
+      margin: 0;
+      max-width: min(92%, 28rem);
+      font-size: clamp(0.52rem, 1.35cqw, 0.68rem);
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.42);
+      pointer-events: none;
+    }
+    body.vid-kiosk .vid-music-credit { display: none; }
     .vid-scene-dots {
       position: absolute;
       top: clamp(0.7rem, 2.5cqh, 1.4rem);
@@ -577,7 +590,7 @@
 
               <!-- Narration (EN track may include baked-in bg music; MS/JA use vid-bgm below) -->
               <audio id="vid-audio" preload="metadata" src="video/narration-en.mp3"></audio>
-              <audio id="vid-bgm" preload="auto" loop src="bgmusic.mp3"></audio>
+              <audio id="vid-bgm" preload="auto" loop src="../bgmusic.mp3"></audio>
 
               <!-- Tap-to-start overlay (browsers block audio autoplay until a gesture) -->
               <button type="button" class="vid-poster" id="vid-poster" data-i18n-attr="aria-label:video.poster.aria" aria-label="Play the lesson with sound">
@@ -711,6 +724,9 @@
               </section>
 
               <div class="vid-progress" aria-hidden="true"><div class="vid-progress-fill" id="vid-progress-fill"></div></div>
+              <p class="vid-music-credit" id="vid-music-credit">
+                Music: &ldquo;Cinematic Trailer&rdquo; by Hans Williamson (Music for Video Library)
+              </p>
             </div>
 
           </div>
