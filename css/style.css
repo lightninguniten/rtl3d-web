@@ -8485,10 +8485,13 @@ html.portrait-mobile .efield-page .efield-step-preview {
   border: 0;
   background: transparent;
   font-family: 'DM Sans', system-ui, sans-serif;
-  font-size: clamp(0.85rem, 2.596vw, 1.086rem);
+  font-size: clamp(0.68rem, 2.1vw, 0.92rem);
   font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  line-height: 1.45;
+  text-align: center;
+  max-width: min(96vw, 40rem);
   color: #FFE07A;
   cursor: pointer;
   padding: 0.35rem 0.75rem 0.15rem;

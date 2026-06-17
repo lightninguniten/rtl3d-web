@@ -21,6 +21,19 @@
   var overlay = null;
   var iframe = null;
 
+  var TAP_HINT =
+    'Click to explore / Tekan untuk lanjut / タップして探索';
+
+  function stopIframeMedia() {
+    if (!iframe) return;
+    try {
+      if (iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'rtl3d-video-stop' }, window.location.origin);
+      }
+    } catch (_) {}
+    try { iframe.src = 'about:blank'; } catch (_) {}
+  }
+
   function buildOverlay() {
     overlay = document.createElement('div');
     overlay.className = 'idle-screensaver';
@@ -33,7 +46,7 @@
             'allow="autoplay; fullscreen; encrypted-media" ' +
             'referrerpolicy="same-origin"></iframe>' +
         '</div>' +
-        '<button type="button" class="idle-tap-hint">Click to explore</button>' +
+        '<button type="button" class="idle-tap-hint">' + TAP_HINT + '</button>' +
       '</div>' +
       '<button type="button" class="idle-explore" aria-label="Return to the home page">' +
         '<span class="idle-explore-glass">' +
@@ -118,12 +131,9 @@
     active = false;
     prompting = false;
     window.clearTimeout(exploreTimer);
+    stopIframeMedia();
     overlay.classList.remove('is-on');
     overlay.classList.remove('show-explore');
-    // free the iframe (stops its rAF/animation + audio) after the fade-out
-    window.setTimeout(function () {
-      if (!active && iframe) iframe.src = 'about:blank';
-    }, 500);
     arm();
   }
 

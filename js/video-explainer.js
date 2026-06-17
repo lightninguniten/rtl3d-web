@@ -478,6 +478,21 @@
     else if (audioOn && audio && !audio.paused) startBgm();
   }
 
+  function stopAllPlayback() {
+    audioOn = false;
+    if (audio) {
+      audio.pause();
+      try { audio.currentTime = 0; } catch (_) {}
+    }
+    stopBgm();
+    if (timeline) timeline.pause();
+  }
+
+  window.addEventListener('message', function (e) {
+    if (!e || !e.data || e.data.type !== 'rtl3d-video-stop') return;
+    stopAllPlayback();
+  });
+
   if (cycleParam) {
     onLessonComplete = advanceCycle;
   }
@@ -567,6 +582,7 @@
     total: function () { return TOTAL; },
     setLang: applyVideoLang,
     usesBgm: usesBgm,
-    stopBgm: stopBgm
+    stopBgm: stopBgm,
+    stopAll: stopAllPlayback
   };
 })();
