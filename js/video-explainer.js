@@ -33,11 +33,12 @@
 
   var SCENE_DUR = {
     en: [8.14, 6.81, 11.29, 9.96, 12.48, 9.12, 9.19, 8.98, 12.14, 11.64, 4.01],
-    ms: [8.07, 10.85, 13.37, 15.51, 13.24, 10.97, 15.01, 12.49, 10.85, 14.25, 6.31],
+    ms: [8.35, 7.62, 17.41, 10.60, 19.13, 11.35, 15.52, 12.91, 11.21, 14.74, 6.52],
     ja: [9.44, 10.64, 16.96, 13.88, 21.48, 13.88, 12.88, 12.92, 18.48, 20.64, 6.08]
   };
 
   var _sceneIdx = 0;
+  var _builtLang = null;
 
   function animLang() {
     var api = vi18n();
@@ -463,10 +464,15 @@
   }
 
   function playWithAudio() {
+    var lang = currentLang();
+    // The GSAP timeline (scene durations + keyframe timing) is per-language.
+    // If the language changed since the timeline was last built, rebuild it so
+    // the animation matches the narration length — otherwise visuals run on the
+    // previous language's (shorter) timeline and race ahead of the voice.
+    if (lang !== _builtLang) applyVideoLang(lang);
     resetAll();
     audioOn = true;
     cycleAdvanceLock = false;
-    var lang = currentLang();
     applyNarrationVolume(lang);
     timeline.restart();
     var api = vi18n();
@@ -492,6 +498,7 @@
     applyNarrationVolume(lang);
     resetAnimatedElements();
     rebuildTimeline();
+    _builtLang = lang;
     if (!usesBgm()) stopBgm();
     else if (audioOn && audio && !audio.paused) startBgm();
   }

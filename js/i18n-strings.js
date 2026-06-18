@@ -347,7 +347,7 @@ window.RTL3D_I18N = {
   },
   'sub.video.subtitle': {
     en: 'Everything you need for the lightning-safety quiz.',
-    ms: 'Semua yang anda perlu ketahui untuk kuiz keselamatan kilat.',
+    ms: 'Inilah semua yang perlu anda tahu untuk menghadapi kuiz keselamatan kilat.',
     ja: '落雷安全クイズに必要なことが、すべて詰まっています。',
   },
 
@@ -366,20 +366,20 @@ window.RTL3D_I18N = {
   'video.s2.unit': { en: 'flashes / second', ms: 'kilatan / saat', ja: '放電／秒' },
   'video.s2.line': {
     en: 'Lightning strikes Earth about <b>100 times every second</b> — roughly <b>8 million</b> bolts a day.',
-    ms: 'Dalam setiap saat, kilat menyambar Bumi lebih kurang <b>100 kali</b> — hampir <b>8 juta</b> kali sehari.',
+    ms: 'Pada setiap saat, kira-kira <b>100</b> kilat menyambar Bumi — hampir <b>8 juta</b> sambaran sehari.',
     ja: '地球上では、毎秒およそ<b>100回</b>、雷が発生しています。一日に約<b>800万回</b>です。',
   },
-  'video.s3.unit': { en: "hotter than the Sun's surface", ms: 'lebih panas daripada permukaan matahari', ja: '太陽の表面の約五倍' },
+  'video.s3.unit': { en: "hotter than the Sun's surface", ms: 'lebih panas daripada permukaan Matahari', ja: '太陽の表面の約五倍' },
   'video.s3.line': {
     en: 'A bolt heats the air to about <b>30,000 °C</b> — <b>5× hotter</b> than the Sun\'s surface. That blast of expanding air is what we hear as <b>thunder</b>.',
-    ms: 'Satu sambaran memanaskan udara sehingga lebih kurang <b>30,000 °C</b> — <b>5× lebih panas</b> daripada permukaan matahari. Rentakan udara yang mengembang itulah bunyi <b>guruh</b> yang kita dengar.',
+    ms: 'Setiap sambaran memanaskan udara sehingga kira-kira <b>30,000 °C</b> — <b>5× lebih panas</b> daripada permukaan Matahari. Udara yang mengembang secara mengejut itulah bunyi <b>guruh</b> yang kita dengar.',
     ja: '一筋の雷は、周囲の空気を約<b>30,000 °C</b>まで加熱します。太陽の表面の<b>約5倍</b>の温度です。その空気が急膨張する衝撃が<b>雷鳴</b>として聞こえます。',
   },
   'video.s4.mapLabel': { en: 'KLANG VALLEY', ms: 'LEMBAH KLANG', ja: 'クラン・バレー' },
   'video.s4.statTag': { en: 'Storm days per year', ms: 'Hari ribut setahun', ja: '年間の雷雨日数' },
   'video.s4.line1': {
     en: 'The <b>Klang Valley</b> around Subang Jaya is one',
-    ms: '<b>Lembah Klang</b> berhampiran Subang Jaya merupakan antara',
+    ms: '<b>Lembah Klang</b> di sekitar Subang Jaya merupakan antara',
     ja: 'スバン・ジャヤを含む<b>クラン・バレー</b>は、',
   },
   'video.s4.line2': {
@@ -389,7 +389,7 @@ window.RTL3D_I18N = {
   },
   'video.s4.line3': {
     en: 'about <b>240 thunderstorm days</b> a year.',
-    ms: 'lebih kurang <b>240 hari ribut</b> setahun.',
+    ms: 'kira-kira <b>240 hari ribut</b> setahun.',
     ja: '年間の雷雨日は約<b>240日</b>にのぼります。',
   },
   'video.s5.expand': {
@@ -399,35 +399,35 @@ window.RTL3D_I18N = {
   },
   'video.s5.line': {
     en: 'A <b>Malaysia–Japan (SATREPS)</b> research project that images lightning live — to protect people and the power grid.',
-    ms: 'Projek penyelidikan bersama <b>Malaysia–Jepun (SATREPS)</b> yang mengimej kilat secara langsung — untuk melindungi nyawa dan bekalan kuasa.',
+    ms: 'Projek penyelidikan bersama <b>Malaysia–Jepun (SATREPS)</b> yang mengimej kilat secara langsung — demi melindungi nyawa dan bekalan elektrik.',
     ja: '<b>マレーシア・日本（SATREPS）</b>共同研究が、雷をリアルタイムに可視化し、人々と電力網を守ります。',
   },
   'video.s6.num': { en: 'LF <small>+</small> VHF', ms: 'LF <small>+</small> VHF', ja: 'LF <small>+</small> VHF' },
   'video.s6.unit': { en: 'radio antennas → 3D images', ms: 'antena radio → imej 3D', ja: 'アンテナ → 三次元イメージ' },
   'video.s6.line': {
     en: 'RTL3D uses <b>LF</b> sensors to catch the main strokes and <b>VHF</b> sensors to map the whole channel — building lightning in <b>3D</b>.',
-    ms: 'RTL3D menggunakan sensor <b>LF</b> untuk mengesan sambaran utama dan sensor <b>VHF</b> untuk memetakan keseluruhan saluran kilat — membina imej kilat dalam <b>3D</b>.',
+    ms: 'RTL3D menggunakan sensor <b>LF</b> untuk mengesan sambaran utama dan sensor <b>VHF</b> untuk memetakan keseluruhan saluran kilat — lalu membina semula imejnya dalam <b>3D</b>.',
     ja: '<b>LF</b>センサーで主な雷撃を捉え、<b>VHF</b>センサーで放電路全体をマッピングし、雷の<b>三次元</b>構造を再現します。',
   },
   'video.s7.num': { en: 'Flash → Bang', ms: 'Kilat → Guruh', ja: '光 → 雷鳴' },
-  'video.s7.unit': { en: 'how far away is the strike?', ms: 'jarak sambaran setempat?', ja: '落雷までの距離の目安' },
+  'video.s7.unit': { en: 'how far away is the strike?', ms: 'berapa jauh sambaran itu?', ja: '落雷までの距離の目安' },
   'video.s7.line': {
     en: 'Count the seconds from <b>flash</b> to <b>thunder</b>, then <b>÷ 3 for km</b> (÷ 5 for miles). Under <b>30 s</b>? It\'s already dangerously close.',
-    ms: 'Kira saat dari <b>kilat</b> hingga <b>guruh</b>, kemudian <b>÷ 3 untuk km</b>. Kurang <b>30 s</b>? Ribut itu sudah terlalu hampir.',
+    ms: 'Kira saat dari <b>kilat</b> hingga <b>guruh</b>, kemudian <b>÷ 3 untuk km</b>. Kurang daripada <b>30 s</b>? Ribut itu sudah terlalu hampir.',
     ja: '<b>光</b>から<b>雷鳴</b>までの秒数を数え、<b>÷3でkm</b>とします。<b>30秒</b>未満なら、すでに危険な距離です。',
   },
   'video.s8.num': { en: '30 – 30', ms: '30 – 30', ja: '30 – 30' },
   'video.s8.unit': { en: 'the rule that keeps you safe', ms: 'peraturan keselamatan kilat', ja: '身を守るためのルール' },
   'video.s8.line': {
     en: 'Thunder within <b>30 seconds</b> of the flash → go inside. Then wait <b>30 minutes after the last thunder</b> before heading back out.',
-    ms: 'Guruh dalam <b>30 saat</b> selepas kilat → masuk ke dalam. Tunggu <b>30 minit selepas guruh terakhir</b> sebelum keluar semula.',
+    ms: 'Guruh dalam <b>30 saat</b> selepas kilat → masuk ke dalam segera. Kemudian tunggu <b>30 minit selepas guruh terakhir</b> sebelum keluar semula.',
     ja: '光の<b>30秒</b>以内に雷鳴が聞こえたら、すぐ屋内へ。最後の雷鳴から<b>30分</b>が経つまでは、外に出ないでください。',
   },
   'video.s9.num': { en: 'Go Indoors', ms: 'Masuk ke Dalam', ja: '屋内へ' },
   'video.s9.unit': { en: '"When thunder roars, go indoors"', ms: '"Apabila guruh bergemuruh, masuk ke dalam"', ja: '「雷鳴がしたら屋内へ」' },
   'video.s9.line': {
     en: 'There is <b>no safe place outside</b>. Shelter in a fully enclosed building or a <b>hard-top car</b> (a Faraday cage). The old "lightning crouch" was dropped in 2008 — it does <b>not</b> protect you.',
-    ms: 'Tiada <b>tempat selamat di luar</b>. Berlindung di dalam bangunan tertutup sepenuhnya atau <b>kereta berbumbung keras</b>. Posisi mencangkung kilat digugurkan pada 2008 — ia <b>tidak</b> melindungi anda.',
+    ms: 'Tiada <b>tempat selamat di luar</b>. Berlindung di dalam bangunan tertutup sepenuhnya atau <b>kereta berbumbung keras</b>. Posisi mencangkung ketika kilat dimansuhkan sejak 2008 — ia <b>tidak</b> melindungi anda.',
     ja: '屋外に<b>安全な場所はありません</b>。完全に囲まれた建物か<b>金属屋根の車</b>へ避難してください。「雷かがみ」は2008年に廃止されました。それでは<b>守れません</b>。',
   },
   'video.s10.title': { en: 'Avoid these in a storm', ms: 'Elakkan ini semasa ribut', ja: '嵐のときは避けましょう' },

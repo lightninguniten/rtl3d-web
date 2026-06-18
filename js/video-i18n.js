@@ -22,7 +22,7 @@
 
   var BGM_LANGS = { ms: true, ja: true };
 
-  var AUDIO_CACHE = '15';
+  var AUDIO_CACHE = '16';
 
 
 

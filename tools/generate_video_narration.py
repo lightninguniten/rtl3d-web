@@ -37,7 +37,7 @@ MODEL = os.environ.get("GEMINI_TTS_MODEL", "gemini-3.1-flash-tts-preview")
 # Per-language voice and director notes tuned for natural delivery.
 VOICE = {
     "en": "Algenib",
-    "ms": "Aoede",
+    "ms": "Sulafat",
     "ja": "Kore",
 }
 
@@ -49,15 +49,22 @@ DIRECTOR = {
         "like a storm is approaching. Emphasise RTL3D and Real-Time Lightning 3D."
     ),
     "ms": (
-        "Gaya: Promo / hype dokumentari sains premium — dramatik seperti versi Inggeris. "
-        "Rentak: Perlahan dan jelas; berhenti seketika pada sempang dan setiap perenggan baru. "
-        "Loghat: Bahasa Melayu baku Malaysia (bukan Indonesia). "
-        "Nada: berwibawa, mendebarkan, seperti ribut menghampiri. "
-        "Baca SETIAP ayat dalam transkrip dengan LENGKAP — jangan langkau, ringkaskan, atau gabungkan ayat. "
-        "Tekankan nombor dan perkataan penting: seratus, lapan juta, tiga puluh ribu, SATREPS, LF, VHF. "
-        "Pada perenggan lima dan enam sahaja, sebut RTL3D sebagai singkatan. "
-        "Jangan sebut Real-Time Lightning three-D atau frasa Inggeris lain. "
-        "JANGAN tambah selamat datang. Baca transkrip verbatim sahaja."
+        "Gaya: dokumentari sains yang mesra dan meyakinkan — seperti seorang guru atau "
+        "pengacara yang ikhlas mahu pendengar benar-benar faham, bukan sekadar promo. "
+        "Rentak: tenang, jelas dan teratur; beri jeda yang cukup pada setiap sempang dan "
+        "setiap perenggan baru supaya setiap fakta sempat dicerna. "
+        "Loghat: Bahasa Melayu baku Malaysia yang kemas dan semula jadi (BUKAN Indonesia, "
+        "bukan terlalu kaku). Sebutan huruf dan nombor mesti betul dan jelas. "
+        "Nada: hangat, berwibawa dan prihatin — seolah-olah menjaga keselamatan pendengar; "
+        "naik sedikit ketika fakta mengejutkan, lembut dan bersungguh ketika nasihat keselamatan. "
+        "Baca SETIAP ayat dalam transkrip dengan LENGKAP — jangan langkau, ringkaskan, "
+        "atau gabungkan ayat. "
+        "Tekankan nombor dan istilah penting: seratus, lapan juta, tiga puluh ribu darjah, "
+        "dua ratus empat puluh, tiga puluh saat, tiga puluh minit, SATREPS, LF, VHF. "
+        "Pada perenggan lima dan enam sahaja, sebut RTL3D sebagai singkatan (R-T-L-tiga-D). "
+        "Jangan sebut 'Real-Time Lightning three-D' atau frasa Inggeris lain. "
+        "JANGAN tambah ucapan selamat datang atau apa-apa kata pengenalan. "
+        "Baca transkrip verbatim sahaja."
     ),
     "ja": (
         "スタイル：英語版・マレー語版と同じくらいドラマチックなシネマティック科学ドキュメンタリー。 "
@@ -460,7 +467,7 @@ def main() -> int:
     client = genai.Client(api_key=api_key)
 
     for lang in langs:
-        if lang in ("en", "ms"):
+        if lang == "en":
             print(f"SKIP {lang}: locked — see video/LESSON-I18N-LOCK.md", file=sys.stderr)
             continue
         print(f"\nGenerating narration-{lang}…")

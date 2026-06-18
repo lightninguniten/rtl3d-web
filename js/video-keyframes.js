@@ -40,40 +40,41 @@
       }
     },
     ms: {
-      /* LOCKED — do not modify */
+      /* Reveal starts pulled earlier so text is on-screen as the voice begins
+         each scene (the tail of each scene was already in sync). */
       intro: {
-        flash: 0.010, bolt: 0.025, boltDur: 0.130, kicker: 0.068, kickerDur: 0.11,
-        titleK: 0.092, title: 0.080, titleDur: 0.140, titleStagger: 0.020,
-        subtitleK: 0.197, subtitle: 0.150, subtitleDur: 0.115, boltFloatDur: 0.45
+        flash: 0.010, bolt: 0.020, boltDur: 0.130, kicker: 0.050, kickerDur: 0.11,
+        titleK: 0.060, title: 0.045, titleDur: 0.140, titleStagger: 0.020,
+        subtitleK: 0.120, subtitle: 0.090, subtitleDur: 0.115, boltFloatDur: 0.45
       },
       fact: {
-        flash: 0.008, icon: 0.020, iconDur: 0.095, stat: 0.080, statDur: 0.100,
-        line: 0.200, lineDur: 0.095, float: 0.210, floatDur: 0.28
+        flash: 0.008, icon: 0.012, iconDur: 0.095, stat: 0.040, statDur: 0.100,
+        line: 0.090, lineDur: 0.095, float: 0.150, floatDur: 0.28
       },
       /** Scenes 6–9: LF/VHF, flash–bang, 30–30, indoors — narration runs longer. */
       factMid: {
-        flash: 0.008, icon: 0.035, iconDur: 0.095, stat: 0.130, statDur: 0.100,
-        line: 0.300, lineDur: 0.095, float: 0.310, floatDur: 0.28
+        flash: 0.008, icon: 0.018, iconDur: 0.095, stat: 0.055, statDur: 0.100,
+        line: 0.120, lineDur: 0.095, float: 0.190, floatDur: 0.28
       },
       malaysia: {
-        map: 0.015, mapDur: 0.095, hotspot: 0.070, hotspotDur: 0.050,
-        hotspotPulse: 0.120, hotspotPulseDur: 0.085, ring: 0.070, ringDur: 0.090,
-        ringStagger: 0.018, flash: 0.080, mapLabel: 0.130, mapLabelDur: 0.045,
-        statTag: 0.095, statTagDur: 0.055, statNum: 0.115, statNumDur: 0.075,
-        dataLines: 0.180, dataLinesDur: 0.058, dataStagger: 0.022
+        map: 0.010, mapDur: 0.095, hotspot: 0.040, hotspotDur: 0.050,
+        hotspotPulse: 0.090, hotspotPulseDur: 0.085, ring: 0.040, ringDur: 0.090,
+        ringStagger: 0.018, flash: 0.045, mapLabel: 0.055, mapLabelDur: 0.045,
+        statTag: 0.050, statTagDur: 0.055, statNum: 0.075, statNumDur: 0.075,
+        dataLines: 0.105, dataLinesDur: 0.058, dataStagger: 0.022
       },
       acronym: {
-        letters: 0.020, lettersDur: 0.065, letterStagger: 0.012, flash: 0.020,
-        expand: 0.120, expandDur: 0.050, expandStagger: 0.014,
-        factLine: 0.280, factLineDur: 0.070
+        letters: 0.015, lettersDur: 0.065, letterStagger: 0.012, flash: 0.015,
+        expand: 0.070, expandDur: 0.050, expandStagger: 0.014,
+        factLine: 0.150, factLineDur: 0.070
       },
       donts: {
-        icon: 0.012, iconDur: 0.058, title: 0.050, titleDur: 0.058,
-        items: 0.100, itemsDur: 0.055, itemStagger: 0.040
+        icon: 0.010, iconDur: 0.058, title: 0.030, titleDur: 0.058,
+        items: 0.060, itemsDur: 0.055, itemStagger: 0.040
       },
       outro: {
-        flash: 0.020, logo: 0.060, logoDur: 0.200, cta: 0.180, ctaDur: 0.230,
-        sub: 0.320, subDur: 0.200, ctaPulse: 0.420, ctaPulseDur: 0.380
+        flash: 0.020, logo: 0.050, logoDur: 0.200, cta: 0.120, ctaDur: 0.230,
+        sub: 0.230, subDur: 0.200, ctaPulse: 0.420, ctaPulseDur: 0.380
       }
     },
     ja: {
