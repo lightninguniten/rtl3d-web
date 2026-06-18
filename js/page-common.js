@@ -142,12 +142,15 @@
   }
 
   function drawBolts() {
-    if (!animating) return;
+    if (!animating) { rafId = null; return; }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     const prevComposite = ctx.globalCompositeOperation;
     // Additive blending makes overlapping passes glow like glass, not stick.
+    // The layered translucent strokes below build the glow on their own — we
+    // deliberately avoid ctx.shadowBlur, which is by far the most expensive 2D
+    // canvas op and forced this full-screen loop off the GPU fast path.
     ctx.globalCompositeOperation = 'lighter';
     bolts = bolts.filter((b) => {
       b.life -= 0.02;
@@ -165,40 +168,46 @@
 
       // 1) Soft wide halo — the diffuse glow around the glass tube.
       trace();
-      ctx.strokeStyle = `rgba(96, 165, 250, ${alpha * 0.16})`;
-      ctx.lineWidth = 7;
-      ctx.shadowColor = 'rgba(147, 197, 253, 0.9)';
-      ctx.shadowBlur = 18 * alpha;
+      ctx.strokeStyle = `rgba(96, 165, 250, ${alpha * 0.14})`;
+      ctx.lineWidth = 11;
       ctx.stroke();
 
-      // 2) Translucent coloured body of the tube.
+      // 2) Mid halo — fills the gap left by dropping the blur.
+      trace();
+      ctx.strokeStyle = `rgba(125, 185, 253, ${alpha * 0.22})`;
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      // 3) Translucent coloured body of the tube.
       trace();
       ctx.strokeStyle = `rgba(147, 197, 253, ${alpha * 0.5})`;
       ctx.lineWidth = 3;
-      ctx.shadowColor = 'rgba(191, 219, 254, 0.8)';
-      ctx.shadowBlur = 10 * alpha;
       ctx.stroke();
 
-      // 3) Bright glossy white core highlight — gives the "glass" sheen.
+      // 4) Bright glossy white core highlight — gives the "glass" sheen.
       trace();
       ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.92})`;
       ctx.lineWidth = 1;
-      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
-      ctx.shadowBlur = 6 * alpha;
       ctx.stroke();
 
-      ctx.shadowBlur = 0;
       return true;
     });
     ctx.globalCompositeOperation = prevComposite;
     if (Math.random() < 0.008 && bolts.length < 3) bolts.push(createBolt());
+    // Idle-pause: when nothing is alive, stop the RAF loop entirely instead of
+    // clearing a blank full-screen buffer every frame forever. The flash
+    // interval (and visibility/flash calls) kick it back on via kickAnimation.
+    if (bolts.length === 0) { rafId = null; return; }
     rafId = requestAnimationFrame(drawBolts);
   }
 
+  function kickAnimation() {
+    if (animating && rafId == null) rafId = requestAnimationFrame(drawBolts);
+  }
+
   function startBoltAnimation() {
-    if (animating) return;
     animating = true;
-    drawBolts();
+    kickAnimation();
   }
 
   function stopBoltAnimation() {
@@ -214,6 +223,7 @@
   function flashBolts(count) {
     const n = Math.min(count || 2, 5 - bolts.length);
     for (let i = 0; i < n; i += 1) bolts.push(createBolt());
+    kickAnimation();
   }
 
   window.RTL3DLightningBg = {
@@ -234,12 +244,36 @@
     else startBoltAnimation();
   });
 
+  // While a video is actually playing, pausing the full-screen bg RAF stops the
+  // browser from recompositing the animated canvas over every decoded video
+  // frame — the dominant GPU cost on pages like /high-speed-video/. The bolts
+  // resume the moment the video pauses or ends.
+  let videosPlaying = 0;
+  document.querySelectorAll('video').forEach((v) => {
+    v.addEventListener('playing', () => {
+      videosPlaying += 1;
+      stopBoltAnimation();
+    });
+    const onIdle = () => {
+      videosPlaying = Math.max(0, videosPlaying - 1);
+      if (videosPlaying === 0 && !document.hidden) startBoltAnimation();
+    };
+    v.addEventListener('pause', onIdle);
+    v.addEventListener('ended', onIdle);
+    // page-common.js is the last deferred script, so an autoplay video may
+    // already be playing before the listener attached — catch that case.
+    if (!v.paused && !v.ended && v.readyState >= 3) {
+      videosPlaying += 1;
+      stopBoltAnimation();
+    }
+  });
+
   scheduleResizeCanvas();
   window.addEventListener('resize', scheduleResizeCanvas);
   const vp = document.getElementById('viewport-169');
   if (vp && window.ResizeObserver) new ResizeObserver(scheduleResizeCanvas).observe(vp);
   window.addEventListener('rtl3d:viewport-resize', scheduleResizeCanvas);
-  if (animating) drawBolts();
+  if (animating) kickAnimation();
 })();
 
 // Load the universal text auto-fit on every page (page-common.js is included

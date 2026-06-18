@@ -549,15 +549,24 @@
   function tick3dAnimation(now) {
     if (!anim3d.playing) return;
 
-    try {
-      updateTimeReveal(now || performance.now());
-      anim3d.angle += ROTATION_SPEED;
-      apply3dSources();
-      apply3dCamera();
-    } catch (err) {
-      console.error('LF 3D animation error:', err);
-      stop3dAnimation();
-      return;
+    const t = now || performance.now();
+    // Each Plotly.relayout/restyle re-renders the whole WebGL scene, so cap the
+    // expensive work to ~30 fps instead of firing it on every RAF (60–144 Hz).
+    // Rotation speed is kept constant by scaling the angle step to elapsed time.
+    if (anim3d.lastRenderMs == null) anim3d.lastRenderMs = t;
+    const elapsed = t - anim3d.lastRenderMs;
+    if (elapsed >= 33) {
+      try {
+        updateTimeReveal(t);
+        anim3d.angle += ROTATION_SPEED * (elapsed / (1000 / 60));
+        anim3d.lastRenderMs = t;
+        apply3dSources();
+        apply3dCamera();
+      } catch (err) {
+        console.error('LF 3D animation error:', err);
+        stop3dAnimation();
+        return;
+      }
     }
 
     anim3d.rafId = requestAnimationFrame(tick3dAnimation);
@@ -568,6 +577,7 @@
     stop3dAnimation();
     anim3d.playing = true;
     anim3d.playbackStartMs = 0;
+    anim3d.lastRenderMs = null;
     anim3d.revealCount = 0;
     setPlayButtonState(true);
     anim3d.rafId = requestAnimationFrame(tick3dAnimation);
