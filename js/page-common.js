@@ -107,12 +107,51 @@
   // subtle and is the signature look of the site.
   let animating = true;
 
+  // --- Adaptive quality -----------------------------------------------------
+  // The effect is NEVER turned off — we keep the bolts glowing on every device
+  // and instead make each frame cheaper so even a very weak PC stays smooth.
+  //   scale   : canvas backing-store size (CSS stretches it back to full, so
+  //             the look is identical; fewer pixels = far less fill cost).
+  //   frameMs : minimum ms between drawn frames (0 = follow the display).
+  // We start from a static guess based on the device, then a runtime FPS
+  // governor downshifts only if the machine actually can't keep up — and never
+  // below a level where the animation still clearly reads.
+  const QUALITY_TIERS = [
+    { scale: 1.0, frameMs: 0 },   // 0 — full
+    { scale: 0.75, frameMs: 0 },  // 1
+    { scale: 0.6, frameMs: 33 },  // 2 — ~30 fps
+    { scale: 0.5, frameMs: 40 },  // 3 — ~25 fps, floor (still alive)
+  ];
+  const reducedMotion = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = window.devicePixelRatio || 1;
+  let qualityIndex = 0;
+  // Coarse static hint: few cores / little RAM / save-data → start lower.
+  if ((navigator.hardwareConcurrency || 8) <= 4
+    || (navigator.deviceMemory || 8) <= 4
+    || navigator.connection?.saveData
+    || reducedMotion) {
+    qualityIndex = 2;
+  }
+  let quality = QUALITY_TIERS[qualityIndex];
+
+  function downshiftQuality() {
+    if (qualityIndex >= QUALITY_TIERS.length - 1) return false;
+    qualityIndex += 1;
+    quality = QUALITY_TIERS[qualityIndex];
+    resizeCanvas();
+    return true;
+  }
+
   function resizeCanvas() {
     const vp = document.getElementById('viewport-169');
     const w = vp ? vp.clientWidth : window.innerWidth;
     const h = vp ? vp.clientHeight : window.innerHeight;
-    canvas.width = w;
-    canvas.height = h;
+    // Clamp for HiDPI: never allocate more than ~1.5× CSS pixels, then apply
+    // the adaptive scale. CSS keeps the canvas at full display size.
+    const px = Math.min(dpr, 1.5) * quality.scale;
+    canvas.width = Math.max(1, Math.round(w * px));
+    canvas.height = Math.max(1, Math.round(h * px));
   }
 
   let resizeCanvasQueued = false;
@@ -141,8 +180,31 @@
     return { segments, life: 1, maxLife: 0.15 + Math.random() * 0.1 };
   }
 
-  function drawBolts() {
+  let lastDrawMs = 0;
+  let slowFrames = 0;
+  function drawBolts(now) {
     if (!animating) { rafId = null; return; }
+    const t = now || performance.now();
+
+    // Frame cap: on lower tiers we draw at most every quality.frameMs, leaving
+    // the GPU idle in between instead of repainting faster than the eye needs.
+    if (quality.frameMs && lastDrawMs && t - lastDrawMs < quality.frameMs) {
+      rafId = requestAnimationFrame(drawBolts);
+      return;
+    }
+    // Runtime governor: if frames keep arriving slower than the current tier's
+    // budget (the machine can't hold the target), step down one tier. Only ever
+    // downshifts, so it settles and never thrashes.
+    if (lastDrawMs) {
+      const budget = quality.frameMs || (1000 / 60);
+      if (t - lastDrawMs > budget * 1.6) {
+        if (++slowFrames >= 12) { slowFrames = 0; downshiftQuality(); }
+      } else if (slowFrames > 0) {
+        slowFrames -= 1;
+      }
+    }
+    lastDrawMs = t;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -216,6 +278,8 @@
       cancelAnimationFrame(rafId);
       rafId = null;
     }
+    lastDrawMs = 0;
+    slowFrames = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     bolts = [];
   }
