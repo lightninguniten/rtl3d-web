@@ -2254,6 +2254,12 @@ body[data-page="home"] .hub-featured-card.hub-link-visited.hub-featured-card-pow
   color: #fbcfe8;
 }
 
+.mission-gallery-topic[data-topic="International collaboration"] {
+  background: rgba(45, 212, 191, 0.18);
+  border-color: rgba(45, 212, 191, 0.45);
+  color: #99f6e4;
+}
+
 .mission-gallery-caption-text {
   font-size: clamp(0.802rem, 1.829cqh, 1rem);
   line-height: 1.45;

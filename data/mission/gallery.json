@@ -1,149 +1,131 @@
 {
-  "version": "202606171806",
+  "version": "202606190917",
   "items": [
     {
-      "id": "equipment-handed-over-batch-01",
-      "topic": "Rogowski coil",
-      "platform": "instagram",
-      "image": "images/mission/equipment-handed-over-batch-01.jpg",
-      "caption": "Equipment Handed Over A batch of equipment which arrived recently has been handed over to UTeM. The equipment was Data Center, Current Sensors, as well as LF and VHF Receivers. Deputy Vice Chancellor of the university,…",
-      "width": 640,
-      "height": 640
+      "id": "fourth-jcc-meeting-tokyo-2026",
+      "topic": "International collaboration",
+      "platform": "facebook",
+      "image": "images/mission/fourth-jcc-meeting-tokyo-2026.jpg",
+      "caption": "Fourth JCC Meeting, 8 June 2026 at JST Annex, Tokyo — SATREPS partners from UTeM, UNITEN, and Kindai University reviewed project progress and signed a renewed commitment to the collaboration.",
+      "width": 1024,
+      "height": 637
     },
     {
-      "id": "rtl-campaign-melaka-malaysia-02",
+      "id": "iclp-2026-sapporo",
+      "topic": "International collaboration",
+      "platform": "facebook",
+      "image": "images/mission/iclp-2026-sapporo.jpg",
+      "caption": "ICLP 2026, Sapporo (31 May–5 June) — ten project papers from Kindai University, UTeM, and UNITEN shared the latest RTL3D findings with the international lightning community.",
+      "width": 1024,
+      "height": 576
+    },
+    {
+      "id": "site-survey-noise-measurement-may-2026",
+      "topic": "Field instrumentation",
+      "platform": "facebook",
+      "image": "images/mission/site-survey-noise-measurement-may-2026.jpg",
+      "caption": "14–15 May field work — DID Ampang site survey, maintenance at TM Bukit Gasing, and a noise measurement test at UiTM Shah Alam ahead of new sensor deployment in the Klang Valley.",
+      "width": 750,
+      "height": 1000
+    },
+    {
+      "id": "rtl-campaign-melaka-last-day-2026",
       "topic": "Rocket-triggered lightning",
-      "platform": "instagram",
-      "image": "images/mission/rtl-campaign-melaka-malaysia-02.jpg",
-      "caption": " RTL Campaign in Melaka, Malaysia – Part 1  On April 27, 2026, researchers from Kindai University arrived at the RTL site, UiTM Jasin Campus, for the campaign. This is to attempt the first time RTL in Malaysia. Today,…",
-      "width": 640,
-      "height": 497
+      "platform": "facebook",
+      "image": "images/mission/rtl-campaign-melaka-last-day-2026.jpg",
+      "caption": "Last day of the Melaka RTL campaign, 9 May 2026 — training at UiTM Jasin and UTeM concluded after a successful lightning trigger on 3 May, marking Malaysia's first RTL field programme.",
+      "width": 1000,
+      "height": 750
     },
     {
-      "id": "the-4th-jcc-meeting-03",
-      "topic": "3D lightning mapping",
+      "id": "first-rtl-malaysia-utem-2026",
+      "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "image": "images/mission/the-4th-jcc-meeting-03.jpg",
-      "caption": "The 4th JCC Meeting On 8 June 2026, the Fourth Joint Coordination Committee (JCC) Meeting for the SATREPS international research project was held at the JST Annex Building in Tokyo, Japan. The...",
-      "width": 2048,
-      "height": 1275
+      "image": "images/mission/first-rtl-malaysia-utem-2026.jpg",
+      "caption": "3 May 2026 — first successful rocket-triggered lightning in Malaysia at the UTeM RTL site, a historic milestone for the RTL3D programme and lightning research in the country.",
+      "width": 576,
+      "height": 1024
     },
     {
-      "id": "rtl3d-facebook-photo-122185143002069357-04",
-      "topic": "3D lightning mapping",
+      "id": "rtl-campaign-melaka-part-1-2026",
+      "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122185143002069357-04.jpg",
-      "caption": "RTL3D Facebook photo (122185143002069357)",
-      "width": 1001,
-      "height": 584
+      "image": "images/mission/rtl-campaign-melaka-part-1-2026.jpg",
+      "caption": "RTL campaign Part 1, 27 April 2026, UiTM Jasin — preparations and a successful first test launch of a new rocket from UiTM Shah Alam ahead of Malaysia's inaugural RTL programme.",
+      "width": 728,
+      "height": 529
     },
     {
-      "id": "rtl3d-facebook-photo-122131380056069357-05",
-      "topic": "3D lightning mapping",
+      "id": "kanazawa-rtl-record-2026",
+      "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122131380056069357-05.jpg",
-      "caption": "RTL3D Facebook photo (122131380056069357)",
-      "width": 569,
-      "height": 568
+      "image": "images/mission/kanazawa-rtl-record-2026.jpg",
+      "caption": "Kanazawa RTL campaign, Dec 2025–Mar 2026 — a record seven successful rocket-triggered lightning strikes, paving the way for the world's lowest-latitude RTL experiment in Malaysia.",
+      "width": 1024,
+      "height": 341
     },
     {
-      "id": "rtl3d-project-update-photo-06",
-      "topic": "3D lightning mapping",
+      "id": "rogowski-inspection-tm-bukit-gasing",
+      "topic": "Rogowski coil",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-project-update-photo-06.jpg",
-      "caption": "RTL3D project update — photo 04",
-      "width": 1494,
-      "height": 1536
+      "image": "images/mission/rogowski-inspection-tm-bukit-gasing.jpg",
+      "caption": "TM Bukit Gasing inspection — Dr. Takeshi Kudo checked Rogowski coil data loggers to verify current sensors are operating correctly and recording accurate lightning measurements.",
+      "width": 1024,
+      "height": 1024
     },
     {
-      "id": "rtl3d-facebook-photo-122302218650069357-07",
-      "topic": "3D lightning mapping",
+      "id": "gamma-radon-sensors-uniten",
+      "topic": "Field instrumentation",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218650069357-07.jpg",
-      "caption": "RTL3D Facebook photo (122302218650069357)",
-      "width": 2048,
-      "height": 1536
+      "image": "images/mission/gamma-radon-sensors-uniten.jpg",
+      "caption": "Gamma-ray and radon sensors from Japan installed at three UNITEN sites — monitoring thunderstorm radiation and atmospheric radon, with installation know-how shared by Prof. Torii, Mr. Miyazaki, and Dr. Zafri.",
+      "width": 1024,
+      "height": 682
     },
     {
-      "id": "rtl3d-facebook-photo-122302218470069357-08",
-      "topic": "3D lightning mapping",
+      "id": "vhf-sensor-north-kuala-lumpur",
+      "topic": "Observation network",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218470069357-08.jpg",
-      "caption": "RTL3D Facebook photo (122302218470069357)",
-      "width": 2048,
-      "height": 1536
+      "image": "images/mission/vhf-sensor-north-kuala-lumpur.jpg",
+      "caption": "North of Kuala Lumpur — Dr. Takayanagi and Dr. Haziq from Kindai University install a VHF sensor with UNITEN and DID support, extending the RTL3D lightning observation network.",
+      "width": 1024,
+      "height": 768
     },
     {
-      "id": "rtl3d-facebook-photo-122302218458069357-09",
-      "topic": "3D lightning mapping",
+      "id": "vhf-sensor-jasin-melaka",
+      "topic": "Observation network",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218458069357-09.jpg",
-      "caption": "RTL3D Facebook photo (122302218458069357)",
-      "width": 2048,
-      "height": 1536
+      "image": "images/mission/vhf-sensor-jasin-melaka.jpg",
+      "caption": "Jasin, Melaka — Dr. Takayanagi and Dr. Haziq from Kindai University install a new VHF sensor with UTeM and UiTM Jasin, recording the site's first observation data.",
+      "width": 1024,
+      "height": 768
     },
     {
-      "id": "rtl3d-facebook-photo-122302218278069357-10",
-      "topic": "3D lightning mapping",
+      "id": "rogowski-coils-tm-bukit-gasing-2025",
+      "topic": "Rogowski coil",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218278069357-10.jpg",
-      "caption": "RTL3D Facebook photo (122302218278069357)",
-      "width": 2048,
-      "height": 1536
+      "image": "images/mission/rogowski-coils-tm-bukit-gasing-2025.jpg",
+      "caption": "12–13 March 2025, TM Bukit Gasing — five Rogowski coils installed around a communications tower to measure lightning current, with Malaysian and Japanese teams completing setup and inspection.",
+      "width": 1024,
+      "height": 682
     },
     {
-      "id": "rtl3d-facebook-photo-122302218230069357-11",
-      "topic": "3D lightning mapping",
+      "id": "lf-sensor-uitm-jasin-2026",
+      "topic": "Observation network",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218230069357-11.jpg",
-      "caption": "RTL3D Facebook photo (122302218230069357)",
-      "width": 2048,
-      "height": 1536
+      "image": "images/mission/lf-sensor-uitm-jasin-2026.jpg",
+      "caption": "UiTM Jasin, 26 February — LF sensor and electric field mill installed to monitor lightning in Melaka, identified as a future rocket-triggered lightning research site.",
+      "width": 1024,
+      "height": 768
     },
     {
-      "id": "rtl3d-facebook-photo-122302218206069357-12",
-      "topic": "3D lightning mapping",
+      "id": "kanazawa-rtl-teams-arrival-2025",
+      "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218206069357-12.jpg",
-      "caption": "RTL3D Facebook photo (122302218206069357)",
-      "width": 2048,
-      "height": 1536
-    },
-    {
-      "id": "rtl3d-facebook-photo-122302218170069357-13",
-      "topic": "3D lightning mapping",
-      "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218170069357-13.jpg",
-      "caption": "RTL3D Facebook photo (122302218170069357)",
-      "width": 2048,
-      "height": 1536
-    },
-    {
-      "id": "rtl3d-facebook-photo-122302218140069357-14",
-      "topic": "3D lightning mapping",
-      "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218140069357-14.jpg",
-      "caption": "RTL3D Facebook photo (122302218140069357)",
-      "width": 2048,
-      "height": 1533
-    },
-    {
-      "id": "rtl3d-facebook-photo-122302218092069357-15",
-      "topic": "3D lightning mapping",
-      "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218092069357-15.jpg",
-      "caption": "RTL3D Facebook photo (122302218092069357)",
-      "width": 960,
-      "height": 560
-    },
-    {
-      "id": "rtl3d-facebook-photo-122302218080069357-16",
-      "topic": "3D lightning mapping",
-      "platform": "facebook",
-      "image": "images/mission/rtl3d-facebook-photo-122302218080069357-16.jpg",
-      "caption": "RTL3D Facebook photo (122302218080069357)",
-      "width": 1494,
-      "height": 1494
+      "image": "images/mission/kanazawa-rtl-teams-arrival-2025.jpg",
+      "caption": "20 December, Kanazawa RTL site — UNITEN and MET Malaysia teams arrive for rocket-triggered lightning training, with a briefing on earlier December field sessions.",
+      "width": 1024,
+      "height": 768
     }
   ]
 }

@@ -8,24 +8,24 @@
 
   var FALLBACK_ITEMS = [
     {
-      topic: '3D lightning mapping',
-      image: 'images/mission/night-time-lightning-over-02.jpg',
-      caption: 'Night-time lightning over the RTL3D study region — CG activity monitored by the Peninsular LF network.'
-    },
-    {
-      topic: '3D lightning mapping',
-      image: 'images/mission/lightning-localization-seminar-and-03.jpg',
-      caption: 'Lightning localization seminar — 2D and 3D mapping progress using Malaysian FALMA observation data.'
-    },
-    {
-      topic: 'Observation network',
-      image: 'images/mission/and-vhf-observation-network-04.jpg',
-      caption: 'LF and VHF observation network field work — site checks ahead of the monsoon lightning season.'
+      topic: 'International collaboration',
+      image: 'images/mission/fourth-jcc-meeting-tokyo-2026.jpg',
+      caption: 'Fourth JCC Meeting, 8 June 2026 at JST Annex, Tokyo — SATREPS partners reviewed project progress and reaffirmed their collaboration.'
     },
     {
       topic: 'Rocket-triggered lightning',
-      image: 'images/mission/rtl3d-field-campaign-preparations-05.jpg',
-      caption: 'RTL3D field campaign preparations — rocket-triggered lightning research in Malaysia.'
+      image: 'images/mission/first-rtl-malaysia-utem-2026.jpg',
+      caption: '3 May 2026 — first successful rocket-triggered lightning in Malaysia at the UTeM RTL site, a historic milestone for the RTL3D programme.'
+    },
+    {
+      topic: 'Observation network',
+      image: 'images/mission/vhf-sensor-jasin-melaka.jpg',
+      caption: 'Jasin, Melaka — VHF sensor installed with UTeM and UiTM Jasin, recording the site\'s first observation data.'
+    },
+    {
+      topic: 'Rogowski coil',
+      image: 'images/mission/rogowski-coils-tm-bukit-gasing-2025.jpg',
+      caption: 'TM Bukit Gasing — five Rogowski coils installed on a communications tower to measure lightning current.'
     }
   ];
 
