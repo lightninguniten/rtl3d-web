@@ -166,18 +166,30 @@
     return d;
   }
 
-  // per-art channel target [seed,x0,y0,targetY,spread]
+  // per-art bolt depth/spread defaults (x position is chosen randomly left/right)
   var CHANNEL = {
-    globe:    [10, 500, 0, 200, 140],
-    crystals: [11, 500, 0, 250, 120],
-    figure:   [22, 600, 0, 330, 90],
-    counter:  [33, 500, 0, 360, 50],
-    shelters: [44, 730, 0, 320, 110],
-    rocket:   [55, 500, 110, 230, 22],
-    outro:    [66, 500, 0, 220, 130]
+    globe:    { seed: 10, targetY: 220, spread: 125, y0: 0 },
+    crystals: { seed: 11, targetY: 270, spread: 110, y0: 0 },
+    figure:   { seed: 22, targetY: 340, spread: 95, y0: 0 },
+    counter:  { seed: 33, targetY: 370, spread: 75, y0: 0 },
+    shelters: { seed: 44, targetY: 330, spread: 100, y0: 0 },
+    rocket:   { seed: 55, targetY: 280, spread: 85, y0: 0 },
+    outro:    { seed: 66, targetY: 240, spread: 115, y0: 0 }
   };
 
-  var CH, flash, stage, fill, dotsWrap, bgm, poster, scenesRoot, progressBar, playPause;
+  // Side-frame strike: reproducible random x on left or right, never top-center.
+  function channelSpec(art, sceneIndex) {
+    var base = CHANNEL[art] || { seed: 10, targetY: 260, spread: 110, y0: 0 };
+    var r = rng(base.seed + sceneIndex * 41);
+    var onLeft = r() >= 0.5;
+    var x0 = onLeft ? (80 + r() * 120) : (800 + r() * 100);
+    var y0 = (base.y0 != null ? base.y0 : 0) + r() * 28;
+    var targetY = base.targetY + (r() - 0.5) * 65;
+    var spread = base.spread * (0.78 + r() * 0.42);
+    return [base.seed + sceneIndex, x0, y0, targetY, spread];
+  }
+
+  var CH, flash, stage, fill, bgm, poster, scenesRoot, progressBar, playPause, vidGrid;
   var timeline = null;
   var SCENES_EL = [];   // generated scene DOM nodes, in order
   var SCENE_AT = [];    // absolute start time (s) of each scene — for chapter seek
@@ -243,10 +255,34 @@
   function buildArt(art) {
     var wrap = document.createElement('div');
     wrap.className = 'prop art-' + art;
-    if (art === 'globe') { wrap.innerHTML = '<div class="globe" aria-hidden="true">🌍</div>'; }
-    else if (art === 'crystals') { wrap.innerHTML = '<div class="crystals"><span class="spark a">❄️</span><span class="spark b">💧</span></div>'; }
-    else if (art === 'figure') { wrap.innerHTML = '<div class="figure" aria-hidden="true">🧍</div>'; }
-    else if (art === 'counter') { wrap.className = 'vid-hero'; wrap.textContent = '0'; }
+    if (art === 'globe') {
+      wrap.innerHTML =
+        '<div class="globe-strikes" aria-hidden="true">' +
+          '<span class="g-strike"></span><span class="g-strike"></span><span class="g-strike"></span>' +
+          '<span class="g-strike"></span><span class="g-strike"></span><span class="g-strike"></span>' +
+          '<span class="g-strike"></span><span class="g-strike"></span><span class="g-strike"></span>' +
+        '</div>' +
+        '<div class="globe" aria-hidden="true">🌍</div>';
+    }
+    else if (art === 'crystals') {
+      wrap.innerHTML =
+        '<svg class="crystal-arc" viewBox="0 0 120 80" aria-hidden="true">' +
+          '<path class="arc-path" d="M25 55 Q60 8 95 55"/>' +
+        '</svg>' +
+        '<div class="crystals"><span class="spark a">❄️</span><span class="spark b">💧</span></div>' +
+        '<div class="crystal-burst" aria-hidden="true"></div>';
+    }
+    else if (art === 'figure') {
+      wrap.innerHTML =
+        '<div class="fig-ground" aria-hidden="true"></div>' +
+        '<div class="fig-danger-ring" aria-hidden="true"></div>' +
+        '<div class="fig-shadow" aria-hidden="true"></div>' +
+        '<div class="figure" aria-hidden="true">🧍</div>';
+    }
+    else if (art === 'counter') {
+      wrap.className = 'vid-hero-wrap';
+      wrap.innerHTML = '<div class="strike-rings" aria-hidden="true"><span class="sr"></span><span class="sr"></span><span class="sr"></span></div><div class="vid-hero">0</div>';
+    }
     else if (art === 'shelters') {
       wrap.className = 'shelters';
       wrap.innerHTML =
@@ -258,15 +294,23 @@
     else if (art === 'rocket') {
       wrap.className = 'rocket-wrap';
       wrap.innerHTML =
+        '<div class="rocket-cloud" aria-hidden="true">☁️</div>' +
         '<svg class="rocket-bolt" viewBox="0 0 40 200" preserveAspectRatio="none" aria-hidden="true">' +
           '<path class="rb-glow" d="M20 200 L27 158 L13 116 L28 74 L15 40 L21 0"/>' +
           '<path class="rb-mid"  d="M20 200 L27 158 L13 116 L28 74 L15 40 L21 0"/>' +
           '<path class="rb-core" d="M20 200 L27 158 L13 116 L28 74 L15 40 L21 0"/>' +
         '</svg>' +
         '<span class="rocket-wire"></span>' +
-        '<span class="rocket">🚀</span>';
+        '<div class="rocket-ship" aria-hidden="true">' +
+          '<span class="rocket">🚀</span>' +
+        '</div>';
     }
-    else if (art === 'outro') { wrap.className = 'logo-lockup'; wrap.innerHTML = '<span class="mk">⚡</span> RTL3D'; }
+    else if (art === 'outro') {
+      wrap.className = 'logo-lockup';
+      wrap.innerHTML =
+        '<div class="logo-rings" aria-hidden="true"><span class="lr"></span><span class="lr"></span></div>' +
+        '<span class="mk">⚡</span> RTL3D';
+    }
     return wrap;
   }
 
@@ -287,11 +331,17 @@
       scene.style.visibility = 'hidden';
 
       var art = document.createElement('div'); art.className = 'vid-art';
+      var glow = document.createElement('div');
+      glow.className = 'vid-art-glow glow-' + sc.art;
+      art.appendChild(glow);
       if (sc.ask) {
         var ask = document.createElement('div'); ask.className = 'vid-ask'; ask.textContent = sc.ask;
         art.appendChild(ask);
       }
-      art.appendChild(buildArt(sc.art));
+      var core = document.createElement('div');
+      core.className = 'vid-art-core';
+      core.appendChild(buildArt(sc.art));
+      art.appendChild(core);
       scene.appendChild(art);
 
       var cap = document.createElement('div'); cap.className = 'vid-caption';
@@ -308,8 +358,8 @@
   }
 
   // ---- the through-line bolt ----------------------------------------
-  function setChannel(art) {
-    var spec = CHANNEL[art]; if (!spec) return 0;
+  function setChannel(art, sceneIndex) {
+    var spec = channelSpec(art, sceneIndex);
     var d = boltPath(spec[0], spec[1], spec[2], spec[3], spec[4]);
     [CH.halo, CH.mid, CH.body, CH.core].forEach(function (p) {
       p.setAttribute('d', d);
@@ -320,13 +370,30 @@
     });
     return len;
   }
-  function drawChannel(tl, at, art) {
-    setChannel(art);
-    var paths = [CH.halo, CH.mid, CH.body, CH.core];
-    tl.to(paths, { strokeDashoffset: 0, opacity: 1, duration: 0.55, ease: 'power2.in' }, at);
-    tl.fromTo(flash, { opacity: 0 }, { opacity: 0.5, duration: 0.07, ease: 'none' }, at + 0.5);
-    tl.to(flash, { opacity: 0, duration: 0.5, ease: 'power2.in' }, at + 0.57);
-    tl.to(paths, { opacity: 0, duration: 1.3, ease: 'power2.out' }, at + 0.85);
+  function screenShake(tl, at, px) {
+    if (!stage) return;
+    tl.fromTo(stage, { x: 0 }, { x: px, duration: 0.035, ease: 'none', yoyo: true, repeat: 7 }, at);
+    tl.set(stage, { x: 0 }, at + 0.32);
+  }
+  function flashPop(tl, at, strength, dur) {
+    if (!flash) return;
+    tl.fromTo(flash, { opacity: 0 }, { opacity: strength || 0.5, duration: 0.05, ease: 'none' }, at);
+    tl.to(flash, { opacity: 0, duration: dur || 0.4, ease: 'power2.in' }, at + 0.05);
+  }
+  function drawChannel(tl, at, art, sceneIndex) {
+    var len = setChannel(art, sceneIndex);
+    tl.call(function () { setChannel(art, sceneIndex); }, null, at);
+    tl.fromTo(CH.core, { strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.32, ease: 'power4.in' }, at);
+    tl.fromTo(CH.body, { strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.26, ease: 'power3.in' }, at + 0.07);
+    tl.fromTo(CH.mid,  { strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.3,  ease: 'power2.in' }, at + 0.13);
+    tl.fromTo(CH.halo, { strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.38, ease: 'power2.out' }, at + 0.18);
+    tl.fromTo(flash, { opacity: 0 }, { opacity: 0.7, duration: 0.04, ease: 'none' }, at + 0.4);
+    tl.to(flash, { opacity: 0.12, duration: 0.04 }, at + 0.44);
+    tl.to(flash, { opacity: 0.6, duration: 0.04 }, at + 0.5);
+    tl.to(flash, { opacity: 0, duration: 0.45, ease: 'power2.in' }, at + 0.54);
+    screenShake(tl, at + 0.42, 5);
+    tl.to([CH.core, CH.body, CH.mid], { opacity: 0.35, duration: 0.05, yoyo: true, repeat: 5, ease: 'none' }, at + 0.62);
+    tl.to([CH.halo, CH.mid, CH.body, CH.core], { opacity: 0, duration: 1.0, ease: 'power2.out' }, at + 0.88);
   }
 
   // ---- one caption beat owns its WHOLE lifecycle: words come IN, hold,
@@ -478,15 +545,15 @@
     // When the voice track is aligned, pace everything to the spoken times.
     var plans = voAligned(lang) ? planScenesAligned(L.scenes, lang)
                                 : L.scenes.map(planScene);
-    var OUTRO_AT = 0;
-    for (var k = 0; k < plans.length - 1; k++) OUTRO_AT += plans[k].dur;
-    CONTENT_END = OUTRO_AT;
+    var totalDur = 0;
+    for (var k = 0; k < plans.length; k++) totalDur += plans[k].dur;
+    CONTENT_END = totalDur;
     SCENE_AT = [];
     CAP_FRAMES = [];
 
     var tl = gsap.timeline({
       paused: true,
-      onUpdate: function () { if (fill) fill.style.width = (Math.min(1, tl.time() / OUTRO_AT) * 100) + '%'; }
+      onUpdate: function () { if (fill) fill.style.width = (Math.min(1, tl.time() / CONTENT_END) * 100) + '%'; }
     });
 
     var aligned = voAligned(lang);
@@ -500,8 +567,13 @@
       var lineEl = sceneEl.querySelector('.vid-cap-line');
       var plan = plans[i];
 
-      tl.call(function () { sceneEl.style.visibility = 'visible'; setDot(i); }, null, at);
-      drawChannel(tl, at, sc.art);
+      tl.call(function () {
+        sceneEl.style.visibility = 'visible';
+        gsap.set(sceneEl, { clearProps: 'scale,filter,x' });
+        setDot(i);
+      }, null, at);
+      buildSceneEntrance(tl, sceneEl, sc, at, plan.dur);
+      drawChannel(tl, at, sc.art, i);
 
       // ask (question) appears first, like a reporter posing it: it reveals
       // word-by-word BIG in the caption line, holds, then settles up into the
@@ -516,7 +588,7 @@
       }
 
       // art set-piece entrance — aligned to its narration beat where it matters
-      buildArtEntrance(tl, sceneEl, sc, at, plan.beatIn);
+      buildArtEntrance(tl, sceneEl, sc, at, plan.beatIn, plan.dur);
 
       // narration beats. In aligned mode a line stays up until the NEXT line is
       // spoken (or scene end); otherwise it uses its own hand-set hold.
@@ -535,8 +607,8 @@
 
       // scene crossfade out (except last)
       if (i < L.scenes.length - 1) {
-        var fade = 0.7;
-        tl.to(sceneEl, { opacity: 0, duration: fade, ease: 'power2.in' }, at + plan.dur - fade);
+        var fade = 0.65;
+        tl.to(sceneEl, { opacity: 0, scale: 0.985, filter: 'blur(3px)', duration: fade, ease: 'power3.in' }, at + plan.dur - fade);
         tl.call(function () {
           sceneEl.style.visibility = 'hidden';
           var l = sceneEl.querySelector('.vid-cap-line');
@@ -552,76 +624,150 @@
     return tl;
   }
 
+  // Scene-level motion (art + backdrop only — captions untouched).
+  function buildSceneEntrance(tl, sceneEl, sc, at, dur) {
+    var art = sceneEl.querySelector('.vid-art');
+    var core = sceneEl.querySelector('.vid-art-core');
+    var glow = sceneEl.querySelector('.vid-art-glow');
+    gsap.set(sceneEl, { scale: 0.98, filter: 'blur(4px)' });
+    tl.fromTo(sceneEl, { opacity: 0, scale: 0.98, filter: 'blur(4px)' },
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.75, ease: 'power3.out' }, at);
+    if (glow) {
+      tl.fromTo(glow, { opacity: 0, scale: 0.65 }, { opacity: 1, scale: 1, duration: 1.0, ease: 'power2.out' }, at + 0.12);
+      tl.to(glow, { scale: 1.08, opacity: 0.8, duration: dur * 0.38, ease: 'sine.inOut', yoyo: true, repeat: 1 }, at + 0.55);
+    }
+    if (core) {
+      tl.fromTo(core, { scale: 0.82, y: 24 }, { scale: 1, y: 0, duration: 0.95, ease: 'back.out(1.4)' }, at + 0.08);
+      tl.to(core, { scale: 1.025, duration: Math.max(2.2, dur * 0.32), ease: 'sine.inOut', yoyo: true, repeat: 1 }, at + 0.85);
+    } else if (art) {
+      tl.fromTo(art, { y: 12 }, { y: 0, duration: 0.75, ease: 'power2.out' }, at + 0.1);
+    }
+    if (dur > 8) {
+      [dur * 0.38, dur * 0.65].forEach(function (ft) {
+        flashPop(tl, at + ft, 0.16, 0.22);
+      });
+    }
+  }
+
   // `beatIn` holds the scene-relative IN time of each narration beat, so art
   // set-pieces can be choreographed to land ON the line that describes them.
-  function buildArtEntrance(tl, sceneEl, sc, at, beatIn) {
+  function buildArtEntrance(tl, sceneEl, sc, at, beatIn, sceneDur) {
     var art = sc.art;
     var sel = function (s) { return sceneEl.querySelector(s); };
     var beat = function (i) { return at + (beatIn[i] != null ? beatIn[i] : 1.0); };
+    var dur = sceneDur || (beatIn.length ? beatIn[beatIn.length - 1] + 5 : 6);
     if (art === 'globe') {
-      tl.fromTo(sel('.art-globe'), { opacity: 0, scale: 0.6, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 1.0, ease: 'back.out(1.5)' }, at + 0.5);
-      tl.to(sel('.globe'), { rotation: 12, duration: 8, ease: 'sine.inOut' }, at + 1.2);
+      var globeWrap = sel('.art-globe');
+      tl.fromTo(globeWrap, { opacity: 0, scale: 0.55, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 1.05, ease: 'back.out(1.55)' }, at + 0.35);
+      tl.fromTo(sel('.globe'), { rotation: -6, scale: 0.92 }, { rotation: 14, scale: 1, duration: dur - 0.8, ease: 'sine.inOut' }, at + 0.9);
+      // lightning pops across the whole intro — more strikes, spaced until scene end
+      var strikes = sceneEl.querySelectorAll('.g-strike');
+      var n = strikes.length || 1;
+      var strikeStart = 0.9;
+      var strikeEnd = dur - 0.35;
+      var interval = Math.max(0.95, (strikeEnd - strikeStart) / n);
+      strikes.forEach(function (st, si) {
+        var stAt = at + strikeStart + si * interval;
+        if (stAt > at + strikeEnd) return;
+        tl.fromTo(st, { opacity: 0, scale: 0.12, y: -12 }, { opacity: 1, scale: 1.05, y: 0, duration: 0.28, ease: 'back.out(2.2)' }, stAt);
+        tl.to(st, { opacity: 0.85, duration: 0.35, ease: 'none' }, stAt + 0.28);
+        tl.to(st, { opacity: 0, scale: 1.55, duration: 0.5, ease: 'power2.out' }, stAt + 0.65);
+        flashPop(tl, stAt + 0.04, 0.14 + (si % 4) * 0.04, 0.2);
+      });
     } else if (art === 'crystals') {
-      tl.fromTo(sel('.prop'), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.9, ease: 'back.out(1.6)' }, at + 0.8);
-      tl.to(sceneEl.querySelector('.spark.a'), { x: 14, rotation: 10, duration: 1.0, ease: 'sine.inOut', yoyo: true, repeat: 9 }, at + 1.6);
-      tl.to(sceneEl.querySelector('.spark.b'), { x: -14, rotation: -10, duration: 1.0, ease: 'sine.inOut', yoyo: true, repeat: 9 }, at + 1.6);
+      tl.fromTo(sel('.prop'), { opacity: 0, scale: 0.45, rotation: -8 }, { opacity: 1, scale: 1, rotation: 0, duration: 1.0, ease: 'back.out(1.65)' }, at + 0.5);
+      var sparkA = sceneEl.querySelector('.spark.a');
+      var sparkB = sceneEl.querySelector('.spark.b');
+      var arc = sel('.arc-path');
+      var burst = sel('.crystal-burst');
+      if (arc) {
+        var arcLen = arc.getTotalLength ? arc.getTotalLength() : 100;
+        gsap.set(arc, { strokeDasharray: arcLen, strokeDashoffset: arcLen, opacity: 0.8 });
+        tl.to(arc, { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, at + 1.2);
+        tl.to(arc, { opacity: 0.2, duration: 0.4, yoyo: true, repeat: 6, ease: 'sine.inOut' }, at + 2.0);
+      }
+      tl.to(sparkA, { x: 22, rotation: 12, duration: 1.1, ease: 'sine.inOut', yoyo: true, repeat: -1 }, at + 1.3);
+      tl.to(sparkB, { x: -22, rotation: -12, duration: 1.1, ease: 'sine.inOut', yoyo: true, repeat: -1 }, at + 1.3);
+      tl.fromTo(burst, { scale: 0.3, opacity: 0 }, { scale: 1.6, opacity: 0.7, duration: 0.35, ease: 'power2.out' }, beat(2));
+      tl.to(burst, { scale: 2.2, opacity: 0, duration: 0.5, ease: 'power2.in' }, beat(2) + 0.35);
+      flashPop(tl, beat(2) + 0.1, 0.35, 0.35);
     } else if (art === 'figure') {
-      tl.fromTo(sel('.prop'), { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.5)' }, at + 0.8);
+      tl.fromTo(sel('.fig-ground'), { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.65, ease: 'power3.out' }, at + 0.45);
+      tl.fromTo(sel('.prop'), { opacity: 0, y: 50, scale: 0.75 }, { opacity: 1, y: 0, scale: 1, duration: 1.0, ease: 'back.out(1.5)' }, at + 0.6);
+      tl.fromTo(sel('.fig-shadow'), { scaleX: 0.4, opacity: 0 }, { scaleX: 1, opacity: 0.55, duration: 1.2, ease: 'power1.inOut' }, at + 1.0);
+      tl.to(sel('.fig-shadow'), { scaleX: 1.5, scaleY: 1.2, opacity: 0.75, duration: beat(3) - at - 1.2, ease: 'power1.in' }, at + 1.2);
+      tl.fromTo(sel('.fig-danger-ring'), { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 0.85, duration: 0.6, ease: 'back.out(1.5)' }, beat(2) - 0.3);
+      tl.to(sel('.fig-danger-ring'), { scale: 1.35, opacity: 0, duration: 0.8, ease: 'power2.out' }, beat(2) + 0.3);
+      tl.to(sel('.figure'), { y: -4, duration: 0.6, ease: 'sine.inOut', yoyo: true, repeat: 3 }, beat(2));
+      flashPop(tl, beat(3) - 0.1, 0.28, 0.3);
     } else if (art === 'counter') {
       var num = sel('.vid-hero');
+      var rings = sceneEl.querySelectorAll('.strike-rings .sr');
       var c2 = { v: 0 };
-      var countAt = beat(2);                 // "...struck seven times — in forty minutes"
-      tl.fromTo(num, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }, countAt - 0.4);
+      var countAt = beat(2);
+      tl.fromTo(num, { opacity: 0, scale: 0.45, y: 16 }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: 'back.out(1.65)' }, countAt - 0.45);
       tl.to(c2, { v: 7, duration: 2.8, ease: 'power1.inOut',
-        onUpdate: function () { num.textContent = Math.round(c2.v); gsap.set(num, { scale: 0.78 + (c2.v / 7) * 0.5 }); } }, countAt);
-      [0.6, 1.5, 2.5].forEach(function (ft) {
-        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.3, duration: 0.05, ease: 'none' }, countAt + ft);
-        tl.to(flash, { opacity: 0, duration: 0.35, ease: 'power2.in' }, countAt + ft + 0.05);
+        onUpdate: function () { num.textContent = Math.round(c2.v); gsap.set(num, { scale: 0.78 + (c2.v / 7) * 0.55 }); } }, countAt);
+      [0.6, 1.5, 2.5].forEach(function (ft, ri) {
+        var rAt = countAt + ft;
+        tl.fromTo(rings[ri], { scale: 0.2, opacity: 0.85 }, { scale: 3.2, opacity: 0, duration: 0.75, ease: 'power2.out' }, rAt);
+        flashPop(tl, rAt, 0.35, 0.32);
+        screenShake(tl, rAt, 3);
       });
-      // let the 7 sit, then ease it away as the line exits
       tl.to(num, { opacity: 0, scale: 0.85, duration: 0.6, ease: 'power2.in' }, beat(3) - 0.2);
     } else if (art === 'shelters') {
       var bad = sceneEl.querySelectorAll('.shelter.bad');
-      // each "bad" card lands ON its own line: "Not under a tree / tent / open"
-      tl.fromTo(bad[0], { opacity: 0, y: 36, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' }, beat(0));
-      tl.fromTo(bad[1], { opacity: 0, y: 36, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' }, beat(1));
-      tl.fromTo(bad[2], { opacity: 0, y: 36, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' }, beat(2));
-      // the safe house punches in on "Inside."
-      tl.fromTo(sceneEl.querySelector('.shelter.good'), { opacity: 0, y: 36, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(2)' }, beat(3));
-      tl.to(sceneEl.querySelector('.shelter.good'), { scale: 1.08, duration: 0.5, ease: 'sine.inOut', yoyo: true, repeat: 1 }, beat(3) + 0.7);
+      var good = sceneEl.querySelector('.shelter.good');
+      // 2×2 grid: tree | tent  /  field | house — one card per beat
+      tl.fromTo(bad[0], { opacity: 0, y: 28, scale: 0.82 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.55)' }, beat(0));
+      tl.to(bad[0], { x: 3, duration: 0.07, yoyo: true, repeat: 3, ease: 'none' }, beat(0) + 0.45);
+      flashPop(tl, beat(0) + 0.12, 0.2, 0.18);
+      tl.fromTo(bad[1], { opacity: 0, y: 28, scale: 0.82 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.55)' }, beat(1));
+      tl.to(bad[1], { y: 2, duration: 0.08, yoyo: true, repeat: 2, ease: 'sine.inOut' }, beat(1) + 0.35);
+      tl.fromTo(bad[2], { opacity: 0, y: 28, scale: 0.82 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.55)' }, beat(2));
+      tl.to(bad, { opacity: 0.5, scale: 0.94, duration: 0.45, ease: 'power2.inOut' }, beat(3) - 0.15);
+      tl.fromTo(good, { opacity: 0, scale: 0.75 }, { opacity: 1, scale: 1.06, duration: 0.7, ease: 'back.out(2)' }, beat(3));
+      tl.call(function () { good.classList.add('is-glow'); }, null, beat(3) + 0.45);
+      tl.to(good, { scale: 1.08, duration: 0.5, ease: 'sine.inOut', yoyo: true, repeat: 3 }, beat(3) + 0.55);
+      flashPop(tl, beat(3) + 0.15, 0.28, 0.3);
     } else if (art === 'rocket') {
-      var wrap = sel('.rocket-wrap'), rocket = sel('.rocket'),
-          wire = sel('.rocket-wire'), bolt = sel('.rocket-bolt');
-      var climbAt = beat(2);                 // "Fire a small rocket trailing a wire..."
-      var strikeAt = climbAt + 2.6;          // rocket reaches the cloud -> bolt follows the wire down
-      tl.fromTo(wrap, { opacity: 0 }, { opacity: 1, duration: 0.5 }, at + 0.8);
+      var wrap = sel('.rocket-wrap'), ship = sel('.rocket-ship'),
+          wire = sel('.rocket-wire'), bolt = sel('.rocket-bolt'),
+          cloud = sel('.rocket-cloud');
+      var climbAt = beat(2);
+      var strikeAt = climbAt + 2.6;
+      tl.call(function () { gsap.set(ship, { xPercent: -50, left: '50%', y: 0, opacity: 1 }); }, null, at + 0.5);
+      tl.fromTo(wrap, { opacity: 0, y: 16, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: 'power2.out' }, at + 0.5);
+      tl.fromTo(cloud, { opacity: 0, y: -16, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(1.5)' }, at + 0.8);
+      tl.to(cloud, { x: 6, duration: 2.5, ease: 'sine.inOut', yoyo: true, repeat: -1 }, at + 1.5);
       var climb = 0;
       tl.call(function () {
         var r = wrap.getBoundingClientRect();
         climb = r.height * 0.85 || 180;
-        gsap.set(rocket, { y: 0, opacity: 1 });
         gsap.set(wire, { height: 0, opacity: 1 });
         gsap.set(bolt, { height: 0, opacity: 0 });
       }, null, climbAt - 0.3);
-      // rocket climbs while the wire pays out beneath it, staying glued to its tail
-      tl.to(rocket, { y: function () { return -climb; }, duration: 2.6, ease: 'power1.in' }, climbAt);
+      tl.to(ship, { y: function () { return -climb; }, duration: 2.6, ease: 'power1.in' }, climbAt);
       tl.to(wire, { height: function () { return climb; }, duration: 2.6, ease: 'power1.in' }, climbAt);
-      // strike: the bolt snaps along the full wire and flickers
+      tl.to(cloud, { scale: 1.15, duration: 0.3, ease: 'power2.in' }, strikeAt - 0.2);
       tl.set(bolt, { height: function () { return climb; } }, strikeAt);
       tl.fromTo(bolt, { opacity: 0 }, { opacity: 1, duration: 0.05 }, strikeAt);
       tl.to(bolt, { opacity: 0.25, duration: 0.05 }, strikeAt + 0.08);
       tl.to(bolt, { opacity: 1, duration: 0.05 }, strikeAt + 0.14);
       tl.to(bolt, { opacity: 0, duration: 0.55, ease: 'power2.out' }, strikeAt + 0.32);
-      // brief whole-screen flash for impact
-      if (flash) {
-        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.8, duration: 0.05 }, strikeAt);
-        tl.to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' }, strikeAt + 0.08);
-      }
-      // rocket and wire fade out after the discharge
-      tl.to(rocket, { opacity: 0, duration: 0.4 }, strikeAt + 0.15);
+      flashPop(tl, strikeAt, 0.85, 0.55);
+      screenShake(tl, strikeAt, 8);
+      tl.to(cloud, { scale: 1.35, opacity: 0.5, duration: 0.4, ease: 'power2.out' }, strikeAt + 0.1);
+      tl.to(ship, { opacity: 0, duration: 0.4 }, strikeAt + 0.15);
       tl.to(wire, { opacity: 0, duration: 0.5 }, strikeAt + 0.3);
     } else if (art === 'outro') {
-      tl.fromTo(sel('.logo-lockup'), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.9, ease: 'back.out(1.7)' }, at + 0.4);
+      var logo = sel('.logo-lockup');
+      var lrs = sceneEl.querySelectorAll('.logo-rings .lr');
+      tl.fromTo(logo, { opacity: 0, scale: 0.55, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 1.05, ease: 'back.out(1.65)' }, at + 0.25);
+      tl.fromTo(lrs[0], { scale: 0.5, opacity: 0.7 }, { scale: 2.2, opacity: 0, duration: 1.8, ease: 'power2.out' }, at + 0.6);
+      tl.fromTo(lrs[1], { scale: 0.5, opacity: 0.5 }, { scale: 2.8, opacity: 0, duration: 2.2, ease: 'power2.out' }, at + 1.2);
+      tl.to(logo, { scale: 1.06, duration: 1.2, ease: 'sine.inOut', yoyo: true, repeat: -1 }, at + 1.5);
+      flashPop(tl, at + 0.5, 0.4, 0.45);
     }
   }
 
@@ -641,31 +787,20 @@
     });
   }
 
-  // ---- dots ----------------------------------------------------------
-  var dotEls = [];
-  function buildDots() {
-    var n = SCRIPT[curLang()].scenes.length;
-    dotsWrap.innerHTML = '';
-    for (var i = 0; i < n; i++) {
-      var d = document.createElement('span'); d.className = 'dot';
-      d.setAttribute('data-i', i);
-      d.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var idx = +this.getAttribute('data-i');
-        if (SCENE_AT[idx] != null) startRun(SCENE_AT[idx], true);
-      });
-      dotsWrap.appendChild(d);
-    }
-    dotEls = dotsWrap.querySelectorAll('.dot');
-  }
-  function setDot(i) { dotEls.forEach(function (d, j) { d.classList.toggle('on', j === i); }); }
+  // ---- dots (removed from UI — progress bar handles seek) ------------
+  function buildDots() {}
+  function setDot() {}
 
   // ---- play / reset --------------------------------------------------
-  function resetChannel() { [CH.halo, CH.mid, CH.body, CH.core].forEach(function (p) { p.style.opacity = '0'; }); if (flash) gsap.set(flash, { opacity: 0 }); }
+  function resetChannel() {
+    [CH.halo, CH.mid, CH.body, CH.core].forEach(function (p) { p.style.opacity = '0'; });
+    if (flash) gsap.set(flash, { opacity: 0 });
+    if (stage) gsap.set(stage, { x: 0 });
+  }
 
   // single source of truth for the background music level (kept low so the
   // on-screen narration is what the viewer reads, music is just atmosphere).
-  var BGM_VOLUME = 0.22;
+  var BGM_VOLUME = 0.10;
   // start the music at `offset` seconds so it stays locked to the timeline.
   function restartBgm(offset) {
     if (!bgm) return;
@@ -810,7 +945,7 @@
 
   function beginScrub(e) {
     if (!timeline || !CONTENT_END) return;
-    if (poster && !poster.classList.contains('hidden')) return;  // not started yet
+    if (poster && !poster.classList.contains('is-hidden')) return;  // not started yet
     scrubbing = true;
     scrubWasPlaying = !paused && timeline.progress() < 1;
     if (progressBar) progressBar.classList.add('is-scrubbing');
@@ -864,12 +999,13 @@
     flash = document.getElementById('vid-flash');
     stage = document.getElementById('vid-stage');
     fill = document.getElementById('vid-progress-fill');
-    dotsWrap = document.getElementById('vid-dots');
     bgm = document.getElementById('vid-bgm');
     poster = document.getElementById('vid-poster');
     scenesRoot = document.getElementById('vid-scenes');
     progressBar = stage.querySelector('.vid-progress');
     playPause = document.getElementById('vid-playpause');
+    vidGrid = document.querySelector('.vid-grid');
+    if (vidGrid) gsap.to(vidGrid, { opacity: 0.55, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
     applyStaticStrings();
     // load voice durations first so the timeline is paced to the spoken clips,
@@ -880,7 +1016,7 @@
     });
 
     poster.addEventListener('click', function () {
-      poster.classList.add('hidden');
+      poster.classList.add('is-hidden');
       play();   // play() restarts the music in lock-step with the timeline
       try { localStorage.setItem('rtl3d-watched-video', '1'); } catch (_) {}
     });
@@ -889,8 +1025,8 @@
     // lands on a real control (progress bar, dots, outro buttons/links) or the
     // poster is still up (lesson not started yet).
     stage.addEventListener('click', function (e) {
-      if (poster && !poster.classList.contains('hidden')) return;
-      if (e.target.closest('.vid-progress, .vid-dots, .vid-outro-actions, a, button')) return;
+      if (poster && !poster.classList.contains('is-hidden')) return;
+      if (e.target.closest('.vid-progress, .vid-outro-actions, a, button')) return;
       togglePlay();
     });
 
@@ -922,7 +1058,7 @@
     document.addEventListener('rtl3d:langchange', function () {
       applyStaticStrings();
       // if a run is in progress, restart it in the new language from the top
-      if (poster.classList.contains('hidden')) play();
+      if (poster.classList.contains('is-hidden')) play();
     });
 
     window.RTL3D_LESSON = { play: play };
