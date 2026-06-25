@@ -15,6 +15,7 @@
   --gold: #FFC72C;
   --positive: #f87171;
   --negative: #60a5fa;
+  --emerald: #34d399;
   --glow: rgba(255, 199, 44, 0.45);
   --surface-blue: rgba(0, 26, 58, 0.88);
   --surface-blue-deep: rgba(0, 30, 68, 0.78);
@@ -518,6 +519,41 @@ a.btn-nav.disabled {
 }
 
 /* Typography */
+
+/* Accessibility utilities — visually-hidden content for screen readers, and a
+   keyboard skip link that appears only when focused. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -100px;
+  z-index: 3000;
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: calc(var(--safe-top) + 8px);
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
 .section-tag {
   display: inline-block;
   font-size: 1.1rem;
@@ -1441,11 +1477,11 @@ body[data-page="home"] .nav-box.nav-box-unvisited {
 
 body[data-page="home"] .nav-box.nav-box-unvisited::after {
   opacity: 1;
-  background: linear-gradient(180deg, #60a5fa, transparent);
+  background: linear-gradient(180deg, var(--negative), transparent);
 }
 
 body[data-page="home"] .nav-box.nav-box-unvisited .nav-box-num {
-  color: #60a5fa;
+  color: var(--negative);
   opacity: 0.95;
 }
 
@@ -1531,7 +1567,7 @@ body[data-page="home"] .hub-featured-card.hub-link-unvisited .hub-featured-title
 }
 
 body[data-page="home"] .hub-featured-card.hub-link-unvisited .hub-featured-cta {
-  color: #60a5fa;
+  color: var(--negative);
 }
 
 body[data-page="home"] .hub-featured-card.hub-link-unvisited.hub-featured-card-power {
@@ -2104,8 +2140,8 @@ body[data-page="home"] .hub-featured-card.hub-link-visited.hub-featured-card-pow
   height: 1.35em;
   font-size: 0.732rem;
   border-radius: 50%;
-  background: #FFC72C;
-  color: #001A3A;
+  background: var(--accent);
+  color: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2219,7 +2255,7 @@ body[data-page="home"] .hub-featured-card.hub-link-visited.hub-featured-card-pow
   text-transform: uppercase;
   padding: 0.18rem 0.5rem;
   border-radius: 999px;
-  color: #001a3a;
+  color: var(--bg);
   background: rgba(255, 199, 44, 0.9);
   border: 1px solid rgba(255, 199, 44, 0.45);
 }
@@ -2324,7 +2360,7 @@ body[data-page="home"] .hub-featured-card.hub-link-visited.hub-featured-card-pow
 }
 
 .mission-gallery-dot.is-active {
-  background: #FFC72C;
+  background: var(--accent);
   transform: scale(1.25);
 }
 
@@ -2877,9 +2913,9 @@ body[data-page="mission"] .split-visual {
 
 .net-icon.lf { background: rgba(96, 165, 250, 0.2); color: var(--accent); }
 .net-icon.vhf { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
-.net-icon.gamma { background: rgba(52, 211, 153, 0.2); color: #34d399; }
+.net-icon.gamma { background: rgba(52, 211, 153, 0.2); color: var(--emerald); }
 .net-icon.efield { background: rgba(255, 199, 44, 0.2); color: var(--gold); }
-.net-icon.video { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+.net-icon.video { background: rgba(248, 113, 113, 0.2); color: var(--positive); }
 .net-icon.rtl { background: rgba(244, 114, 182, 0.2); color: #f472b6; }
 
 .net-item h4 { font-size: 1.062rem; margin-bottom: 0; }
@@ -5549,8 +5585,8 @@ body[data-page="partners"] .satreps-note {
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #FFC72C, #e6a800);
-  color: #001A3A;
+  background: linear-gradient(135deg, var(--accent), #e6a800);
+  color: var(--bg);
   font-weight: 700;
   box-shadow: 0 4px 20px rgba(255, 199, 44, 0.35);
 }
@@ -8138,18 +8174,18 @@ html.portrait-mobile .efield-page .efield-step-preview {
 }
 
 .gamma-page .efield-stat-val {
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-page .efield-open-btn {
   border-color: rgba(52, 211, 153, 0.45);
   background: rgba(52, 211, 153, 0.12);
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-page .efield-open-btn:hover {
   background: rgba(52, 211, 153, 0.2);
-  border-color: #34d399;
+  border-color: var(--emerald);
 }
 
 .gamma-page .efield-step-preview:hover {
@@ -8158,17 +8194,17 @@ html.portrait-mobile .efield-page .efield-step-preview {
 }
 
 .gamma-page .efield-step-preview:hover .efield-step-thumb-hint {
-  color: #34d399;
+  color: var(--emerald);
   background: linear-gradient(to top, rgba(0, 26, 58, 0.95), rgba(52, 211, 153, 0.15));
 }
 
 .gamma-page .efield-step-preview:hover .efield-step-hint {
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-page .efield-panel-num {
   background: rgba(52, 211, 153, 0.18);
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-page .efield-spec-grid > div {
@@ -8177,25 +8213,25 @@ html.portrait-mobile .efield-page .efield-step-preview {
 }
 
 .gamma-page .efield-spec-grid dd {
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-page .efield-points li::before {
-  background: #34d399;
+  background: var(--emerald);
 }
 
 .gamma-guide-modal .efield-guide-kicker {
-  color: #34d399;
+  color: var(--emerald);
 }
 
 .gamma-guide-modal .efield-carousel-dot.is-active {
-  background: #34d399;
+  background: var(--emerald);
   box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25);
 }
 
 /* ── High-Speed Video page ─────────────────────────────────────────────── */
 
-.hsv-page .efield-stat-val { color: #f87171; }
+.hsv-page .efield-stat-val { color: var(--positive); }
 .hsv-page .efield-stat { border-color: rgba(248, 113, 113, 0.2); }
 
 .hsv-page-header {
@@ -8213,7 +8249,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   padding: clamp(0.35rem, 1cqh, 0.6rem) clamp(0.5rem, 1.8vw, 1.25rem) clamp(0.55rem, 1.4cqh, 0.85rem);
   background:
     radial-gradient(ellipse 120% 80% at 50% 0%, rgba(248, 113, 113, 0.08), transparent 62%),
-    linear-gradient(180deg, #001A3A 0%, #001e44 72%, rgba(0, 26, 58, 0.35) 100%);
+    linear-gradient(180deg, var(--bg) 0%, #001e44 72%, rgba(0, 26, 58, 0.35) 100%);
   border-bottom: 1px solid rgba(248, 113, 113, 0.18);
   transition: background 0.35s ease, padding 0.35s ease;
 }
@@ -8223,7 +8259,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   padding-bottom: clamp(0.75rem, 2cqh, 1.2rem);
   background:
     radial-gradient(ellipse 130% 90% at 50% 0%, rgba(248, 113, 113, 0.12), transparent 68%),
-    linear-gradient(180deg, #001A3A 0%, #001e44 78%, rgba(0, 26, 58, 0.5) 100%);
+    linear-gradient(180deg, var(--bg) 0%, #001e44 78%, rgba(0, 26, 58, 0.5) 100%);
 }
 
 .hsv-theater-stage {
@@ -8275,7 +8311,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #f87171;
+  color: var(--positive);
 }
 
 .hsv-clip-select {
@@ -8420,12 +8456,12 @@ html.portrait-mobile .efield-page .efield-step-preview {
 }
 
 .hsv-page .hsv-camera-card .efield-points li::before {
-  background: #f87171;
+  background: var(--positive);
 }
 
 .hsv-page .efield-spec-grid > div { border-color: rgba(248, 113, 113, 0.15); }
-.hsv-page .efield-spec-grid dd { color: #f87171; }
-.hsv-page .efield-points li::before { background: #f87171; }
+.hsv-page .efield-spec-grid dd { color: var(--positive); }
+.hsv-page .efield-points li::before { background: var(--positive); }
 
 /* ===================================================================
    Home idle "screensaver" — attract loop (js/home-idle-screensaver.js)
@@ -8434,7 +8470,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #001A3A;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8488,7 +8524,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   line-height: 1.45;
   text-align: center;
   max-width: min(96vw, 40rem);
-  color: #FFE07A;
+  color: var(--accent-bright);
   cursor: pointer;
   padding: 0.35rem 0.75rem 0.15rem;
   opacity: 0.92;
@@ -8565,7 +8601,7 @@ html.portrait-mobile .efield-page .efield-step-preview {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: clamp(0.92rem, 2.832vw, 1.18rem);
   font-weight: 600;
-  color: #FFE07A;
+  color: var(--accent-bright);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -8644,9 +8680,9 @@ html.portrait-mobile .efield-page .efield-step-preview {
 .quiz-gate-btn:hover { border-color: rgba(255, 199, 44, 0.6); background: rgba(255, 199, 44, 0.08); }
 .quiz-gate-btn:active { transform: scale(0.98); }
 .quiz-gate-btn.primary {
-  background: linear-gradient(135deg, #FFC72C, #e6a800);
+  background: linear-gradient(135deg, var(--accent), #e6a800);
   border-color: transparent;
-  color: #001A3A;
+  color: var(--bg);
   font-weight: 800;
   box-shadow: 0 8px 26px rgba(255, 199, 44, 0.3);
 }

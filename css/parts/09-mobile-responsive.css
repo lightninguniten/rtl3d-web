@@ -1,0 +1,323 @@
+/* Mobile — boxes must grow with text (applies to all pages ≤900px) */
+@media (max-width: 900px) {
+  .slide-inner {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .slide-inner > .network-grid,
+  .slide-inner > .cards.three,
+  .slide-inner > .flow,
+  .slide-inner > .impact-row,
+  .slide-inner > .partners,
+  .slide-inner > .acknowledgement-block,
+  .slide-inner > .hub-cinema,
+  .slide-inner > .hub-lower,
+  .slide-inner > .hub-featured,
+  .slide-inner > .hub-nav-wrap,
+  .slide-inner > .hub-hero-panel,
+  .slide-inner > .metric-list {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: min-content;
+  }
+
+  .network-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
+    gap: var(--panel-gap);
+  }
+
+  .cards.three {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .card,
+  .nav-box,
+  .flow-step,
+  .impact,
+  .net-item,
+  .partner-col,
+  .goal-box,
+  .detail-block,
+  .metric,
+  .pill,
+  .split-text,
+  a.net-item.net-item-clickable {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+    max-height: none;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .net-item p,
+  .net-item h4,
+  .net-count,
+  .net-tap-hint {
+    max-width: 100%;
+  }
+
+  .net-item p {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .card h3,
+  .flow-step h4,
+  .net-item h4 {
+    line-height: 1.3;
+    overflow-wrap: break-word;
+  }
+
+  .split-text p,
+  .card p,
+  .flow-step p,
+  .net-item p,
+  .partner-col li,
+  .goal-box p,
+  .detail-text {
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+
+  .impact-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .impact,
+  a.impact.impact-clickable {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .partners {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .partner-col.leads .lead-list {
+    display: block;
+  }
+
+  body[data-page="partners"] .acknowledgement-title,
+  body[data-page="partners"] .satreps-note {
+    text-align: left;
+  }
+
+  .flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .flow-arrow {
+    display: none;
+  }
+
+  .flow-step {
+    max-width: none;
+    text-align: left;
+  }
+
+  .split {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 0.65rem;
+  }
+
+  .split-text,
+  .split-visual {
+    min-height: 0;
+    height: auto;
+  }
+
+  /* Our Mission — full-page scroll, readable text, edge-to-edge gallery */
+  body[data-page="mission"] .page-view {
+    overflow-y: auto;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  body[data-page="mission"] .slide-inner.split {
+    padding-inline: clamp(0.85rem, 4.5vw, 1.25rem);
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    gap: 0.85rem;
+  }
+
+  body[data-page="mission"] .split-text {
+    overflow: visible;
+    max-height: none;
+    height: auto;
+    width: 100%;
+    flex: 0 0 auto;
+    hyphens: manual;
+    word-break: normal;
+  }
+
+  body[data-page="mission"] .split-text h2 {
+    line-height: 1.25;
+    margin-bottom: 0.55rem;
+    hyphens: manual;
+    word-break: normal;
+  }
+
+  body[data-page="mission"] .split-text p {
+    line-height: 1.5;
+    hyphens: manual;
+    word-break: normal;
+  }
+
+  body[data-page="mission"] .split-visual {
+    order: -1;
+    overflow: visible;
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+    min-height: min-content;
+  }
+
+  body[data-page="mission"] .mission-gallery {
+    height: auto;
+    max-height: none;
+    width: 100%;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  body[data-page="mission"] .mission-gallery-viewport {
+    flex: 0 0 auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+    max-height: none;
+    height: auto;
+  }
+
+  body[data-page="mission"] .mission-gallery-caption {
+    flex-shrink: 0;
+    min-height: min-content;
+    height: auto;
+    overflow: visible;
+  }
+
+  body[data-page="mission"] .mission-gallery-controls {
+    flex-shrink: 0;
+  }
+
+  body[data-page="mission"] .mission-gallery-caption-text {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+
+  body[data-page="mission"] .pill-row {
+    margin-top: 0.65rem;
+    gap: 0.4rem;
+  }
+
+  body[data-page="mission"] .pill {
+    width: auto;
+  }
+
+  body[data-page="mission"] .mission-video-cta {
+    margin-top: 0.75rem;
+    align-items: flex-start;
+  }
+
+  body[data-page="mission"] .mission-video-copy span {
+    line-height: 1.4;
+  }
+
+  /* Social — single column, page scrolls; embeds use native touch scroll */
+  .social-columns {
+    grid-template-columns: 1fr;
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+
+  body[data-page="social"] .slide-inner {
+    flex: 0 0 auto;
+    max-height: none;
+    min-height: min-content;
+  }
+
+  body[data-page="social"] .social-col {
+    flex: 0 0 auto;
+  }
+
+  body[data-page="social"] .social-embed-viewport {
+    flex: 0 0 auto;
+    min-height: min-content;
+    max-height: none;
+    overflow: visible;
+    touch-action: auto;
+  }
+
+  body[data-page="social"] .social-embed-shield {
+    display: none;
+  }
+
+  body[data-page="impact"] .slide-inner > .impact-row,
+  body[data-page="impact"] .slide-inner > .flow {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+}
+
+/* Responsive — layout tweaks (text-in-box rules are in block above) */
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; gap: 1rem; }
+  .cloud-viz, .cube-scene { height: clamp(90px, 22cqh, 180px); }
+  .split-visual.map-wrap { order: -1; }
+  .study-area-page-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(220px, 1fr);
+  }
+  .study-area-page-split .study-area-map { min-height: 220px; }
+  .tnb-page-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(220px, 1fr);
+  }
+  .tnb-page-split .tnb-map { min-height: 220px; }
+  .map-svg { max-height: min(200px, 30cqh); }
+}
+
+@media (max-width: 520px) {
+  .hero-stats { gap: 0.75rem; }
+  .stat-num { font-size: 1.77rem; }
+  .slide { padding-inline: 1rem; }
+
+  .social-col-header {
+    padding: 0.45rem 0.6rem;
+    gap: 0.4rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .hero-title { font-size: clamp(1.77rem, 4.72vw, 2.596rem); }
+  .hero-stats { margin-bottom: 0.75rem; }
+  .card { padding: var(--panel-pad-y) var(--panel-pad-x); }
+  .net-item { padding: var(--panel-pad-y) var(--panel-pad-x); }
+  h2 { font-size: 1.475rem; }
+  p, .card p { font-size: 1.121rem; }
+}
+

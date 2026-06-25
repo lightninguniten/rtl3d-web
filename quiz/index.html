@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="Test your lightning safety knowledge. 10 questions for students.">
   <title>Lightning Safety Quiz — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
   <style>
     .quiz-wrap {
       width: 100%;
@@ -308,6 +308,7 @@
   </style>
 </head>
 <body data-page="quiz">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -320,7 +321,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D</span>
         </div>
       </div>
@@ -339,7 +340,8 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view">
+        <main id="main-content" tabindex="-1" class="page-view">
+          <h1 class="sr-only">Lightning Quiz</h1>
 
           <div class="slide-inner hero" style="align-items:center;">
             <span class="section-tag center" data-i18n="quiz.tag">⚡ Lightning Safety Quiz</span>
@@ -363,7 +365,7 @@
             <div class="quiz-wrap" id="quiz-body" hidden>
               <div class="quiz-header">
                 <div class="quiz-progress-row">
-                  <div class="quiz-progress-label" id="quiz-progress">Question 1 of 10</div>
+                  <div class="quiz-progress-label" id="quiz-progress">Question 1 of 5</div>
                   <div class="quiz-score-live" id="quiz-score-live">Score: 0</div>
                 </div>
                 <div class="quiz-progress-bar">

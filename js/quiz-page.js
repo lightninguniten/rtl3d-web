@@ -3,70 +3,34 @@
 
   var QUESTIONS = [
     {
-      q: 'You are outside when you see lightning. How long should you wait after the LAST thunder before it is safe to go back outside?',
-      opts: ['5 minutes', '15 minutes', '30 minutes', '1 hour'],
+      q: 'What makes lightning happen in the sky?',
+      opts: ['Supernatural power', 'Ice and water drops rubbing', 'God is angry', 'Clouds bumping'],
+      ans: 1,
+      explain: 'Lots of tiny pieces of ice and drops of water bump and rub into each other in the cloud as they move around. This rubbing builds up static electricity — just like when you rub your socks on a carpet!'
+    },
+    {
+      q: 'Why do some people get hit by lightning?',
+      opts: ['Because they are bad luck', 'Because they wear bright clothes', 'Because they stand in open places', 'Because they have things made of iron'],
       ans: 2,
-      explain: 'The 30-30 rule: wait at least 30 minutes after the last thunder clap before resuming outdoor activities. Lightning can strike far from the storm centre.'
+      explain: 'People are more likely to be hit by lightning when they are in open areas, where they become the tallest object nearby. Iron things do not attract lightning — lightning is so strong that it can strike anything nearby.'
     },
     {
-      q: 'Which of the following is the SAFEST place to shelter during a thunderstorm?',
-      opts: ['Under a tall tree', 'Inside a fully enclosed building or hard-top vehicle', 'In an open field, crouching low', 'Near a metal fence'],
-      ans: 1,
-      explain: 'A fully enclosed building with plumbing and wiring acts as a Faraday cage, safely conducting lightning to the ground. Avoid trees, open areas, and metal structures.'
+      q: 'Does lightning strike the same place twice?',
+      opts: ['Yes, it can strike the same place again', 'No, it never strikes the same place again'],
+      ans: 0,
+      explain: 'Lightning can strike the same place again and again. For example, one mobile phone tower was hit by lightning 7 times in just 40 minutes!'
     },
     {
-      q: 'What is the "Flash-to-Bang" method used for?',
-      opts: ['Measuring rainfall intensity', 'Estimating how far away a lightning strike is', 'Counting how many strikes have occurred', 'Predicting where the next strike will land'],
-      ans: 1,
-      explain: 'Count the seconds between the lightning flash and the thunder, then divide by 3 to get the distance in kilometres (or divide by 5 for miles). Under 30 seconds means seek shelter immediately.'
+      q: 'Where is the safe place to avoid lightning strikes?',
+      opts: ['On a sports ground', 'Under a tree', 'In a tent on a campsite', 'Inside a house'],
+      ans: 3,
+      explain: 'Lightning looks for the easiest and fastest path to the ground. Being inside a house or building keeps you safe because the walls and roof protect you. Open fields, trees, and tents do not protect you — lightning can easily strike there. We are building a website and phone app to tell you where lightning strikes.'
     },
     {
-      q: 'Lightning can travel through which of the following inside a building?',
-      opts: ['Wooden furniture', 'Plumbing and water pipes', 'Thick curtains', 'Carpet flooring'],
-      ans: 1,
-      explain: 'Lightning can travel through plumbing, water pipes, and electrical wiring. Avoid showering, washing dishes, or using corded devices during a thunderstorm.'
-    },
-    {
-      q: 'Which of these activities is DANGEROUS during a lightning storm?',
-      opts: ['Sitting in a car with windows up', 'Playing golf or holding an umbrella outdoors', 'Watching from inside a house', 'Talking on a mobile phone indoors'],
-      ans: 1,
-      explain: 'Golf clubs, fishing rods, umbrellas, and similar objects extend your height and attract lightning. Never hold objects above your head in a storm. Talking on a mobile phone outdoors is also dangerous — indoors is fine.'
-    },
-    {
-      q: 'What does the RTL3D project stand for?',
-      opts: ['Radar Tracking of Lightning in 3 Dimensions', 'Real-Time Lightning 3D Imaging & Forecasting', 'Remote Thunder-Locator Device', 'Radiated Thunder and Lightning Detection'],
-      ans: 1,
-      explain: 'RTL3D is a Malaysia–Japan SATREPS research project focused on Real-Time Lightning 3D Imaging and Forecasting to protect lives and power infrastructure.'
-    },
-    {
-      q: 'On average, how many lightning flashes strike the Earth every second?',
-      opts: ['About 10', 'About 45', 'About 100', 'About 500'],
-      ans: 2,
-      explain: 'Earth experiences roughly 100 lightning flashes every second — about 8 million per day. Malaysia sits near the equator and is one of the most lightning-prone countries on Earth: the Klang Valley (around Subang Jaya) gets about 240 thunderstorm days a year.'
-    },
-    {
-      q: 'You are caught outdoors when a storm hits. What is the BEST thing to do?',
-      opts: ['Crouch low on the balls of your feet and wait it out', 'Lie flat on the ground', 'Get inside a building or hard-top vehicle as fast as safely possible', 'Shelter under the nearest tall tree'],
-      ans: 2,
-      explain: 'There is NO safe place outdoors in a storm. Modern advice (NWS) is simply: "When thunder roars, go indoors." Head for a fully enclosed building or a hard-top car. The old "lightning crouch" was dropped in 2008 — it does not protect you. If you are stuck outside, keep moving toward shelter and avoid hilltops, open fields, water and isolated trees.'
-    },
-    {
-      q: 'Which sensor type does the RTL3D network use to image lightning channels in 3D?',
-      opts: ['Infrared cameras only', 'LF (Low Frequency) and VHF (Very High Frequency) antennas', 'Doppler radar only', 'Laser rangefinders'],
-      ans: 1,
-      explain: 'RTL3D uses a network of LF and VHF radio receivers spread across multiple sites. LF sensors detect return strokes; VHF sensors map the full channel development in 3D.'
-    },
-    {
-      q: 'A lightning bolt can heat the air around it to approximately how hot?',
-      opts: ['1,000 °C (hotter than boiling water)', '5,000 °C (same as the Sun\'s surface)', '30,000 °C (five times hotter than the Sun\'s surface)', '100 °C (same as boiling water)'],
-      ans: 2,
-      explain: 'A lightning channel heats the surrounding air to around 30,000 °C — roughly five times the temperature of the Sun\'s surface. This rapid heating causes the explosive expansion we hear as thunder.'
-    },
-    {
-      q: 'About how many thunderstorm days does the Klang Valley (around Subang Jaya) experience each year?',
-      opts: ['About 30 days', 'About 90 days', 'About 240 days', 'About 365 days'],
-      ans: 2,
-      explain: 'The Klang Valley records roughly 240 thunderstorm days a year, making Subang Jaya one of the most lightning-prone towns in the world. (The global record for flash density belongs to Lake Maracaibo, Venezuela — but Malaysia is firmly among the top hotspots.)'
+      q: 'Can we change the place where lightning strikes?',
+      opts: ['Yes, we can change where the lightning strikes', 'No, we cannot change where the lightning strikes'],
+      ans: 0,
+      explain: 'We can send a small rocket into the sky with a long wire attached to it. As the rocket flies up, the wire stretches from the ground into the clouds. Lightning likes an easy path — and the wire becomes that path, so lightning follows the wire down to the ground. We did this Rocket-Triggered Lightning for the first time in Melaka, Malaysia, in 2026!'
     }
   ];
 

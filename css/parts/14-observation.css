@@ -1,0 +1,89 @@
+/* Observation detail pages — narrow view tweaks */
+@media (max-width: 719px) {
+  .efield-page .efield-open-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .efield-guide-modal {
+    padding: calc(var(--safe-top) + 0.35rem) 0.35rem calc(var(--safe-bottom) + 0.35rem);
+    align-items: flex-end;
+  }
+
+  .efield-guide-panel {
+    width: 100%;
+    border-radius: 14px 14px 0 0;
+  }
+}
+
+html.portrait-mobile .efield-page .efield-card,
+html.portrait-mobile .efield-page .efield-step-preview {
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Gamma-ray & radon page — emerald theme (extends efield layout) */
+.gamma-page .efield-stat {
+  background: rgba(52, 211, 153, 0.08);
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.gamma-page .efield-stat-val {
+  color: var(--emerald);
+}
+
+.gamma-page .efield-open-btn {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--emerald);
+}
+
+.gamma-page .efield-open-btn:hover {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: var(--emerald);
+}
+
+.gamma-page .efield-step-preview:hover {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.06);
+}
+
+.gamma-page .efield-step-preview:hover .efield-step-thumb-hint {
+  color: var(--emerald);
+  background: linear-gradient(to top, rgba(0, 26, 58, 0.95), rgba(52, 211, 153, 0.15));
+}
+
+.gamma-page .efield-step-preview:hover .efield-step-hint {
+  color: var(--emerald);
+}
+
+.gamma-page .efield-panel-num {
+  background: rgba(52, 211, 153, 0.18);
+  color: var(--emerald);
+}
+
+.gamma-page .efield-spec-grid > div {
+  background: rgba(52, 211, 153, 0.05);
+  border-left-color: rgba(52, 211, 153, 0.45);
+}
+
+.gamma-page .efield-spec-grid dd {
+  color: var(--emerald);
+}
+
+.gamma-page .efield-points li::before {
+  background: var(--emerald);
+}
+
+.gamma-guide-modal .efield-guide-kicker {
+  color: var(--emerald);
+}
+
+.gamma-guide-modal .efield-carousel-dot.is-active {
+  background: var(--emerald);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25);
+}
+

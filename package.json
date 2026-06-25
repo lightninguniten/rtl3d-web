@@ -1,0 +1,21 @@
+{
+  "name": "rtl3d-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static front-end for Real-Time Lightning 3D Imaging & Forecasting (SATREPS Malaysia-Japan). No bundler; tooling is lint/format only.",
+  "license": "MIT",
+  "scripts": {
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint \"js/**/*.js\" \"*.js\"",
+    "lint:css": "stylelint \"css/parts/**/*.css\"",
+    "format": "prettier --write \"**/*.{js,css,html,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,css,html,json,md}\"",
+    "fix": "npm run format && eslint --fix \"js/**/*.js\" \"*.js\" && stylelint --fix \"css/parts/**/*.css\""
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard": "^36.0.1"
+  }
+}

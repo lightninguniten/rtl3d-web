@@ -1,0 +1,586 @@
+/* LF dedicated page */
+.lf-page {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad-y) var(--page-pad-x);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.lf-page.drag-scroll-active {
+  cursor: grab;
+}
+
+.lf-page.is-drag-scrolling {
+  cursor: grabbing;
+  user-select: none;
+  scroll-snap-type: none;
+}
+
+.lf-plot,
+.lf-plot-3d-wrap {
+  touch-action: pan-y;
+}
+
+.lf-plot-3d-wrap.is-panning {
+  touch-action: none;
+}
+
+.lf-page-header {
+  flex-shrink: 0;
+  margin-bottom: clamp(0.15rem, 0.8cqh, 0.4rem);
+}
+
+.lf-page-header h1 {
+  font-size: clamp(1.062rem, 3.068cqh, 1.593rem);
+  margin: 0.15rem 0 0;
+}
+
+.lf-page-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.lf-page .detail-body {
+  display: grid;
+  grid-template-columns: minmax(0, clamp(180px, 26cqw, 320px)) minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  flex: 1;
+}
+
+.lf-page .detail-side {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.8cqh, 0.4rem);
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.lf-page .detail-block {
+  margin-bottom: 0;
+  padding: var(--panel-pad-y) var(--panel-pad-x);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lf-page .detail-block:first-child {
+  flex: 0 1 auto;
+  padding-bottom: calc(var(--panel-pad-y) + 0.15rem);
+}
+
+.lf-page .detail-block-sites {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.lf-page .detail-block-sites h3 {
+  flex-shrink: 0;
+}
+
+.lf-page .detail-block .sensor-diagram {
+  max-height: min(118px, 18cqh);
+  min-height: 0;
+  margin-bottom: clamp(0.25rem, 0.8cqh, 0.45rem);
+}
+
+.lf-page .sensor-svg {
+  max-height: min(118px, 18cqh);
+  min-height: 0;
+  height: auto;
+}
+
+.lf-page .detail-text {
+  font-size: clamp(0.885rem, 2.124cqh, 1rem);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.lf-page .site-table {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: clamp(0.885rem, 2.124cqh, 1rem);
+}
+
+.lf-page .site-table.drag-scroll-active {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.lf-page .site-table.is-drag-scrolling {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.lf-page .site-table li {
+  padding: clamp(0.1rem, 0.4cqh, 0.18rem) 0;
+}
+
+.lf-page .detail-controls {
+  flex-shrink: 0;
+  margin-bottom: clamp(0.25rem, 0.8cqh, 0.5rem);
+}
+
+.lf-page .detail-controls label,
+.lf-page .flash-meta {
+  font-size: clamp(0.85rem, 2cqh, 1rem);
+}
+
+.lf-page .lf-plots {
+  flex: 1;
+  min-height: 0;
+}
+
+/* LF desktop — 3-column plot grid inside viewport */
+@media (min-width: 901px) {
+  .lf-page .detail-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .lf-page .lf-plots {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    gap: 0.45rem;
+  }
+
+  .lf-page .lf-plot {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .lf-page .lf-plot-3d-wrap {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    height: 100%;
+    min-height: clamp(120px, 28cqh, 320px);
+  }
+}
+
+/* LF mobile — stacked plots, page scroll */
+@media (max-width: 900px) {
+  .lf-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    padding-bottom: calc(var(--safe-bottom) + 1.25rem);
+    scroll-snap-type: none;
+  }
+
+  .lf-page-body {
+    flex: none;
+    overflow: visible;
+    height: auto;
+  }
+
+  .detail-body { grid-template-columns: 1fr; }
+  .lf-page .detail-body {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    overflow: visible;
+    height: auto;
+    flex: none;
+    gap: 0.65rem;
+  }
+  .lf-page .detail-main {
+    flex: none;
+    overflow: visible;
+    height: auto;
+  }
+  .lf-page .lf-plots {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    height: auto;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0.65rem;
+  }
+  .lf-page .lf-plot {
+    width: 100%;
+    height: auto;
+    min-height: clamp(200px, 32vh, 280px);
+    flex: none;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .lf-page .lf-plot-3d-wrap {
+    width: 100%;
+    height: auto;
+    min-height: clamp(280px, 46vh, 380px);
+    flex: none;
+    grid-column: auto;
+    grid-row: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .lf-page .lf-plot-3d {
+    width: 100%;
+    flex: 1 1 auto;
+    height: clamp(260px, 44vh, 360px);
+    min-height: clamp(260px, 44vh, 360px);
+  }
+
+  .lf-page .detail-text {
+    overflow-wrap: break-word;
+    line-height: 1.4;
+  }
+}
+
+a.btn-nav {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* LF detail modal (legacy — unused) */
+body.modal-open { overflow: hidden; }
+
+.detail-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    0.25rem
+    0.75rem
+    calc(var(--safe-bottom) + 0.25rem);
+  background: rgba(0, 26, 58, 0.88);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.detail-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detail-modal-panel {
+  width: min(98%, 100%);
+  max-height: 96%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 26, 58, 0.97);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-header h2 {
+  font-size: 1.357rem;
+  margin: 0.25rem 0 0;
+}
+
+.detail-close {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(0, 26, 58, 0.8);
+  color: var(--text-muted);
+  font-size: 1.77rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.detail-close:hover { color: var(--accent); border-color: var(--accent); }
+
+.detail-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+}
+
+.detail-side {
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 0.25rem;
+}
+
+.detail-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detail-block {
+  margin-bottom: 0.75rem;
+  padding: var(--panel-pad-y) var(--panel-pad-x);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.detail-block h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.detail-text {
+  font-size: 0.897rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.sensor-svg {
+  width: 100%;
+  max-height: 100px;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-sans);
+}
+
+.sensor-svg text {
+  font-family: var(--font-sans);
+}
+
+.site-table {
+  list-style: none;
+  font-size: 0.944rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.site-table li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.08);
+  color: var(--text-muted);
+}
+
+.site-code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  min-width: 2.5rem;
+}
+
+.site-table small {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.detail-controls {
+  margin-bottom: 0.5rem;
+}
+
+.detail-controls label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.flash-meta {
+  font-size: 0.944rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.lf-plots {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.45rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.lf-plot-3d-wrap {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  position: relative;
+  padding: 0;
+  border: none;
+  background: transparent;
+  min-height: clamp(120px, 28cqh, 320px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  touch-action: none;
+  cursor: grab;
+}
+
+.lf-plot-3d-wrap.is-panning {
+  cursor: grabbing;
+}
+
+.lf-plot-3d {
+  flex: 1;
+  width: 100%;
+  min-height: clamp(100px, 24cqh, 280px);
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 26, 58, 0.4);
+}
+
+.lf-3d-controls {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 0.55rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.lf-3d-play,
+.lf-3d-repeat {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(0, 26, 58, 0.92);
+  color: var(--accent-bright);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  transition: border-color 0.2s, transform 0.15s, background 0.2s, color 0.2s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.lf-3d-play svg,
+.lf-3d-repeat svg {
+  width: 18px;
+  height: 18px;
+}
+
+.lf-3d-play .icon-pause { display: none; }
+
+.lf-3d-play.playing .icon-play { display: none; }
+.lf-3d-play.playing .icon-pause { display: block; }
+
+.lf-3d-repeat.active {
+  border-color: var(--accent);
+  color: var(--accent-bright);
+  background: rgba(30, 58, 90, 0.95);
+}
+
+.lf-3d-play:hover,
+.lf-3d-repeat:hover {
+  border-color: var(--accent);
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.lf-3d-play:active,
+.lf-3d-repeat:active { transform: scale(0.94); }
+
+.lf-plot {
+  min-height: 0;
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 26, 58, 0.4);
+}
+
+#lf-plot-plan {
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .lf-plots { min-height: 0; }
+}
+
+@media (max-width: 520px) {
+  .lf-page .lf-plots {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0.65rem;
+  }
+
+  .lf-page .lf-plot-3d-wrap {
+    grid-column: auto;
+    grid-row: auto;
+    min-height: clamp(320px, 54vh, 460px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lf-page .lf-plot-3d {
+    height: clamp(300px, 52vh, 440px);
+    min-height: clamp(300px, 52vh, 440px);
+  }
+}
+
+/* LF / VHF — taller 3D rotating view on phone portrait */
+html.portrait-mobile .lf-page .lf-plot-3d-wrap {
+  min-height: clamp(320px, 54vh, 460px);
+  display: flex;
+  flex-direction: column;
+}
+
+html.portrait-mobile .lf-page .lf-plot-3d {
+  height: clamp(300px, 52vh, 440px);
+  min-height: clamp(300px, 52vh, 440px);
+}
+

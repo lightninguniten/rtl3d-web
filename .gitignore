@@ -1,3 +1,6 @@
+# Node tooling (lint/format only — no bundler, no build output)
+node_modules/
+
 # Python
 __pycache__/
 *.py[cod]

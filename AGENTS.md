@@ -106,7 +106,52 @@ $$\mathrm{lat} = \mathrm{lat}_0 + y_{\mathrm{km}}/111.32,\quad
 
 ## CSS
 
-Single stylesheet: edit `css/style.css`, then run `build-web-assets.bat` to regenerate `css/style.min.css` (linked by all pages). TNB split layout: `.tnb-page-split`, toolbar `.tnb-lightning-toolbar`, sidebar `.tnb-page-sidebar`.
+Source of truth is the ordered partials in `css/parts/` (`01-tokens-base.css` …
+`16-overrides.css`); they are concatenated in filename order. Edit the relevant
+partial, then run `build-web-assets.bat` to regenerate both the `css/style.css`
+bundle and the minified `css/style.min.css` (linked by all pages). Do not hand-edit
+`css/style.css` — it is a generated bundle. Partials concatenate in cascade order,
+so keep order-dependent overrides in the later-numbered files. TNB split layout:
+`.tnb-page-split`, toolbar `.tnb-lightning-toolbar`, sidebar `.tnb-page-sidebar`.
+
+Cache-busting is automatic: `build-web-assets.bat` stamps every page's
+`css/style.min.css?v=<hash>` with a content hash of the minified CSS, so the token
+changes only when the CSS does. Do not hand-edit the `?v=` strings.
+
+## Shared page &lt;head&gt;
+
+The invariant head tags for every `{slug}/index.html` (charset, viewport, robots,
+Open Graph / Twitter scaffold, canonical domain, favicon wrapper, stylesheet links)
+are owned by a single template in `scripts/build_head.py`. Edit that template and
+run `py -3 scripts/build_head.py` to propagate to all 20 sub-pages. Per-page values
+(title, description, favicon glyph, og/twitter copy, and page-specific extras such
+as Leaflet links, preloads, inline `<style>`, and scripts) live in each page and are
+preserved across regeneration. The home page `index.html` is hand-maintained (it has
+unique SEO tags: sitemap, og:image, site verification).
+
+## Linting & formatting
+
+Dev-only tooling (no bundler, no runtime impact). One-time `npm install`, then:
+
+```bash
+npm run lint      # eslint (js/) + stylelint (css/parts/)
+npm run format    # prettier --write
+npm run fix       # format + eslint --fix + stylelint --fix
+```
+
+Configs: `eslint.config.js`, `.stylelintrc.json`, `.prettierrc.json`, `.editorconfig`.
+Vendored libraries (`js/vendor/`, Leaflet, GSAP, qrcode) and generated bundles
+(`css/style.css`, `css/style.min.css`) are ignored. Rules are intentionally light so
+the existing code passes; warnings are advisory.
+
+## Deploy (GitHub Pages)
+
+`.github/workflows/pages.yml` stages a clean `_site/` with
+`rsync -a --exclude-from=.deployignore ./ _site/` and publishes only that, so the
+public site never ships build tooling, dev artifacts, CSS source, configs, or
+internal docs. To change what is public, edit `.deployignore` (rsync-style patterns;
+`LICENSE` is intentionally kept). Anything a page actually fetches must NOT be listed
+there.
 
 ## Conventions for edits
 

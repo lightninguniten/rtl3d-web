@@ -19,11 +19,12 @@
   <meta name="twitter:description" content="LF lightning observation network — stations, sensors, and 3D localization results.">
   <title>LF Network — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
   <link rel="preload" href="js/vendor/plotly-2.35.2.min.js" as="script">
   <script defer src="js/vendor/plotly-2.35.2.min.js"></script>
 </head>
 <body data-page="lf">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -36,7 +37,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D · LF</span>
         </div>
       </div>
@@ -57,7 +58,7 @@
         <div class="grid-overlay"></div>
       </div>
 
-      <main class="lf-page">
+      <main id="main-content" tabindex="-1" class="lf-page">
         <header class="lf-page-header">
           <span class="section-tag" data-i18n="page.lf.title">LF Network</span>
           <h1 data-i18n="sub.lf.h1">Low Frequency Lightning Observation</h1>

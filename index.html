@@ -22,10 +22,11 @@
   <meta name="twitter:image" content="https://lightninguniten.github.io/rtl3d-web/images/og-image.png">
   <title>RTL3D — Real-Time Lightning 3D Imaging & Forecasting</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618e">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
 
 </head>
 <body data-page="home">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -38,7 +39,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D</span>
         </div>
       </div>
@@ -57,7 +58,7 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view">
+        <main id="main-content" tabindex="-1" class="page-view">
 
           <div class="slide-inner hero hub">
             <div class="partner-logos mobile-snap" aria-label="Partner universities">

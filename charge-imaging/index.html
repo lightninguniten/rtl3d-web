@@ -19,10 +19,11 @@
   <meta name="twitter:description" content="3D Charge Imaging — RTL3D">
   <title>3D Charge Imaging — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
 
 </head>
 <body data-page="imaging">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -35,7 +36,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D</span>
         </div>
       </div>
@@ -54,7 +55,8 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view">
+        <main id="main-content" tabindex="-1" class="page-view">
+          <h1 class="sr-only">3D Charge Imaging</h1>
 
           <div class="slide-inner split">
             <div class="split-text">

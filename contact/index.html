@@ -19,10 +19,11 @@
   <meta name="twitter:description" content="Contact — RTL3D">
   <title>Contact — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
 
 </head>
 <body data-page="contact">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -35,7 +36,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D</span>
         </div>
       </div>
@@ -54,7 +55,8 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view">
+        <main id="main-content" tabindex="-1" class="page-view">
+          <h1 class="sr-only">Contact</h1>
 
           <div class="slide-inner hero contact-slide">
             <span class="section-tag" data-i18n="contact.tag">Get Involved</span>

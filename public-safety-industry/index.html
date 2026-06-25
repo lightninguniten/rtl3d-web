@@ -19,11 +19,12 @@
   <meta name="twitter:description" content="Industry and tourism lightning movement — 5 min live volumes and 30 min mock nowcast">
   <title>Public Safety — Industry &amp; Tourism — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
   <link rel="stylesheet" href="css/leaflet.css">
   <link rel="stylesheet" href="css/leaflet.fullscreen.css">
 </head>
 <body data-page="public-safety-industry">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -36,7 +37,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D · Industry &amp; Tourism</span>
         </div>
       </div>
@@ -55,7 +56,8 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view page-view-tnb">
+        <main id="main-content" tabindex="-1" class="page-view page-view-tnb">
+          <h1 class="sr-only">Public Safety — Industry & Tourism</h1>
           <div class="slide-inner tnb-page tnb-page-split">
             <aside class="tnb-page-sidebar-wrap">
               <div class="tnb-lightning-toolbar tnb-radar-toolbar" aria-label="Lightning movement controls">

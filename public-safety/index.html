@@ -19,13 +19,14 @@
   <meta name="twitter:description" content="Public safety — Aviation and maritime lightning nowcasting map">
   <title>Public Safety — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
   <link rel="stylesheet" href="css/leaflet.css">
   <link rel="stylesheet" href="css/leaflet.fullscreen.css">
   <link rel="preload" href="data/osm/aviation-layers-core.json" as="fetch" crossorigin>
   <link rel="preload" href="data/osm/aviation-layers-detail.json" as="fetch" crossorigin>
 </head>
 <body data-page="public-safety">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -38,7 +39,7 @@
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
           <span class="brand-text">RTL3D · Aviation &amp; Maritime</span>
         </div>
       </div>
@@ -57,7 +58,8 @@
           <canvas id="lightning-canvas"></canvas>
           <div class="grid-overlay"></div>
         </div>
-        <main class="page-view page-view-tnb">
+        <main id="main-content" tabindex="-1" class="page-view page-view-tnb">
+          <h1 class="sr-only">Public Safety — Aviation & Maritime</h1>
           <div class="slide-inner tnb-page tnb-page-split">
             <aside class="tnb-page-sidebar-wrap">
               <div class="tnb-lightning-toolbar" aria-label="Lightning source controls">

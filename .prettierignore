@@ -1,0 +1,18 @@
+# Generated / minified
+css/style.min.css
+**/*.min.js
+**/*.min.css
+
+# Vendored third-party libraries (keep upstream formatting)
+js/leaflet.js
+js/leaflet.fullscreen.js
+js/gsap.min.js
+js/qrcode.min.js
+js/vendor/
+css/leaflet.css
+css/leaflet.fullscreen.css
+
+# Generated data + bundles
+data/
+css/style.css
+node_modules/

@@ -1,0 +1,43 @@
+# Paths excluded from the public GitHub Pages deploy.
+# Consumed by .github/workflows/pages.yml (rsync --exclude-from) to stage _site/.
+# These are build tooling, dev artifacts, and source the live site never serves.
+# Patterns follow rsync rules: a trailing "/" matches a directory; a pattern with
+# an internal "/" is anchored to the repo root; otherwise it matches at any depth.
+
+# VCS / CI / tooling installs
+.git/
+.github/
+_site/
+node_modules/
+
+# Build & scrape tooling (not referenced by any page)
+scripts/
+tools/
+*.bat
+*.py
+__pycache__/
+
+# CSS source — only css/style.min.css is served
+css/parts/
+css/style.css
+
+# Dev artifacts & generation intermediates
+logs/
+video/voice/
+video/__pycache__/
+
+# Dev configs & lockfiles
+package.json
+package-lock.json
+eslint.config.js
+.editorconfig
+.prettierrc.json
+.prettierignore
+.stylelintrc.json
+.stylelintignore
+.deployignore
+
+# Internal docs (LICENSE is intentionally kept)
+AGENTS.md
+README.md
+CREDITS.md

@@ -11,10 +11,15 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="RTL3D">
   <meta property="og:title" content="Lightning in Malaysia — Animated Lesson">
+  <meta property="og:description" content="A cinematic ~1-minute lesson on lightning in Malaysia — covering every fact in the RTL3D lightning-safety quiz: how lightning works, the RTL3D project, and how to stay safe.">
   <meta property="og:url" content="https://lightninguniten.github.io/rtl3d-web/video/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lightning in Malaysia — RTL3D">
+  <meta name="twitter:description" content="A cinematic ~1-minute lesson on lightning in Malaysia — covering every fact in the RTL3D lightning-safety quiz: how lightning works, the RTL3D project, and how to stay safe.">
   <title>Lightning in Malaysia — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=20260618b">
+  <link rel="stylesheet" href="css/style.min.css?v=254b2634b9">
 
   <!-- GSAP (vendored locally, v3.12.5) for premium, spring-weighted scene transitions -->
   <script defer src="js/gsap.min.js"></script>
@@ -449,15 +454,76 @@
     .vid-progress {
       position: absolute;
       left: 0; right: 0; bottom: 0;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      z-index: 4;
+      height: 10px;                 /* the visible track — tall, easy to grab */
+      background: rgba(255, 255, 255, 0.14);
+      z-index: 6;
+      cursor: pointer;
+      touch-action: none;           /* let us own drag gestures, no page scroll */
+      transition: height 0.12s ease, background 0.12s ease;
+    }
+    /* an even taller invisible hit-zone above the track for forgiving aim */
+    .vid-progress::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: clamp(20px, 4cqh, 34px);
+    }
+    .vid-progress:hover,
+    .vid-progress.is-scrubbing {
+      height: 14px;
+      background: rgba(255, 255, 255, 0.2);
     }
     .vid-progress-fill {
+      position: relative;
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #FFC72C, #FFE07A);
       box-shadow: 0 0 12px rgba(255, 199, 44, 0.7);
+    }
+    /* the draggable knob, sitting at the playhead */
+    .vid-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255, 199, 44, 0.95);
+      transform: translateY(-50%) scale(0);
+      transition: transform 0.12s ease;
+    }
+    .vid-progress:hover .vid-progress-fill::after,
+    .vid-progress.is-scrubbing .vid-progress-fill::after {
+      transform: translateY(-50%) scale(1);
+    }
+
+    /* centre play/pause cue (▶ stays while paused, ❚❚ flashes on resume) */
+    .vid-playpause {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0.82);
+      z-index: 7;
+      pointer-events: none;
+      width: clamp(3.2rem, 13cqh, 5.5rem);
+      height: clamp(3.2rem, 13cqh, 5.5rem);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 10, 28, 0.5);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+      color: #fff;
+      font-size: clamp(1.2rem, 5.5cqh, 2.4rem);
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .vid-playpause.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
     }
     .vid-music-credit {
       position: absolute;
@@ -487,6 +553,29 @@
       transition: background 0.3s ease, transform 0.3s ease;
     }
     .vid-scene-dots .dot.is-active { background: #FFC72C; transform: scale(1.35); }
+
+    /* chapter dots rendered by lesson.js (#vid-dots) — clickable markers */
+    .vid-dots {
+      position: absolute;
+      top: clamp(0.7rem, 2.5cqh, 1.4rem);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.55rem;
+      z-index: 7;
+      pointer-events: auto;
+    }
+    .vid-dots .dot {
+      position: relative;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    /* bigger invisible tap target around each small dot */
+    .vid-dots .dot::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; }
+    .vid-dots .dot:hover { background: rgba(255, 255, 255, 0.6); }
+    .vid-dots .dot.on { background: #FFC72C; transform: scale(1.4); }
 
     /* Tap-to-start poster */
     .vid-poster {
@@ -554,6 +643,7 @@
   </style>
 </head>
 <body data-page="video">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="viewport-shell">
     <header class="top-bar">
       <div class="top-left">
@@ -561,13 +651,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           <span class="btn-label" data-i18n="ui.back">Back</span>
         </a>
-        <a id="home-btn" href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
+        <a href="./" class="btn-icon btn-nav" title="Home" aria-label="Home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
           <span class="btn-label" data-i18n="ui.home">Home</span>
         </a>
         <div class="brand">
-          <span class="brand-icon">⚡</span>
-          <span class="brand-text">RTL3D</span>
+          <span class="brand-icon" aria-hidden="true">⚡</span>
+          <span class="brand-text">RTL3D · Lightning Lesson</span>
         </div>
       </div>
       <div class="top-actions">
@@ -579,154 +669,44 @@
         </button>
       </div>
     </header>
+
     <div class="viewport-frame" id="viewport-frame">
       <div class="viewport-169" id="viewport-169">
-        <main class="page-view">
+        <main id="main-content" tabindex="-1" class="page-view">
+          <h1 class="sr-only">When Thunder Roars — Lightning Lesson</h1>
           <div class="slide-inner video-page-inner">
 
-            <div class="vid-stage" id="vid-stage" role="img" aria-label="Animated lightning lesson covering the RTL3D lightning-safety quiz: how lightning works, the RTL3D project, and how to stay safe.">
-              <div class="vid-flash" aria-hidden="true"></div>
+            <div class="vid-stage" id="vid-stage" role="img"
+                 aria-label="Animated lightning lesson narrated phrase by phrase: how lightning forms, who it strikes, whether it strikes twice, where you are safe, and how RTL3D can choose where it strikes.">
+              <div class="vid-grid" aria-hidden="true"></div>
               <div class="vid-vignette" aria-hidden="true"></div>
 
-              <!-- Narration (EN track may include baked-in bg music; MS/JA use vid-bgm below) -->
-              <audio id="vid-audio" preload="metadata" src="video/narration-en.mp3"></audio>
+              <svg class="vid-channel" id="vid-channel" viewBox="0 0 1000 562" preserveAspectRatio="none" aria-hidden="true">
+                <path class="ch-halo" id="ch-halo"></path>
+                <path class="ch-mid"  id="ch-mid"></path>
+                <path class="ch-body" id="ch-body"></path>
+                <path class="ch-core" id="ch-core"></path>
+              </svg>
+
+              <div class="vid-flash" id="vid-flash" aria-hidden="true"></div>
+              <div class="vid-playpause" id="vid-playpause" aria-hidden="true"></div>
+
               <audio id="vid-bgm" preload="auto" loop src="bgmusic.mp3"></audio>
 
-              <!-- Tap-to-start overlay (browsers block audio autoplay until a gesture) -->
-              <button type="button" class="vid-poster" id="vid-poster" data-i18n-attr="aria-label:video.poster.aria" aria-label="Play the lesson with sound">
+              <button type="button" class="vid-poster" id="vid-poster" aria-label="Play the lesson with sound">
                 <span class="vid-poster-bolt" aria-hidden="true">⚡</span>
-                <span class="vid-poster-title" data-i18n="video.poster.title">Lightning in Malaysia</span>
-                <span class="vid-poster-sub" data-i18n="video.poster.sub">A 1-minute animated lesson</span>
-                <span class="vid-poster-play"><span class="vid-poster-play-icon" aria-hidden="true">▶</span> <span data-i18n="video.poster.play">Play with sound</span></span>
+                <span class="vid-poster-title">When <span class="accent">Thunder</span> Roars</span>
+                <span class="vid-poster-sub" id="poster-sub">A lightning story, told in 90 seconds.</span>
+                <span class="vid-poster-play"><span aria-hidden="true">▶</span> <span id="poster-play">Play with sound</span></span>
               </button>
 
-              <!-- Chapter label (top-centre) -->
-              <div class="vid-chapter" id="vid-chapter" aria-hidden="true"></div>
+              <div class="vid-dots" id="vid-dots" aria-hidden="true"></div>
 
-              <!-- ============ Scene 1 — Intro ============ -->
-              <section class="vid-scene" id="scene-1">
-                <div class="vid-bolt" aria-hidden="true">⚡</div>
-                <div class="vid-kicker" data-i18n="video.s1.kicker">Real-Time Lightning 3D · RTL3D</div>
-                <h1 class="vid-title">
-                  <span class="word" data-i18n="video.s1.w1">Lightning</span>
-                  <span class="word accent" data-i18n="video.s1.w2">in</span>
-                  <span class="word accent" data-i18n="video.s1.w3">Malaysia</span>
-                </h1>
-                <p class="vid-subtitle" data-i18n="sub.video.subtitle">Everything you need for the lightning-safety quiz.</p>
-              </section>
-
-              <!-- ============ CHAPTER 1 · THE SCIENCE ============ -->
-
-              <!-- Scene 2 — 100 flashes per second -->
-              <section class="vid-scene vid-fact" id="scene-2" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">🌍</div>
-                <div class="vid-fact-stat"><span class="num">100</span><span class="unit" data-i18n="video.s2.unit">flashes / second</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s2.line">Lightning strikes Earth about <b>100 times every second</b> — roughly <b>8 million</b> bolts a day.</p>
-              </section>
-
-              <!-- Scene 3 — 30,000 °C -->
-              <section class="vid-scene vid-fact" id="scene-3" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">🔥</div>
-                <div class="vid-fact-stat"><span class="num">30,000<small>°C</small></span><span class="unit" data-i18n="video.s3.unit">hotter than the Sun's surface</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s3.line">A bolt heats the air to about <b>30,000 °C</b> — <b>5× hotter</b> than the Sun's surface. That blast of expanding air is what we hear as <b>thunder</b>.</p>
-              </section>
-
-              <!-- Scene 4 — Malaysia hotspot (map) -->
-              <section class="vid-scene" id="scene-4" style="visibility:hidden;">
-                <div class="vid-data">
-                  <div class="vid-map" aria-hidden="true">
-                    <div class="vid-ring r3"></div>
-                    <div class="vid-ring r2"></div>
-                    <div class="vid-ring r1"></div>
-                    <div class="vid-hotspot"></div>
-                    <div class="vid-map-label" data-i18n="video.s4.mapLabel">KLANG VALLEY</div>
-                  </div>
-                  <div class="vid-data-copy">
-                    <div class="vid-stat-tag" data-i18n="video.s4.statTag">Storm days per year</div>
-                    <div class="vid-stat-num"><span>~240</span></div>
-                    <p class="vid-data-line">
-                      <span class="line" data-i18n-html="video.s4.line1">The <b>Klang Valley</b> around Subang Jaya is one</span>
-                      <span class="line" data-i18n-html="video.s4.line2">of the most <b>lightning-prone</b> places on Earth —</span>
-                      <span class="line" data-i18n-html="video.s4.line3">about <b>240 thunderstorm days</b> a year.</span>
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              <!-- ============ CHAPTER 2 · THE RTL3D PROJECT ============ -->
-
-              <!-- Scene 5 — What RTL3D stands for -->
-              <section class="vid-scene" id="scene-5" style="visibility:hidden;">
-                <div class="vid-acronym" aria-hidden="true">
-                  <span class="ac" data-l="R">R</span><span class="ac" data-l="T">T</span><span class="ac" data-l="L">L</span><span class="ac accent" data-l="3">3</span><span class="ac accent" data-l="D">D</span>
-                </div>
-                <div class="vid-acronym-expand">
-                  <span class="aw"><b>R</b>eal-Time</span>
-                  <span class="aw"><b>L</b>ightning</span>
-                  <span class="aw accent"><b>3D</b></span>
-                  <span class="aw">Imaging &amp; Forecasting</span>
-                </div>
-                <p class="vid-fact-line" data-i18n-html="video.s5.line">A <b>Malaysia–Japan (SATREPS)</b> research project that images lightning live — to protect people and the power grid.</p>
-              </section>
-
-              <!-- Scene 6 — LF + VHF sensors -->
-              <section class="vid-scene vid-fact" id="scene-6" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">📡</div>
-                <div class="vid-fact-stat"><span class="num">LF <small>+</small> VHF</span><span class="unit" data-i18n="video.s6.unit">radio antennas → 3D images</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s6.line">RTL3D uses <b>LF</b> sensors to catch the main strokes and <b>VHF</b> sensors to map the whole channel — building lightning in <b>3D</b>.</p>
-              </section>
-
-              <!-- ============ CHAPTER 3 · STAY SAFE ============ -->
-
-              <!-- Scene 7 — Flash-to-Bang -->
-              <section class="vid-scene vid-fact" id="scene-7" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">⚡🔊</div>
-                <div class="vid-fact-stat"><span class="num" data-i18n="video.s7.num">Flash → Bang</span><span class="unit" data-i18n="video.s7.unit">how far away is the strike?</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s7.line">Count the seconds from <b>flash</b> to <b>thunder</b>, then <b>÷ 3 for km</b> (÷ 5 for miles). Under <b>30 s</b>? It's already dangerously close.</p>
-              </section>
-
-              <!-- Scene 8 — 30-30 rule -->
-              <section class="vid-scene vid-fact" id="scene-8" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">⏱️</div>
-                <div class="vid-fact-stat"><span class="num">30 – 30</span><span class="unit" data-i18n="video.s8.unit">the rule that keeps you safe</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s8.line">Thunder within <b>30 seconds</b> of the flash → go inside. Then wait <b>30 minutes after the last thunder</b> before heading back out.</p>
-              </section>
-
-              <!-- Scene 9 — Safe shelter / go indoors -->
-              <section class="vid-scene vid-fact" id="scene-9" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">🏠</div>
-                <div class="vid-fact-stat"><span class="num" data-i18n="video.s9.num">Go Indoors</span><span class="unit" data-i18n="video.s9.unit">"When thunder roars, go indoors"</span></div>
-                <p class="vid-fact-line" data-i18n-html="video.s9.line">There is <b>no safe place outside</b>. Shelter in a fully enclosed building or a <b>hard-top car</b> (a Faraday cage). The old "lightning crouch" was dropped in 2008 — it does <b>not</b> protect you.</p>
-              </section>
-
-              <!-- Scene 10 — Dangers (do / don't) -->
-              <section class="vid-scene" id="scene-10" style="visibility:hidden;">
-                <div class="vid-fact-icon" aria-hidden="true">⚠️</div>
-                <div class="vid-donts-title" data-i18n="video.s10.title">Avoid these in a storm</div>
-                <ul class="vid-donts">
-                  <li class="dont"><span class="x">✕</span><span class="dont-text" data-i18n="video.s10.d1">Tall trees, open fields, hilltops &amp; water</span></li>
-                  <li class="dont"><span class="x">✕</span><span class="dont-text" data-i18n="video.s10.d2">Golf clubs, umbrellas — anything that raises your height</span></li>
-                  <li class="dont"><span class="x">✕</span><span class="dont-text" data-i18n-html="video.s10.d3">Showers, taps &amp; corded phones — lightning travels through <b>pipes &amp; wiring</b></span></li>
-                </ul>
-              </section>
-
-              <!-- ============ Scene 11 — Outro ============ -->
-              <section class="vid-scene" id="scene-11" style="visibility:hidden;">
-                <div class="vid-outro-logo"><span class="mark">⚡</span> RTL3D</div>
-                <div class="vid-cta" data-i18n-html="video.s11.cta">Stay&nbsp;Safe, <span class="accent">Stay&nbsp;Informed.</span></div>
-                <div class="vid-outro-sub">
-                  <button type="button" class="vid-outro-btn" id="vid-outro-replay">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
-                    <span data-i18n="video.s11.replay">Replay video</span>
-                  </button>
-                  <a class="vid-quiz-link" href="quiz/" data-i18n="video.s11.quiz">Take the lightning quiz →</a>
-                </div>
-              </section>
+              <!-- Scenes are generated by lesson.js into #vid-scenes -->
+              <div id="vid-scenes" style="position:absolute; inset:0; z-index:4;"></div>
 
               <div class="vid-progress" aria-hidden="true"><div class="vid-progress-fill" id="vid-progress-fill"></div></div>
-              <p class="vid-music-credit" id="vid-music-credit">
-                Music: &ldquo;Epic Trailer&rdquo; by Hans Williamson (Music for Video Library, Patreon)
-              </p>
+              <p class="vid-credit" id="vid-credit">Music: bgmusic — RTL3D outreach</p>
             </div>
 
           </div>
@@ -736,9 +716,7 @@
   </div>
 
   <script defer src="js/i18n-strings.js"></script>
-
   <script defer src="js/i18n.js"></script>
-
   <script defer src="js/site-urls.js"></script>
   <script defer src="js/site-pages.js"></script>
   <script defer src="js/qrcode-loader.js"></script>
@@ -747,8 +725,7 @@
   <script defer src="js/viewport.js"></script>
   <script defer src="js/page-visits.js"></script>
   <script defer src="js/page-common.js"></script>
-  <script defer src="js/video-keyframes.js?v=18"></script>
-  <script defer src="js/video-i18n.js?v=15"></script>
-  <script defer src="js/video-explainer.js?v=26"></script>
+
+  <script defer src="video/lesson.js"></script>
 </body>
 </html>
