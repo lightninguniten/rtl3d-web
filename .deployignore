@@ -23,7 +23,8 @@ css/style.css
 
 # Dev artifacts & generation intermediates
 logs/
-video/voice/
+video/voice/_parts_*/
+video/voice/backup-*/
 video/__pycache__/
 
 # Dev configs & lockfiles
