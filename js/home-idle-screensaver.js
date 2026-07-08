@@ -5,6 +5,13 @@
   // an attract-loop of the lightning lesson takes over the screen. The first
   // touch / click / key / scroll dismisses it and returns to the hub.
   if (document.body.dataset.page !== 'home') return;
+  // Disabled per product requirement: do not show old idle video/voice.
+  window.RTL3D_IDLE = {
+    show: function () {},
+    hide: function () {},
+    setTimeoutMs: function () {}
+  };
+  return;
 
   var IDLE_MS = 60 * 1000;
   var urlFn = (window.RTL3D_URL && window.RTL3D_URL.page) || function (s) { return s + '/'; };
