@@ -3,7 +3,6 @@
 
   const flashSelect = document.getElementById('lf-flash-select');
   const flashMeta = document.getElementById('lf-flash-meta');
-  const siteList = document.getElementById('lf-site-list');
   const play3dBtn = document.getElementById('lf-3d-play');
   const repeat3dBtn = document.getElementById('lf-3d-repeat');
 
@@ -146,11 +145,72 @@
     yaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)', tickfont: axisTickFont, automargin: true },
   };
 
+  const AREA_RADIUS_KM = 10;
+  const AREA_STEP_KM = 8;
+
+  function quantizeKm(v) {
+    return Math.round(Number(v) / AREA_STEP_KM) * AREA_STEP_KM;
+  }
+
+  function areaSites(sites) {
+    return (sites || []).map((s) => ({
+      x_km: quantizeKm(s.x_km),
+      y_km: quantizeKm(s.y_km),
+    }));
+  }
+
+  function areaCircleTrace(sites, color, fill) {
+    const x = [];
+    const y = [];
+    const n = 48;
+    sites.forEach((s, si) => {
+      if (si) {
+        x.push(null);
+        y.push(null);
+      }
+      for (let i = 0; i <= n; i++) {
+        const a = (i / n) * 2 * Math.PI;
+        x.push(s.x_km + AREA_RADIUS_KM * Math.cos(a));
+        y.push(s.y_km + AREA_RADIUS_KM * Math.sin(a));
+      }
+    });
+    return {
+      x,
+      y,
+      mode: 'lines',
+      type: 'scatter',
+      name: 'Observation areas',
+      showlegend: false,
+      hoverinfo: 'skip',
+      line: { color, width: 1.6, dash: 'dot' },
+      fill: 'toself',
+      fillcolor: fill,
+    };
+  }
+
+  function areaMarkers3d(sites, color) {
+    return {
+      type: 'scatter3d',
+      mode: 'markers',
+      name: 'Observation areas',
+      x: sites.map((s) => s.x_km),
+      y: sites.map((s) => s.y_km),
+      z: sites.map(() => 0),
+      hoverinfo: 'skip',
+      marker: {
+        symbol: 'circle',
+        size: 16,
+        color,
+        opacity: 0.28,
+        line: { color, width: 2 },
+      },
+    };
+  }
+
   function applyData(sites, flashes) {
     sitesData = sites;
     flashesData = Array.isArray(flashes) ? flashes : [];
     populateFlashSelect();
-    populateSiteList();
   }
 
   function loadData() {
@@ -181,15 +241,6 @@
       if (flashMeta) flashMeta.textContent = 'Could not load lightning data.';
     });
     return loadPromise;
-  }
-
-  function populateSiteList() {
-    if (!sitesData?.sites) return;
-    siteList.innerHTML = sitesData.sites.map((s) =>
-      `<li><span class="site-code">${s.code}</span> ${s.name}` +
-      `<small>${s.x_km}, ${s.y_km} km</small></li>`
-    ).join('');
-    window.RTL3DDragScroll?.scan?.(siteList);
   }
 
   function populateFlashSelect() {
@@ -229,11 +280,12 @@
   }
 
   function calcNetworkPlanLimits(x, y, sites) {
+    const display = areaSites(sites);
     const xs = x.slice();
     const ys = y.slice();
-    sites.forEach((s) => {
-      xs.push(s.x_km);
-      ys.push(s.y_km);
+    display.forEach((s) => {
+      xs.push(s.x_km - AREA_RADIUS_KM, s.x_km + AREA_RADIUS_KM);
+      ys.push(s.y_km - AREA_RADIUS_KM, s.y_km + AREA_RADIUS_KM);
     });
     const xMin = Math.min(...xs);
     const xMax = Math.max(...xs);
@@ -602,7 +654,7 @@
 
   function render3dPlot(flash, lim) {
     if (!flash || !window.Plotly || !sitesData?.sites) return Promise.resolve();
-    const sites = sitesData.sites;
+    const sites = areaSites(sitesData.sites);
     const spanX = lim.x[1] - lim.x[0];
     const spanY = lim.y[1] - lim.y[0];
     const spanZ = lim.z[1] - lim.z[0];
@@ -623,8 +675,7 @@
     anim3d.siteBase = {
       x: sites.map((s) => s.x_km),
       y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
-      text: sites.map((s) => s.code),
+      z: sites.map(() => 0),
     };
     anim3d.boxBase = buildBoxGeometry(lim);
 
@@ -648,24 +699,7 @@
       hovertemplate: 'WE %{x:.1f}, SN %{y:.1f}, H %{z:.1f} km<br>t=%{marker.color:.0f} ms<extra></extra>',
     };
 
-    const sites3d = {
-      type: 'scatter3d',
-      mode: 'markers+text',
-      name: 'LF sites',
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 10, color: '#e2e8f0' },
-      marker: {
-        symbol: 'square',
-        size: 4,
-        color: '#fbbf24',
-        line: { color: '#0f172a', width: 1 },
-      },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const sites3d = areaMarkers3d(sites, '#fbbf24');
 
     const box3d = {
       type: 'scatter3d',
@@ -762,9 +796,9 @@
     const zMin = Math.max(0, percentile(z, 0.005));
     const zMax = percentile(z, 0.995);
     const lim = calcLimits(x, y, z);
-    const sites = sitesData.sites;
+    const sites = areaSites(sitesData.sites);
     const planLim = calcPlanLimits(x, y);
-    const networkPlanLim = calcNetworkPlanLimits(x, y, sites);
+    const networkPlanLim = calcNetworkPlanLimits(x, y, sitesData.sites);
     planZoom.wide = networkPlanLim;
     planZoom.tight = planLim;
     planZoom.showingWide = true;
@@ -782,17 +816,7 @@
     anim3d.revealCount = 0;
     anim3d.playbackStartMs = 0;
 
-    const planSites = {
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      mode: 'markers+text', type: 'scatter', name: 'LF sites',
-      showlegend: false,
-      marker: { symbol: 'square', size: 8, color: '#fbbf24', line: { color: '#0f172a', width: 1 } },
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 10, color: '#e2e8f0' },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const planSites = areaCircleTrace(sites, '#fbbf24', 'rgba(251, 191, 36, 0.14)');
 
     const traces = {
       plan: [scatterTrace(x, y, t, 'Sources'), planSites],

@@ -15,17 +15,17 @@
     {
       topic: 'Rocket-triggered lightning',
       image: 'images/mission/first-rtl-malaysia-utem-2026.jpg',
-      caption: '3 May 2026 — first successful rocket-triggered lightning in Malaysia at the UTeM RTL site, a historic milestone for the RTL3D programme.'
+      caption: '3 May 2026 — first successful rocket-triggered lightning in Malaysia, a historic milestone for the RTL3D programme.'
     },
     {
       topic: 'Observation network',
       image: 'images/mission/vhf-sensor-jasin-melaka.jpg',
-      caption: 'Jasin, Melaka — VHF sensor installed with UTeM and UiTM Jasin, recording the site\'s first observation data.'
+      caption: 'Straits of Malacca region — VHF sensor installed with UTeM and UiTM, recording the site\'s first observation data.'
     },
     {
       topic: 'Rogowski coil',
       image: 'images/mission/rogowski-coils-tm-bukit-gasing-2025.jpg',
-      caption: 'TM Bukit Gasing — five Rogowski coils installed on a communications tower to measure lightning current.'
+      caption: 'Five Rogowski coils installed on a communications tower to measure lightning current.'
     }
   ];
 

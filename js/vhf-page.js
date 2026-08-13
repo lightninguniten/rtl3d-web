@@ -3,17 +3,16 @@
 
   const flashSelect = document.getElementById('vhf-flash-select');
   const flashMeta = document.getElementById('vhf-flash-meta');
-  const siteList = document.getElementById('vhf-site-list');
   const play3dBtn = document.getElementById('vhf-3d-play');
   const repeat3dBtn = document.getElementById('vhf-3d-repeat');
 
   const VHF_SITES = [
-    { code: 'UTNV', name: 'UNITEN',      lat:  3.000, lon: 101.819, x_km: -43.7, y_km:  30.2, alt_km: 0.06 },
-    { code: 'PJWV', name: 'PADANG JAWA', lat:  3.083, lon: 101.453, x_km: -81.4, y_km:  39.6, alt_km: 0.04 },
-    { code: 'DAMV', name: 'BATUDAM',     lat:  3.209, lon: 101.646, x_km: -63.9, y_km:  53.5, alt_km: 0.09 },
-    { code: 'UJSV', name: 'UITM JASIN',  lat:  2.310, lon: 102.434, x_km:  20.5, y_km: -46.5, alt_km: 0.03 },
-    { code: 'UTMV', name: 'UTEM',        lat:  2.260, lon: 102.248, x_km:  -0.6, y_km: -51.9, alt_km: 0.03 },
-    { code: 'PBSV', name: 'PULAU BESAR', lat:  2.173, lon: 102.183, x_km:  -7.3, y_km: -60.5, alt_km: 0.01 },
+    { x_km: -43.7, y_km:  30.2 },
+    { x_km: -81.4, y_km:  39.6 },
+    { x_km: -63.9, y_km:  53.5 },
+    { x_km:  20.5, y_km: -46.5 },
+    { x_km:  -0.6, y_km: -51.9 },
+    { x_km:  -7.3, y_km: -60.5 },
   ];
 
   let flashesData = [];
@@ -146,13 +145,66 @@
     yaxis: { gridcolor: 'rgba(96,165,250,0.12)', zerolinecolor: 'rgba(96,165,250,0.2)' },
   };
 
-  function populateSiteList() {
-    if (!siteList) return;
-    siteList.innerHTML = VHF_SITES.map((s) =>
-      `<li><span class="site-code">${s.code}</span> ${s.name}` +
-      `<small>${s.lat.toFixed(3)}°N, ${s.lon.toFixed(3)}°E</small></li>`
-    ).join('');
-    window.RTL3DDragScroll?.scan?.(siteList);
+  const AREA_RADIUS_KM = 10;
+  const AREA_STEP_KM = 8;
+
+  function quantizeKm(v) {
+    return Math.round(Number(v) / AREA_STEP_KM) * AREA_STEP_KM;
+  }
+
+  function areaSites(sites) {
+    return (sites || []).map((s) => ({
+      x_km: quantizeKm(s.x_km),
+      y_km: quantizeKm(s.y_km),
+    }));
+  }
+
+  function areaCircleTrace(sites, color, fill) {
+    const x = [];
+    const y = [];
+    const n = 48;
+    sites.forEach((s, si) => {
+      if (si) {
+        x.push(null);
+        y.push(null);
+      }
+      for (let i = 0; i <= n; i++) {
+        const a = (i / n) * 2 * Math.PI;
+        x.push(s.x_km + AREA_RADIUS_KM * Math.cos(a));
+        y.push(s.y_km + AREA_RADIUS_KM * Math.sin(a));
+      }
+    });
+    return {
+      x,
+      y,
+      mode: 'lines',
+      type: 'scatter',
+      name: 'Observation areas',
+      showlegend: false,
+      hoverinfo: 'skip',
+      line: { color, width: 1.6, dash: 'dot' },
+      fill: 'toself',
+      fillcolor: fill,
+    };
+  }
+
+  function areaMarkers3d(sites, color) {
+    return {
+      type: 'scatter3d',
+      mode: 'markers',
+      name: 'Observation areas',
+      x: sites.map((s) => s.x_km),
+      y: sites.map((s) => s.y_km),
+      z: sites.map(() => 0),
+      hoverinfo: 'skip',
+      marker: {
+        symbol: 'circle',
+        size: 16,
+        color,
+        opacity: 0.28,
+        line: { color, width: 2 },
+      },
+    };
   }
 
   function populateFlashSelect() {
@@ -198,11 +250,12 @@
   }
 
   function calcNetworkPlanLimits(x, y, sites) {
+    const display = areaSites(sites);
     const xs = x.slice();
     const ys = y.slice();
-    sites.forEach((s) => {
-      xs.push(s.x_km);
-      ys.push(s.y_km);
+    display.forEach((s) => {
+      xs.push(s.x_km - AREA_RADIUS_KM, s.x_km + AREA_RADIUS_KM);
+      ys.push(s.y_km - AREA_RADIUS_KM, s.y_km + AREA_RADIUS_KM);
     });
     const xMin = Math.min(...xs);
     const xMax = Math.max(...xs);
@@ -554,7 +607,7 @@
 
   function render3dPlot(flash, lim) {
     if (!flash || !window.Plotly) return Promise.resolve();
-    const sites = VHF_SITES;
+    const sites = areaSites(VHF_SITES);
     const spanX = lim.x[1] - lim.x[0];
     const spanY = lim.y[1] - lim.y[0];
     const spanZ = lim.z[1] - lim.z[0];
@@ -573,8 +626,7 @@
     anim3d.siteBase = {
       x: sites.map((s) => s.x_km),
       y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
-      text: sites.map((s) => s.code),
+      z: sites.map(() => 0),
     };
     anim3d.boxBase = buildBoxGeometry(lim);
 
@@ -598,24 +650,7 @@
       hovertemplate: 'WE %{x:.1f}, SN %{y:.1f}, H %{z:.1f} km<br>t=%{marker.color:.0f} ms<extra></extra>',
     };
 
-    const sites3d = {
-      type: 'scatter3d',
-      mode: 'markers+text',
-      name: 'VHF sites',
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' },
-      marker: {
-        symbol: 'square',
-        size: 4,
-        color: '#a78bfa',
-        line: { color: '#0f172a', width: 1 },
-      },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const sites3d = areaMarkers3d(sites, '#a78bfa');
 
     const box3d = {
       type: 'scatter3d',
@@ -710,9 +745,9 @@
     const zMin = Math.max(0, percentile(z, 0.005));
     const zMax = percentile(z, 0.995);
     const lim = calcLimits(x, y, z);
-    const sites = VHF_SITES;
+    const sites = areaSites(VHF_SITES);
     const planLim = calcPlanLimits(x, y);
-    const networkPlanLim = calcNetworkPlanLimits(x, y, sites);
+    const networkPlanLim = calcNetworkPlanLimits(x, y, VHF_SITES);
     planZoom.wide = networkPlanLim;
     planZoom.tight = planLim;
     planZoom.showingWide = true;
@@ -730,17 +765,7 @@
     anim3d.revealCount = 0;
     anim3d.playbackStartMs = 0;
 
-    const planSites = {
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      mode: 'markers+text', type: 'scatter', name: 'VHF sites',
-      showlegend: false,
-      marker: { symbol: 'square', size: 10, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 13, color: '#e2e8f0' },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const planSites = areaCircleTrace(sites, '#a78bfa', 'rgba(167, 139, 250, 0.14)');
 
     const traces = {
       plan: [scatterTrace(x, y, t, 'Sources'), planSites],
@@ -811,8 +836,8 @@
   function initSiteView() {
     if (!window.Plotly) return;
 
-    const sites = VHF_SITES;
-    const netLim = calcNetworkSiteOnlyLimits(sites);
+    const sites = areaSites(VHF_SITES);
+    const netLim = calcNetworkSiteOnlyLimits(VHF_SITES);
     planZoom.wide = netLim;
     planZoom.tight = netLim;
     planZoom.showingWide = true;
@@ -821,17 +846,7 @@
     const ticksX = kmTicks(netLim.x[0], netLim.x[1], tickStep);
     const ticksY = kmTicks(netLim.y[0], netLim.y[1], tickStep);
 
-    const planSites = {
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      mode: 'markers+text', type: 'scatter', name: 'VHF sites',
-      showlegend: false,
-      marker: { symbol: 'square', size: 10, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 13, color: '#e2e8f0' },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const planSites = areaCircleTrace(sites, '#a78bfa', 'rgba(167, 139, 250, 0.14)');
 
     const planLayout = {
       ...plotLayout,
@@ -868,24 +883,14 @@
     anim3d.siteBase = {
       x: sites.map((s) => s.x_km),
       y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
+      z: sites.map(() => 0),
     };
     anim3d.boxBase = buildBoxGeometry(lim);
     anim3d.timeData = null;
 
     const boxLines = anim3d.boxBase.lines;
 
-    const sites3d = {
-      type: 'scatter3d', mode: 'markers+text', name: 'VHF sites',
-      x: sites.map((s) => s.x_km),
-      y: sites.map((s) => s.y_km),
-      z: sites.map((s) => s.alt_km || 0),
-      text: sites.map((s) => s.code),
-      textposition: 'top center',
-      textfont: { family: 'DM Sans, sans-serif', size: 14, color: '#e2e8f0' },
-      marker: { symbol: 'square', size: 4, color: '#a78bfa', line: { color: '#0f172a', width: 1 } },
-      hovertemplate: '%{text}<extra></extra>',
-    };
+    const sites3d = areaMarkers3d(sites, '#a78bfa');
 
     const box3d = {
       type: 'scatter3d', mode: 'lines', name: 'Box',
@@ -1146,7 +1151,6 @@
   }
 
   function start() {
-    populateSiteList();
     populateFlashSelect();
     bindEvents();
     const plotlyReady = window.ensurePlotly2d

@@ -19,28 +19,28 @@
       "id": "site-survey-noise-measurement-may-2026",
       "topic": "Field instrumentation",
       "platform": "facebook",
-      "caption": "14–15 May field work — DID Ampang site survey, maintenance at TM Bukit Gasing, and a noise measurement test at UiTM Shah Alam ahead of new sensor deployment in the Klang Valley."
+      "caption": "14–15 May field work — partner-site survey, sensor maintenance, and a noise measurement test ahead of new sensor deployment in the Klang Valley."
     },
     {
       "source": "data/mission/uploads/rtl-campaign-melaka-last-day-2026.png",
       "id": "rtl-campaign-melaka-last-day-2026",
       "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "caption": "Last day of the Melaka RTL campaign, 9 May 2026 — training at UiTM Jasin and UTeM concluded after a successful lightning trigger on 3 May, marking Malaysia's first RTL field programme."
+      "caption": "Last day of the Malaysia RTL campaign, 9 May 2026 — partner training concluded after a successful lightning trigger on 3 May, marking Malaysia's first RTL field programme."
     },
     {
       "source": "data/mission/uploads/first-rtl-malaysia-utem-2026.png",
       "id": "first-rtl-malaysia-utem-2026",
       "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "caption": "3 May 2026 — first successful rocket-triggered lightning in Malaysia at the UTeM RTL site, a historic milestone for the RTL3D programme and lightning research in the country."
+      "caption": "3 May 2026 — first successful rocket-triggered lightning in Malaysia, a historic milestone for the RTL3D programme and lightning research in the country."
     },
     {
       "source": "data/mission/uploads/rtl-campaign-melaka-part-1-2026.png",
       "id": "rtl-campaign-melaka-part-1-2026",
       "topic": "Rocket-triggered lightning",
       "platform": "facebook",
-      "caption": "RTL campaign Part 1, 27 April 2026, UiTM Jasin — preparations and a successful first test launch of a new rocket from UiTM Shah Alam ahead of Malaysia's inaugural RTL programme."
+      "caption": "RTL campaign Part 1, 27 April 2026 — preparations and a successful first test launch of a new rocket ahead of Malaysia's inaugural RTL programme."
     },
     {
       "source": "data/mission/uploads/kanazawa-rtl-record-2026.png",
@@ -54,42 +54,42 @@
       "id": "rogowski-inspection-tm-bukit-gasing",
       "topic": "Rogowski coil",
       "platform": "facebook",
-      "caption": "TM Bukit Gasing inspection — Dr. Takeshi Kudo checked Rogowski coil data loggers to verify current sensors are operating correctly and recording accurate lightning measurements."
+      "caption": "Rogowski coil inspection — Dr. Takeshi Kudo checked data loggers to verify current sensors are operating correctly and recording accurate lightning measurements."
     },
     {
       "source": "data/mission/uploads/gamma-radon-sensors-uniten.png",
       "id": "gamma-radon-sensors-uniten",
       "topic": "Field instrumentation",
       "platform": "facebook",
-      "caption": "Gamma-ray and radon sensors from Japan installed at three UNITEN sites — monitoring thunderstorm radiation and atmospheric radon, with installation know-how shared by Prof. Torii, Mr. Miyazaki, and Dr. Zafri."
+      "caption": "Gamma-ray and radon sensors from Japan installed at partner sites — monitoring thunderstorm radiation and atmospheric radon, with installation know-how shared by Prof. Torii, Mr. Miyazaki, and Dr. Zafri."
     },
     {
       "source": "data/mission/uploads/vhf-sensor-north-kuala-lumpur.png",
       "id": "vhf-sensor-north-kuala-lumpur",
       "topic": "Observation network",
       "platform": "facebook",
-      "caption": "North of Kuala Lumpur — Dr. Takayanagi and Dr. Haziq from Kindai University install a VHF sensor with UNITEN and DID support, extending the RTL3D lightning observation network."
+      "caption": "Klang Valley — Dr. Takayanagi and Dr. Haziq from Kindai University install a VHF sensor with UNITEN and DID support, extending the RTL3D lightning observation network."
     },
     {
       "source": "data/mission/uploads/vhf-sensor-jasin-melaka.png",
       "id": "vhf-sensor-jasin-melaka",
       "topic": "Observation network",
       "platform": "facebook",
-      "caption": "Jasin, Melaka — Dr. Takayanagi and Dr. Haziq from Kindai University install a new VHF sensor with UTeM and UiTM Jasin, recording the site's first observation data."
+      "caption": "Straits of Malacca region — Dr. Takayanagi and Dr. Haziq from Kindai University install a new VHF sensor with UTeM and UiTM, recording the site's first observation data."
     },
     {
       "source": "data/mission/uploads/rogowski-coils-tm-bukit-gasing-2025.png",
       "id": "rogowski-coils-tm-bukit-gasing-2025",
       "topic": "Rogowski coil",
       "platform": "facebook",
-      "caption": "12–13 March 2025, TM Bukit Gasing — five Rogowski coils installed around a communications tower to measure lightning current, with Malaysian and Japanese teams completing setup and inspection."
+      "caption": "12–13 March 2025 — five Rogowski coils installed around a communications tower to measure lightning current, with Malaysian and Japanese teams completing setup and inspection."
     },
     {
       "source": "data/mission/uploads/lf-sensor-uitm-jasin-2026.png",
       "id": "lf-sensor-uitm-jasin-2026",
       "topic": "Observation network",
       "platform": "facebook",
-      "caption": "UiTM Jasin, 26 February — LF sensor and electric field mill installed to monitor lightning in Melaka, identified as a future rocket-triggered lightning research site."
+      "caption": "26 February — LF sensor and electric field mill installed to monitor lightning in the Straits of Malacca region, identified as a future rocket-triggered lightning research area."
     },
     {
       "source": "data/mission/uploads/kanazawa-rtl-teams-arrival-2025.png",

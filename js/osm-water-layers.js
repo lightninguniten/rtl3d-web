@@ -719,14 +719,14 @@
         });
 
         if (layerRefs.stations) {
-          L.DomUtil.create('div', 'power-layers-heading', panel).textContent = 'Stations';
+          L.DomUtil.create('div', 'power-layers-heading', panel).textContent = 'Areas';
           const row = L.DomUtil.create('label', 'power-layers-row', panel);
           const cb = L.DomUtil.create('input', '', row);
           cb.type = 'checkbox';
           cb.checked = true;
           cb.dataset.layerId = 'stations';
           L.DomUtil.create('span', 'power-layers-swatch station', row);
-          L.DomUtil.create('span', 'power-layers-label', row).textContent = 'Observation stations';
+          L.DomUtil.create('span', 'power-layers-label', row).textContent = 'Observation areas';
           cb.addEventListener('change', () => visibilityCtrl.setVisible('stations', cb.checked));
           checkboxes.push(cb);
         }
@@ -781,7 +781,7 @@
     });
     legend.innerHTML =
       (spans.length ? '<div class="map-legend-group">' + spans.join('') + '</div>' : '') +
-      '<span><i class="leg lf-vhf"></i> Observation stations</span>';
+      '<span><i class="leg area-target"></i> Observation areas</span>';
     if (typeof window.initDragScroll === 'function') window.initDragScroll(legend);
   }
 

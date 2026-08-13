@@ -232,9 +232,9 @@ window.RTL3D_I18N = {
     ja: '連携大学キャンパス（LF + VHF）',
   },
   'study.list.agency': {
-    en: 'Government agency observation sites',
-    ms: 'Tapak pemerhatian agensi kerajaan',
-    ja: '政府機関の観測サイト',
+    en: 'Government agency observation areas',
+    ms: 'Kawasan pemerhatian agensi kerajaan',
+    ja: '政府機関の観測エリア',
   },
   'study.list.met': {
     en: 'Meteorological / early-warning partners (LF)',
@@ -242,15 +242,20 @@ window.RTL3D_I18N = {
     ja: '気象・早期警報パートナー（LF）',
   },
   'study.list.coastal': {
-    en: 'Coastal and offshore observation sites',
-    ms: 'Tapak pemerhatian pantai dan luar pantai',
-    ja: '沿岸・沖合の観測サイト',
+    en: 'Coastal and offshore observation areas',
+    ms: 'Kawasan pemerhatian pantai dan luar pantai',
+    ja: '沿岸・沖合の観測エリア',
   },
   'study.legend.lf': { en: 'LF only', ms: 'LF sahaja', ja: 'LFのみ' },
   'study.legend.region': {
     en: 'Approximate study region',
     ms: 'Kawasan kajian anggaran',
     ja: 'おおよその研究対象地域',
+  },
+  'study.legend.areas': {
+    en: 'Observation areas',
+    ms: 'Kawasan pemerhatian',
+    ja: '観測エリア',
   },
   'study.legend.coverage': {
     en: '&gt;120 km illustrative coverage',
@@ -350,6 +355,40 @@ window.RTL3D_I18N = {
   /* ---- Sub-page heroes (header / lead) ---- */
   'sub.lf.h1': { en: 'Low Frequency Lightning Observation', ms: 'Pemerhatian Kilat Frekuensi Rendah', ja: '低周波（LF）雷観測' },
   'sub.vhf.h1': { en: 'Very High Frequency Lightning Observation', ms: 'Pemerhatian Kilat Frekuensi Amat Tinggi', ja: '超短波（VHF）雷観測' },
+  'sub.lf.coverage.h3': { en: 'Network coverage', ms: 'Liputan rangkaian', ja: 'ネットワークのカバー範囲' },
+  'sub.lf.coverage.li1': {
+    en: 'Distributed array across the Straits of Malacca region',
+    ms: 'Tatasusunan teragih merentasi rantau Selat Melaka',
+    ja: 'マラッカ海峡地域に広がる分散アレイ',
+  },
+  'sub.lf.coverage.li2': {
+    en: 'Observation areas only — exact sites are not shown',
+    ms: 'Kawasan pemerhatian sahaja — tapak tepat tidak dipaparkan',
+    ja: '観測エリアのみ — 正確な地点は表示しません',
+  },
+  'sub.lf.coverage.li3': { en: 'Time-of-arrival 3D localization', ms: 'Penyetempatan 3D masa ketibaan', ja: '到来時刻による3D位置推定' },
+  'sub.lf.coverage.li4': { en: '&gt;120 km nowcasting coverage', ms: 'Liputan nowcast &gt;120 km', ja: '120 km超のナウキャスト範囲' },
+  'sub.vhf.coverage.h3': { en: 'Network coverage', ms: 'Liputan rangkaian', ja: 'ネットワークのカバー範囲' },
+  'sub.vhf.coverage.li1': {
+    en: 'Distributed VHF array across the study region',
+    ms: 'Tatasusunan VHF teragih merentasi kawasan kajian',
+    ja: '研究対象地域に広がるVHF分散アレイ',
+  },
+  'sub.vhf.coverage.li2': {
+    en: 'Observation areas only — exact sites are not shown',
+    ms: 'Kawasan pemerhatian sahaja — tapak tepat tidak dipaparkan',
+    ja: '観測エリアのみ — 正確な地点は表示しません',
+  },
+  'sub.vhf.coverage.li3': {
+    en: 'GPS-synchronized time-of-arrival mapping',
+    ms: 'Pemetaan masa ketibaan disegerakkan GPS',
+    ja: 'GPS同期の到来時刻マッピング',
+  },
+  'sub.vhf.coverage.li4': {
+    en: 'Tens of kilometres baseline, sub-km source accuracy',
+    ms: 'Garis dasar puluhan kilometer, ketepatan sumber sub-km',
+    ja: '数十kmの基線、サブkmのソース精度',
+  },
   'sub.efield.h1': { en: 'Atmospheric Electric Field Monitoring', ms: 'Pemantauan Medan Elektrik Atmosfera', ja: '大気電界モニタリング' },
   'sub.efield.lead': {
     en: 'Ground-based field mills measure the vertical potential gradient — supporting charge validation, pre-strike warning, and multi-sensor nowcasting across the RTL3D network.',

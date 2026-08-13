@@ -183,9 +183,6 @@ def main():
         x_km, y_km = km_offset(s["lat"], s["lon"])
         sites_out.append({
             "code": s["code"],
-            "name": s["name"],
-            "lat": s["lat"],
-            "lon": s["lon"],
             "x_km": x_km,
             "y_km": y_km,
             "alt_km": round(s["alt_m"] / 1000.0, 3),

@@ -30,7 +30,7 @@
       q: 'Can we change the place where lightning strikes?',
       opts: ['Yes, we can change where the lightning strikes', 'No, we cannot change where the lightning strikes'],
       ans: 0,
-      explain: 'We can send a small rocket into the sky with a long wire attached to it. As the rocket flies up, the wire stretches from the ground into the clouds. Lightning likes an easy path — and the wire becomes that path, so lightning follows the wire down to the ground. We did this Rocket-Triggered Lightning for the first time in Melaka, Malaysia, in 2026!'
+      explain: 'We can send a small rocket into the sky with a long wire attached to it. As the rocket flies up, the wire stretches from the ground into the clouds. Lightning likes an easy path — and the wire becomes that path, so lightning follows the wire down to the ground. We did this Rocket-Triggered Lightning for the first time in Malaysia, in 2026!'
     }
   ];
 

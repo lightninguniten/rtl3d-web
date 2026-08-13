@@ -363,12 +363,12 @@ body > .tnb-map-panel.map-leaflet-fs-panel {
 }
 
 .power-layers-swatch.station {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d97706 50%, #2563eb 50%);
-  border: 1px solid #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  background: rgba(217, 119, 6, 0.18);
+  border: 2px dashed #d97706;
+  box-shadow: none;
 }
 
 .power-layers-label {
@@ -684,6 +684,13 @@ body > .tnb-map-panel.map-leaflet-fs-panel {
 .leg.lf-vhf { background: var(--gold); }
 .leg.lf { background: var(--accent); }
 .leg.ring { background: transparent; border: 1px dashed var(--accent); width: 10px; height: 10px; border-radius: 50%; }
+.leg.area-target {
+  background: rgba(217, 119, 6, 0.18);
+  border: 2px dashed #d97706;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
 .leg.region {
   background: rgba(245, 158, 11, 0.2);
   border: 1px dashed #f59e0b;

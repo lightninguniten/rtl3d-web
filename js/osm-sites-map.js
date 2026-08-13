@@ -1,23 +1,23 @@
 (function () {
   'use strict';
 
+  /** Coarse area centres only — no names, codes, or exact pins (Prof Morimoto policy). */
   const NETWORK = {
-    origin: { lat: 2.726931, lon: 102.24901 },
     sites: [
-      { code: 'MKPL', name: 'MET Kuala Pilah', lat: 2.726931, lon: 102.24901 },
-      { code: 'UTNL', name: 'UNITEN Putrajaya Campus', lat: 2.969325, lon: 101.728753 },
-      { code: 'DAML', name: 'DID Batu Dam', lat: 3.275989, lon: 101.684435 },
-      { code: 'PJWL', name: 'DID Padang Jawa', lat: 3.045798, lon: 101.491347 },
-      { code: 'PBSL', name: 'Pulau Besar', lat: 2.113398, lon: 102.334112 },
-      { code: 'KUTL', name: 'Kolej UNITI, Port Dickson', lat: 2.404219, lon: 101.96472 },
-      { code: 'FLKL', name: 'Falak Astronomy Complex', lat: 2.293866, lon: 102.083391 },
-      { code: 'UTML', name: 'UTeM Malacca', lat: 2.313962, lon: 102.318442 },
-      { code: 'UJSL', name: 'UiTM Jasin Campus', lat: 2.228043, lon: 102.458225 },
+      { lat: 2.7, lon: 102.2, lfOnly: true },
+      { lat: 3.0, lon: 101.7 },
+      { lat: 3.3, lon: 101.7 },
+      { lat: 3.0, lon: 101.5 },
+      { lat: 2.1, lon: 102.3 },
+      { lat: 2.4, lon: 102.0, lfOnly: true },
+      { lat: 2.3, lon: 102.1 },
+      { lat: 2.3, lon: 102.3 },
+      { lat: 2.2, lon: 102.5 },
     ],
   };
 
-  const LF_ONLY = new Set(['MKPL', 'KUTL']);
   const COVERAGE_KM = 120;
+  const AREA_RADIUS_KM = 12;
 
   /** Study region bbox for OSM power-line query (south, west, north, east) */
   const POWER_BBOX = { s: 2.0, w: 101.3, n: 3.5, e: 102.65 };
@@ -1227,7 +1227,7 @@
 
         if (layerRefs.stations) {
           const heading = L.DomUtil.create('div', 'power-layers-heading', panel);
-          heading.textContent = 'Stations';
+          heading.textContent = 'Areas';
 
           const row = L.DomUtil.create('label', 'power-layers-row', panel);
           const cb = L.DomUtil.create('input', '', row);
@@ -1237,7 +1237,7 @@
 
           const swatch = L.DomUtil.create('span', 'power-layers-swatch station', row);
           const text = L.DomUtil.create('span', 'power-layers-label', row);
-          text.textContent = 'Observation stations';
+          text.textContent = 'Observation areas';
 
           cb.addEventListener('change', () => setLayerVisible('stations', cb.checked));
           checkboxes.push(cb);
@@ -1309,7 +1309,7 @@
     legend.innerHTML =
       (txHtml ? '<div class="map-legend-group"><span class="map-legend-heading">Transmission</span>' + txHtml + '</div>' : '') +
       (distHtml ? '<div class="map-legend-group"><span class="map-legend-heading">Distribution</span>' + distHtml + '</div>' : '') +
-      '<span><i class="leg lf-vhf"></i> Observation stations</span>';
+      '<span><i class="leg area-target"></i> Observation areas</span>';
 
     if (typeof window.initDragScroll === 'function') {
       window.initDragScroll(legend);
@@ -1637,20 +1637,28 @@
     }
   }
 
-  function siteClass(code) {
-    return LF_ONLY.has(code) ? 'lf' : 'lf-vhf';
+  function siteClass(site) {
+    return site.lfOnly ? 'lf' : 'lf-vhf';
   }
 
-  function makeMarkerIcon(code, kind) {
-    return L.divIcon({
-      className: '',
-      html:
-        '<div class="study-site-marker ' + kind + '">' +
-        '<span class="study-site-dot" aria-hidden="true"></span>' +
-        '<span class="study-site-code">' + code + '</span>' +
-        '</div>',
-      iconSize: [52, 30],
-      iconAnchor: [9, 15],
+  function addStationAreaCircles(map, layer, sites, bounds) {
+    sites.forEach((site) => {
+      const kind = siteClass(site);
+      const color = kind === 'lf' ? '#2563eb' : '#d97706';
+      const circle = L.circle([site.lat, site.lon], {
+        radius: AREA_RADIUS_KM * 1000,
+        color,
+        weight: 2.25,
+        opacity: 0.78,
+        dashArray: '8 6',
+        fillColor: color,
+        fillOpacity: 0.14,
+        interactive: false,
+        className: 'study-area-target',
+      });
+      if (layer) circle.addTo(layer);
+      else circle.addTo(map);
+      bounds.extend(circleBounds(site.lat, site.lon, AREA_RADIUS_KM));
     });
   }
 
@@ -1708,8 +1716,8 @@
 
     function buildMap() {
       const sites = NETWORK.sites;
-      const origin = NETWORK.origin;
-      fallbackView = [origin.lat, origin.lon];
+      const regionCenter = APPROX_STUDY_BOUNDS.getCenter();
+      fallbackView = [regionCenter.lat, regionCenter.lng];
       const hideExactSites = mapEl.dataset.approximateSites === 'true';
       const showTnbRegion = mapEl.dataset.tnbRegion === 'true';
       const showPowerLines = mapEl.dataset.powerLines === 'true';
@@ -1777,10 +1785,8 @@
       }
 
       if (hideExactSites) {
-        // Approximate envelope only — no station pins or named sites (Prof Morimoto policy).
         const approxBounds = APPROX_STUDY_BOUNDS;
-        const center = approxBounds.getCenter();
-        fallbackView = [center.lat, center.lng];
+        fallbackView = [regionCenter.lat, regionCenter.lng];
 
         L.rectangle(approxBounds, {
           color: '#f59e0b',
@@ -1794,7 +1800,7 @@
           .addTo(map);
         bounds.extend(approxBounds);
 
-        L.circle([center.lat, center.lng], {
+        L.circle([regionCenter.lat, regionCenter.lng], {
           radius: COVERAGE_KM * 1000,
           color: '#2e6ff2',
           weight: 2,
@@ -1805,38 +1811,10 @@
         })
           .bindTooltip('Illustrative >120 km coverage', { sticky: true })
           .addTo(map);
-        bounds.extend(circleBounds(center.lat, center.lng, COVERAGE_KM));
-      } else {
-        sites.forEach((site) => {
-          const kind = siteClass(site.code);
-          const marker = L.marker([site.lat, site.lon], {
-            icon: makeMarkerIcon(site.code, kind),
-            alt: site.name,
-          });
-          marker.bindPopup(
-            '<strong>' + site.code + '</strong><br>' + site.name,
-            { closeButton: true, autoClose: true }
-          );
-          if (stationsLayer) marker.addTo(stationsLayer);
-          else marker.addTo(map);
-          bounds.extend([site.lat, site.lon]);
-        });
-
-        if (!showPowerLines && !showWaterInfra && !showAviationRoutes && !showLightningRadar) {
-          bounds.extend(circleBounds(origin.lat, origin.lon, COVERAGE_KM));
-          L.circle([origin.lat, origin.lon], {
-            radius: COVERAGE_KM * 1000,
-            color: '#2e6ff2',
-            weight: 2,
-            opacity: 0.65,
-            dashArray: '8 6',
-            fillColor: '#2e6ff2',
-            fillOpacity: 0.06,
-          })
-            .bindTooltip('>120 km LF nowcasting coverage', { sticky: true })
-            .addTo(map);
-        }
+        bounds.extend(circleBounds(regionCenter.lat, regionCenter.lng, COVERAGE_KM));
       }
+
+      addStationAreaCircles(map, stationsLayer, sites, bounds);
 
       studyBounds = fixedMapViewBounds() || bounds;
       isolateMapNavigation(mapEl, map);

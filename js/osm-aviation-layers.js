@@ -592,7 +592,7 @@
 
         if (layerRefs.stations) {
           const stationsHeading = L.DomUtil.create('div', 'power-layers-heading', panel);
-          stationsHeading.textContent = 'Stations';
+          stationsHeading.textContent = 'Areas';
           const row = L.DomUtil.create('label', 'power-layers-row', panel);
           const cb = L.DomUtil.create('input', '', row);
           cb.type = 'checkbox';
@@ -600,7 +600,7 @@
           cb.dataset.aviationLayerId = 'stations';
           L.DomUtil.create('span', 'power-layers-swatch station', row);
           const text = L.DomUtil.create('span', 'power-layers-label', row);
-          text.textContent = 'Observation stations';
+          text.textContent = 'Observation areas';
           cb.addEventListener('change', () => visibilityCtrl.refresh());
         }
 
@@ -641,7 +641,7 @@
     });
     legend.innerHTML =
       (spans.length ? '<div class="map-legend-group">' + spans.join('') + '</div>' : '') +
-      '<span><i class="leg lf-vhf"></i> Observation stations</span>' +
+      '<span><i class="leg area-target"></i> Observation areas</span>' +
       '<span><i class="leg jet"></i> Lightning (Jet = time)</span>' +
       '<span><i class="leg rad"></i> 15 km radiation zone</span>';
     if (typeof window.initDragScroll === 'function') window.initDragScroll(legend);

@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="VHF lightning observation network — stations, sensors, and 3D source mapping results.">
   <title>VHF Network — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=cafb69041d">
+  <link rel="stylesheet" href="css/style.min.css?v=8fe4136302">
   <link rel="preload" href="js/vendor/plotly-cartesian-2.35.2.min.js" as="script">
   <script defer src="js/vendor/plotly-cartesian-2.35.2.min.js"></script>
 </head>
@@ -102,8 +102,13 @@
             </section>
 
             <section class="detail-block detail-block-sites">
-              <h3>Station locations</h3>
-              <ul class="site-table drag-scroll" id="vhf-site-list" data-drag-scroll aria-label="Station list — drag to scroll"></ul>
+              <h3 data-i18n="sub.vhf.coverage.h3">Network coverage</h3>
+              <ul class="site-list coverage-points">
+                <li><span class="dot lf-vhf"></span> <span data-i18n="sub.vhf.coverage.li1">Distributed VHF array across the study region</span></li>
+                <li><span class="dot lf"></span> <span data-i18n="sub.vhf.coverage.li2">Observation areas only — exact sites are not shown</span></li>
+                <li><span class="dot lf-vhf"></span> <span data-i18n="sub.vhf.coverage.li3">GPS-synchronized time-of-arrival mapping</span></li>
+                <li><span class="dot lf"></span> <span data-i18n="sub.vhf.coverage.li4">Tens of kilometres baseline, sub-km source accuracy</span></li>
+              </ul>
             </section>
           </aside>
 

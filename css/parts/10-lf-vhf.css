@@ -130,6 +130,19 @@
   padding: clamp(0.1rem, 0.4cqh, 0.18rem) 0;
 }
 
+.lf-page .coverage-points {
+  flex: 1;
+  min-height: 0;
+  margin-top: 0.35rem;
+  font-size: clamp(0.885rem, 2.124cqh, 1rem);
+}
+
+.lf-page .coverage-points li {
+  padding: clamp(0.18rem, 0.7cqh, 0.32rem) 0;
+  align-items: flex-start;
+  line-height: 1.35;
+}
+
 .lf-page .detail-controls {
   flex-shrink: 0;
   margin-bottom: clamp(0.25rem, 0.8cqh, 0.5rem);

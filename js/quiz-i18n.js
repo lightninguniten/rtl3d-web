@@ -33,7 +33,7 @@ window.RTL3D_QUIZ_I18N = {
       q: 'Bolehkah kita mengubah tempat kilat menyambar?',
       opts: ['Ya, kita boleh mengubah tempat kilat menyambar', 'Tidak, kita tidak boleh mengubah tempat kilat menyambar'],
       ans: 0,
-      explain: 'Kita boleh melancarkan roket kecil ke langit dengan wayar panjang yang diikat padanya. Apabila roket terbang naik, wayar memanjang dari tanah ke awan. Kilat sukakan laluan yang mudah — maka wayar itu menjadi laluannya, dan kilat mengikut wayar turun ke bumi. Kami berjaya melakukan Kilat Tercetus Roket ini buat kali pertama di Melaka, Malaysia, pada tahun 2026!'
+      explain: 'Kita boleh melancarkan roket kecil ke langit dengan wayar panjang yang diikat padanya. Apabila roket terbang naik, wayar memanjang dari tanah ke awan. Kilat sukakan laluan yang mudah — maka wayar itu menjadi laluannya, dan kilat mengikut wayar turun ke bumi. Kami berjaya melakukan Kilat Tercetus Roket ini buat kali pertama di Malaysia, pada tahun 2026!'
     }
   ]
 };
