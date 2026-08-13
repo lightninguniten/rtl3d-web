@@ -447,6 +447,10 @@
     gap: 0.5rem;
   }
 
+  .impact-devices {
+    grid-template-columns: 1fr;
+  }
+
   .impact,
   a.impact.impact-clickable {
     width: 100%;

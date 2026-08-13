@@ -109,7 +109,8 @@
   display: block;
 }
 
-.fb-qr-name {
+.fb-qr-name,
+.fb-qr-handle {
   font-size: 1.121rem;
   font-weight: 600;
   color: var(--accent-bright);
@@ -119,11 +120,31 @@
   pointer-events: none;
 }
 
+a.fb-qr-handle {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+a.fb-qr-handle:hover,
+a.fb-qr-handle:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
 .fb-qr-hint {
   font-size: 0.92rem;
   color: var(--text-muted);
   margin: 0;
   line-height: 1.45;
+}
+
+.fb-qr-visit {
+  width: 100%;
+  justify-content: center;
+  margin: 0.35rem 0 0.7rem;
+  box-sizing: border-box;
 }
 
 button.btn.primary {

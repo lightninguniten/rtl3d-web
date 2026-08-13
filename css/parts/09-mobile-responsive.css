@@ -13,6 +13,7 @@
   .slide-inner > .network-grid,
   .slide-inner > .cards.three,
   .slide-inner > .flow,
+  .slide-inner > .impact-devices,
   .slide-inner > .impact-row,
   .slide-inner > .partners,
   .slide-inner > .acknowledgement-block,
@@ -277,6 +278,7 @@
   }
 
   body[data-page="impact"] .slide-inner > .impact-row,
+  body[data-page="impact"] .slide-inner > .impact-devices,
   body[data-page="impact"] .slide-inner > .flow {
     flex: 0 0 auto;
     overflow: visible;

@@ -31,14 +31,19 @@
       '<div class="fb-qr-panel">' +
       '<button type="button" class="fb-qr-close" data-fb-close aria-label="Close">&times;</button>' +
       '<div class="fb-qr-icon" aria-hidden="true">' + fbIconSvg() + '</div>' +
-      '<h2 id="fb-qr-title" class="fb-qr-title">Follow us on Facebook</h2>' +
+      '<h2 id="fb-qr-title" class="fb-qr-title" data-i18n="qr.fb.title">Follow us on Facebook</h2>' +
       '<div class="fb-qr-box" id="fb-qr-box" aria-hidden="true"></div>' +
-      '<p class="fb-qr-name">' + FB_NAME + '</p>' +
-      '<p class="fb-qr-hint">Scan with your phone camera to visit our page</p>' +
+      '<a class="fb-qr-handle" href="' + FB_URL + '" target="_blank" rel="noopener noreferrer">' + FB_NAME + '</a>' +
+      '<a class="btn primary fb-qr-visit" href="' + FB_URL + '" target="_blank" rel="noopener noreferrer">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+      '<span data-i18n="qr.fb.visit">Open Facebook</span>' +
+      '</a>' +
+      '<p class="fb-qr-hint" data-i18n="qr.hint">Scan the code, or open the page on this device</p>' +
       '</div>';
 
     document.body.appendChild(modal);
     qrContainer = modal.querySelector('#fb-qr-box');
+    if (window.RTL3Di18n) window.RTL3Di18n.translateTree(modal);
 
     modal.querySelectorAll('[data-fb-close]').forEach(function (el) {
       el.addEventListener('click', closeModal);
@@ -62,6 +67,7 @@
     var show = function () {
       createModal();
       renderQr();
+      if (window.RTL3Di18n) window.RTL3Di18n.translateTree(modal);
       modal.hidden = false;
       requestAnimationFrame(function () {
         modal.classList.add('open');

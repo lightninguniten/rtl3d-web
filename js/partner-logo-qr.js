@@ -6,6 +6,7 @@
   var titleEl = null;
   var nameEl = null;
   var logoEl = null;
+  var visitEl = null;
 
   function createModal() {
     if (modal) return;
@@ -25,8 +26,12 @@
       '<div class="partner-qr-logo" id="partner-qr-logo" aria-hidden="true"></div>' +
       '<h2 id="partner-qr-title" class="fb-qr-title"></h2>' +
       '<div class="fb-qr-box partner-qr-box" id="partner-qr-box" aria-hidden="true"></div>' +
-      '<p class="fb-qr-name" id="partner-qr-name"></p>' +
-      '<p class="fb-qr-hint">Scan with your phone camera to visit the website</p>' +
+      '<a class="fb-qr-handle" id="partner-qr-name" href="#" target="_blank" rel="noopener noreferrer"></a>' +
+      '<a class="btn primary fb-qr-visit" id="partner-qr-visit" href="#" target="_blank" rel="noopener noreferrer">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+      '<span data-i18n="qr.partner.visit">Open website</span>' +
+      '</a>' +
+      '<p class="fb-qr-hint" data-i18n="qr.hint">Scan the code, or open the page on this device</p>' +
       '</div>';
 
     document.body.appendChild(modal);
@@ -34,6 +39,8 @@
     titleEl = modal.querySelector('#partner-qr-title');
     nameEl = modal.querySelector('#partner-qr-name');
     logoEl = modal.querySelector('#partner-qr-logo');
+    visitEl = modal.querySelector('#partner-qr-visit');
+    if (window.RTL3Di18n) window.RTL3Di18n.translateTree(modal);
 
     modal.querySelectorAll('[data-partner-qr-close]').forEach(function (el) {
       el.addEventListener('click', closeModal);
@@ -56,12 +63,16 @@
   function openModal(opts) {
     var show = function () {
       createModal();
+      var url = opts.url || '#';
       titleEl.textContent = opts.title || 'University website';
-      nameEl.textContent = opts.label || opts.url || '';
+      nameEl.textContent = opts.label || url;
+      nameEl.href = url;
+      visitEl.href = url;
       logoEl.innerHTML = opts.logoSrc
         ? '<img src="' + opts.logoSrc + '" alt="">'
         : '';
-      renderQr(opts.url);
+      renderQr(url);
+      if (window.RTL3Di18n) window.RTL3Di18n.translateTree(modal);
       modal.hidden = false;
       requestAnimationFrame(function () {
         modal.classList.add('open');
