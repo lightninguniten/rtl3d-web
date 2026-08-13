@@ -22,6 +22,9 @@
   /** Study region bbox for OSM power-line query (south, west, north, east) */
   const POWER_BBOX = { s: 2.0, w: 101.3, n: 3.5, e: 102.65 };
 
+  /** Coarse Straits of Malacca envelope for public study-area map (no exact sites) */
+  const APPROX_STUDY_BOUNDS = L.latLngBounds([2.0, 101.4], [3.4, 102.6]);
+
   /** Peninsular Malaysia — fixed map view for public-safety / aviation pages */
   const PENINSULAR_BOUNDS = L.latLngBounds([1.25, 99.6], [6.75, 104.5]);
 
@@ -1707,6 +1710,7 @@
       const sites = NETWORK.sites;
       const origin = NETWORK.origin;
       fallbackView = [origin.lat, origin.lon];
+      const hideExactSites = mapEl.dataset.approximateSites === 'true';
       const showTnbRegion = mapEl.dataset.tnbRegion === 'true';
       const showPowerLines = mapEl.dataset.powerLines === 'true';
       const showWaterInfra = mapEl.dataset.waterInfrastructure === 'true';
@@ -1721,6 +1725,7 @@
           ? PENINSULAR_BOUNDS
           : null;
       const mapMinZoom = showLightningRadar ? 4 : usePeninsularView ? 6 : undefined;
+      const mapMaxZoom = hideExactSites ? 9 : undefined;
 
       map = L.map(mapEl, {
         scrollWheelZoom: true,
@@ -1736,6 +1741,7 @@
         zoomDelta: 1,
         preferCanvas: showLightning || showLightningRadar,
         minZoom: mapMinZoom,
+        maxZoom: mapMaxZoom,
         maxBounds: mapPanBounds ? mapPanBounds.pad(0.03) : undefined,
         maxBoundsViscosity: mapPanBounds ? 0.85 : undefined,
       });
@@ -1744,7 +1750,7 @@
       L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
 
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+        maxZoom: hideExactSites ? 9 : 19,
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
@@ -1770,34 +1776,66 @@
         bounds.extend(tnbBounds);
       }
 
-      sites.forEach((site) => {
-        const kind = siteClass(site.code);
-        const marker = L.marker([site.lat, site.lon], {
-          icon: makeMarkerIcon(site.code, kind),
-          alt: site.name,
-        });
-        marker.bindPopup(
-          '<strong>' + site.code + '</strong><br>' + site.name,
-          { closeButton: true, autoClose: true }
-        );
-        if (stationsLayer) marker.addTo(stationsLayer);
-        else marker.addTo(map);
-        bounds.extend([site.lat, site.lon]);
-      });
+      if (hideExactSites) {
+        // Approximate envelope only — no station pins or named sites (Prof Morimoto policy).
+        const approxBounds = APPROX_STUDY_BOUNDS;
+        const center = approxBounds.getCenter();
+        fallbackView = [center.lat, center.lng];
 
-      if (!showPowerLines && !showWaterInfra && !showAviationRoutes && !showLightningRadar) {
-        bounds.extend(circleBounds(origin.lat, origin.lon, COVERAGE_KM));
-        L.circle([origin.lat, origin.lon], {
+        L.rectangle(approxBounds, {
+          color: '#f59e0b',
+          weight: 2,
+          opacity: 0.8,
+          dashArray: '10 6',
+          fillColor: '#f59e0b',
+          fillOpacity: 0.1,
+        })
+          .bindTooltip('Approximate study region', { sticky: true })
+          .addTo(map);
+        bounds.extend(approxBounds);
+
+        L.circle([center.lat, center.lng], {
           radius: COVERAGE_KM * 1000,
           color: '#2e6ff2',
           weight: 2,
-          opacity: 0.65,
+          opacity: 0.55,
           dashArray: '8 6',
           fillColor: '#2e6ff2',
-          fillOpacity: 0.06,
+          fillOpacity: 0.05,
         })
-          .bindTooltip('>120 km LF nowcasting coverage', { sticky: true })
+          .bindTooltip('Illustrative >120 km coverage', { sticky: true })
           .addTo(map);
+        bounds.extend(circleBounds(center.lat, center.lng, COVERAGE_KM));
+      } else {
+        sites.forEach((site) => {
+          const kind = siteClass(site.code);
+          const marker = L.marker([site.lat, site.lon], {
+            icon: makeMarkerIcon(site.code, kind),
+            alt: site.name,
+          });
+          marker.bindPopup(
+            '<strong>' + site.code + '</strong><br>' + site.name,
+            { closeButton: true, autoClose: true }
+          );
+          if (stationsLayer) marker.addTo(stationsLayer);
+          else marker.addTo(map);
+          bounds.extend([site.lat, site.lon]);
+        });
+
+        if (!showPowerLines && !showWaterInfra && !showAviationRoutes && !showLightningRadar) {
+          bounds.extend(circleBounds(origin.lat, origin.lon, COVERAGE_KM));
+          L.circle([origin.lat, origin.lon], {
+            radius: COVERAGE_KM * 1000,
+            color: '#2e6ff2',
+            weight: 2,
+            opacity: 0.65,
+            dashArray: '8 6',
+            fillColor: '#2e6ff2',
+            fillOpacity: 0.06,
+          })
+            .bindTooltip('>120 km LF nowcasting coverage', { sticky: true })
+            .addTo(map);
+        }
       }
 
       studyBounds = fixedMapViewBounds() || bounds;

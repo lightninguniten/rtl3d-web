@@ -684,6 +684,13 @@ body > .tnb-map-panel.map-leaflet-fs-panel {
 .leg.lf-vhf { background: var(--gold); }
 .leg.lf { background: var(--accent); }
 .leg.ring { background: transparent; border: 1px dashed var(--accent); width: 10px; height: 10px; border-radius: 50%; }
+.leg.region {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px dashed #f59e0b;
+  width: 12px;
+  height: 10px;
+  border-radius: 2px;
+}
 .leg.jet {
   background: linear-gradient(90deg, #000083, #00ffff, #ffff00, #ff0000, #800000);
   width: 14px;

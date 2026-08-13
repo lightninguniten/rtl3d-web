@@ -216,10 +216,47 @@ window.RTL3D_I18N = {
 
   /* ---- Study Area page ---- */
   'study.tag': { en: 'Study Area', ms: 'Kawasan Kajian', ja: '研究対象地域' },
-  'study.h2': { en: 'Observation sites across Malacca', ms: 'Lokasi pemerhatian di seluruh Melaka', ja: 'マラッカ各地の観測サイト' },
-  'study.p': { en: 'A distributed network spanning the Straits of Malacca region, with stations operated by UTeM and UNITEN teams.', ms: 'Rangkaian teragih meliputi rantau Selat Melaka, dengan stesen dikendalikan oleh pasukan UTeM dan UNITEN.', ja: 'マラッカ海峡地域に広がる分散型ネットワークで、UTeMとUNITENのチームが各局を運用しています。' },
+  'study.h2': {
+    en: 'Observation network — Straits of Malacca',
+    ms: 'Rangkaian pemerhatian — Selat Melaka',
+    ja: '観測ネットワーク — マラッカ海峡',
+  },
+  'study.p': {
+    en: 'A distributed LF / VHF network across the Straits of Malacca region, operated with partner university and agency teams. Exact station positions are not disclosed.',
+    ms: 'Rangkaian LF / VHF teragih merentasi rantau Selat Melaka, dikendalikan bersama rakan universiti dan agensi. Kedudukan tepat stesen tidak didedahkan.',
+    ja: 'マラッカ海峡地域に広がるLF／VHF分散ネットワークで、大学・機関のパートナーと運用しています。観測局の正確な位置は公開しません。',
+  },
+  'study.list.uni': {
+    en: 'Partner university campuses (LF + VHF)',
+    ms: 'Kampus universiti rakan (LF + VHF)',
+    ja: '連携大学キャンパス（LF + VHF）',
+  },
+  'study.list.agency': {
+    en: 'Government agency observation sites',
+    ms: 'Tapak pemerhatian agensi kerajaan',
+    ja: '政府機関の観測サイト',
+  },
+  'study.list.met': {
+    en: 'Meteorological / early-warning partners (LF)',
+    ms: 'Rakan meteorologi / amaran awal (LF)',
+    ja: '気象・早期警報パートナー（LF）',
+  },
+  'study.list.coastal': {
+    en: 'Coastal and offshore observation sites',
+    ms: 'Tapak pemerhatian pantai dan luar pantai',
+    ja: '沿岸・沖合の観測サイト',
+  },
   'study.legend.lf': { en: 'LF only', ms: 'LF sahaja', ja: 'LFのみ' },
-  'study.legend.coverage': { en: '&gt;120 km coverage', ms: 'liputan &gt;120 km', ja: '120 km超のカバー範囲' },
+  'study.legend.region': {
+    en: 'Approximate study region',
+    ms: 'Kawasan kajian anggaran',
+    ja: 'おおよその研究対象地域',
+  },
+  'study.legend.coverage': {
+    en: '&gt;120 km illustrative coverage',
+    ms: 'liputan ilustratif &gt;120 km',
+    ja: '120 km超の参考カバー範囲',
+  },
 
   /* ---- Partners page ---- */
   'partners.tag': { en: 'Collaboration', ms: 'Kerjasama', ja: '共同研究' },
@@ -253,6 +290,16 @@ window.RTL3D_I18N = {
     ja: 'ご支援、ご協力、ご提案、ご質問、ご要望を歓迎いたします。私たちの取り組みをフォローし、研究コミュニティとつながってください。',
   },
   'contact.followFb': { en: 'Follow on Facebook', ms: 'Ikuti di Facebook', ja: 'Facebookでフォロー' },
+  'contact.email': {
+    en: 'morimoto（at）ele.kindai.ac.jp',
+    ms: 'morimoto（at）ele.kindai.ac.jp',
+    ja: 'morimoto（at）ele.kindai.ac.jp',
+  },
+  'contact.emailNote': {
+    en: 'Note that this e-mail address has replaced the “@” with “（at）” to prevent spam. When e-mailing, replace the “（at）” with “@”.',
+    ms: 'Alamat e-mel ini menggantikan “@” dengan “（at）” untuk mengelakkan spam. Apabila menghantar e-mel, gantikan “（at）” dengan “@”.',
+    ja: 'このメールアドレスはスパム防止のため「@」を「（at）」に置き換えています。送信時は「（at）」を「@」に戻してください。',
+  },
   'contact.goal': {
     en: '<strong>Overall Goal:</strong> Real-time lightning 3D imaging and nowcasting utilized to reduce lightning damages and electric failures — expanding across Malaysia and neighboring countries.',
     ms: '<strong>Matlamat Keseluruhan:</strong> Pengimejan 3D kilat masa nyata dan ramalan segera digunakan untuk mengurangkan kerosakan akibat kilat dan gangguan elektrik — diperluas ke seluruh Malaysia dan negara jiran.',
