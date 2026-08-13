@@ -290,15 +290,15 @@ window.RTL3D_I18N = {
     ja: 'ご支援、ご協力、ご提案、ご質問、ご要望を歓迎いたします。私たちの取り組みをフォローし、研究コミュニティとつながってください。',
   },
   'contact.followFb': { en: 'Follow on Facebook', ms: 'Ikuti di Facebook', ja: 'Facebookでフォロー' },
-  'contact.email': {
-    en: 'morimoto（at）ele.kindai.ac.jp',
-    ms: 'morimoto（at）ele.kindai.ac.jp',
-    ja: 'morimoto（at）ele.kindai.ac.jp',
+  'contact.faculty': {
+    en: 'Prof. Takeshi Morimoto — Kindai University',
+    ms: 'Prof. Takeshi Morimoto — Universiti Kindai',
+    ja: '森本健志教授 — 近畿大学',
   },
-  'contact.emailNote': {
-    en: 'Note that this e-mail address has replaced the “@” with “（at）” to prevent spam. When e-mailing, replace the “（at）” with “@”.',
-    ms: 'Alamat e-mel ini menggantikan “@” dengan “（at）” untuk mengelakkan spam. Apabila menghantar e-mel, gantikan “（at）” dengan “@”.',
-    ja: 'このメールアドレスはスパム防止のため「@」を「（at）」に置き換えています。送信時は「（at）」を「@」に戻してください。',
+  'contact.facultyAria': {
+    en: 'Open Prof. Takeshi Morimoto’s Kindai University faculty page (opens in a new tab)',
+    ms: 'Buka laman fakulti Universiti Kindai Prof. Takeshi Morimoto (tab baharu)',
+    ja: '近畿大学の森本健志教授の教員ページを開く（新しいタブ）',
   },
   'contact.goal': {
     en: '<strong>Overall Goal:</strong> Real-time lightning 3D imaging and nowcasting utilized to reduce lightning damages and electric failures — expanding across Malaysia and neighboring countries.',
