@@ -222,9 +222,9 @@ window.RTL3D_I18N = {
     ja: '観測ネットワーク — マラッカ海峡',
   },
   'study.p': {
-    en: 'A distributed LF / VHF network across the Straits of Malacca region, operated with partner university and agency teams. Exact station positions are not disclosed.',
-    ms: 'Rangkaian LF / VHF teragih merentasi rantau Selat Melaka, dikendalikan bersama rakan universiti dan agensi. Kedudukan tepat stesen tidak didedahkan.',
-    ja: 'マラッカ海峡地域に広がるLF／VHF分散ネットワークで、大学・機関のパートナーと運用しています。観測局の正確な位置は公開しません。',
+    en: 'A distributed LF / VHF network across the Straits of Malacca region, operated with partner university and agency teams.',
+    ms: 'Rangkaian LF / VHF teragih merentasi rantau Selat Melaka, dikendalikan bersama rakan universiti dan agensi.',
+    ja: 'マラッカ海峡地域に広がるLF／VHF分散ネットワークで、大学・機関のパートナーと運用しています。',
   },
   'study.list.uni': {
     en: 'Partner university campuses (LF + VHF)',
@@ -248,9 +248,9 @@ window.RTL3D_I18N = {
   },
   'study.legend.lf': { en: 'LF only', ms: 'LF sahaja', ja: 'LFのみ' },
   'study.legend.region': {
-    en: 'Approximate study region',
-    ms: 'Kawasan kajian anggaran',
-    ja: 'おおよその研究対象地域',
+    en: 'Study region',
+    ms: 'Kawasan kajian',
+    ja: '研究対象地域',
   },
   'study.legend.areas': {
     en: 'Observation areas',
@@ -258,9 +258,9 @@ window.RTL3D_I18N = {
     ja: '観測エリア',
   },
   'study.legend.coverage': {
-    en: '&gt;120 km illustrative coverage',
-    ms: 'liputan ilustratif &gt;120 km',
-    ja: '120 km超の参考カバー範囲',
+    en: '&gt;120 km coverage',
+    ms: 'liputan &gt;120 km',
+    ja: '120 km超のカバー範囲',
   },
 
   /* ---- Partners page ---- */
@@ -362,9 +362,9 @@ window.RTL3D_I18N = {
     ja: 'マラッカ海峡地域に広がる分散アレイ',
   },
   'sub.lf.coverage.li2': {
-    en: 'Observation areas only — exact sites are not shown',
-    ms: 'Kawasan pemerhatian sahaja — tapak tepat tidak dipaparkan',
-    ja: '観測エリアのみ — 正確な地点は表示しません',
+    en: 'Software-defined radio Fast Antenna receivers',
+    ms: 'Penerima radio ditakrif perisian antena pantas',
+    ja: 'ソフトウェア無線の高速アンテナ受信機',
   },
   'sub.lf.coverage.li3': { en: 'Time-of-arrival 3D localization', ms: 'Penyetempatan 3D masa ketibaan', ja: '到来時刻による3D位置推定' },
   'sub.lf.coverage.li4': { en: '&gt;120 km nowcasting coverage', ms: 'Liputan nowcast &gt;120 km', ja: '120 km超のナウキャスト範囲' },
@@ -375,9 +375,9 @@ window.RTL3D_I18N = {
     ja: '研究対象地域に広がるVHF分散アレイ',
   },
   'sub.vhf.coverage.li2': {
-    en: 'Observation areas only — exact sites are not shown',
-    ms: 'Kawasan pemerhatian sahaja — tapak tepat tidak dipaparkan',
-    ja: '観測エリアのみ — 正確な地点は表示しません',
+    en: 'Broadband 20–80 MHz circular flat-plate antennas',
+    ms: 'Antena plat rata bulat jalur lebar 20–80 MHz',
+    ja: '20–80 MHz広帯域の円形平板アンテナ',
   },
   'sub.vhf.coverage.li3': {
     en: 'GPS-synchronized time-of-arrival mapping',

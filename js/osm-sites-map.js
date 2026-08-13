@@ -1796,7 +1796,7 @@
           fillColor: '#f59e0b',
           fillOpacity: 0.1,
         })
-          .bindTooltip('Approximate study region', { sticky: true })
+          .bindTooltip('Study region', { sticky: true })
           .addTo(map);
         bounds.extend(approxBounds);
 
@@ -1809,7 +1809,7 @@
           fillColor: '#2e6ff2',
           fillOpacity: 0.05,
         })
-          .bindTooltip('Illustrative >120 km coverage', { sticky: true })
+          .bindTooltip('>120 km coverage', { sticky: true })
           .addTo(map);
         bounds.extend(circleBounds(regionCenter.lat, regionCenter.lng, COVERAGE_KM));
       }
