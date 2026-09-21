@@ -37,6 +37,29 @@ the script does on your behalf.
 
 
 ----------------------------------------------------------------
+ONE-TIME: AUTHORISE THE SCRIPT
+----------------------------------------------------------------
+Deploying does NOT grant permissions. A web app that runs as you cannot
+touch Drive or Sheets until you have approved those scopes once, by hand,
+from the editor. Until then the endpoint answers with a Google
+"Access denied - you need access" page instead of JSON.
+
+  1. Open the project:
+     https://script.google.com/d/1jzfrM5xqUrJAM0_ERzEkb8uCdox5-P0vH_UZyRZsPF8kV6_bf9xzPWJX/edit
+  2. In the function dropdown at the top, pick  setup
+  3. Press Run.
+  4. Approve the permission prompt. Google will warn that the app is not
+     verified - it is your own script; choose Advanced, then "Go to ...".
+  5. The Execution log prints the results spreadsheet URL. Keep it.
+
+setup() creates the spreadsheet if it does not exist yet and remembers its
+id in script properties, so this works whether or not the project was made
+from inside a Sheet.
+
+Re-run this only if you later add code needing a new permission.
+
+
+----------------------------------------------------------------
 ALREADY SET UP, BUT THE RESULTS PAGE IS EMPTY?
 ----------------------------------------------------------------
 That means the deployed script is an old version. Check it by opening

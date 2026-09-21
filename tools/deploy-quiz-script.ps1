@@ -56,7 +56,11 @@ Ok "node $(node -v)"
 # --- the deployment id lives in the web app URL ----------------------------
 Step 'Reading the deployment id from js/quiz-config.js'
 $configPath = Join-Path $root 'js\quiz-config.js'
-$config = Get-Content -Raw $configPath
+# Drop comment lines first: the file documents the setting with a commented
+# example ('.../AKfy.../exec') above the real one, and a naive match finds
+# that placeholder instead.
+$config = (Get-Content $configPath |
+  Where-Object { $_.TrimStart() -notlike '//*' }) -join "`n"
 $m = [regex]::Match($config, "RTL3D_QUIZ_ENDPOINT\s*=\s*'([^']+)'")
 if (-not $m.Success -or -not $m.Groups[1].Value.Trim()) {
   throw "No RTL3D_QUIZ_ENDPOINT in $configPath. Deploy once by hand first (tools\quiz-sheet.gs.txt), then this script can take over."
@@ -65,6 +69,11 @@ $endpoint = $m.Groups[1].Value.Trim()
 $dm = [regex]::Match($endpoint, '/macros/s/([^/]+)/exec')
 if (-not $dm.Success) { throw "Could not read a deployment id out of: $endpoint" }
 $deploymentId = $dm.Groups[1].Value
+# A real deployment id is a long AKfycb... token. Anything short means a
+# placeholder was picked up instead of the live URL.
+if ($deploymentId.Length -lt 30 -or $deploymentId -notmatch '^AKfyc') {
+  throw "That does not look like a real deployment id: '$deploymentId'. Check RTL3D_QUIZ_ENDPOINT in $configPath."
+}
 Ok "deployment $deploymentId"
 
 # --- clasp, kept local to this repo ----------------------------------------
@@ -85,26 +94,32 @@ if (-not (Test-Path $claspJs)) {
 if (-not (Test-Path $claspJs)) { throw "clasp did not install into $cliDir" }
 Ok 'clasp ready'
 
+# One explicit array parameter, never ValueFromRemainingArguments: PowerShell
+# binds loose -V / -d style tokens itself and they never reach clasp, which
+# then sees their values as positional arguments.
 function Invoke-Clasp {
-  param([Parameter(ValueFromRemainingArguments = $true)][string[]]$ClaspArgs)
+  param([Parameter(Mandatory = $true)][string[]]$ClaspArgs)
   # clasp writes ordinary progress and errors to stderr. Under
   # $ErrorActionPreference = 'Stop' that becomes a terminating NativeCommandError
-  # before we ever get to read $LASTEXITCODE, so the callers below could never
-  # inspect a failure. Keep native stderr non-terminating for the call itself.
+  # before we get to read the exit code, so failures below could never be
+  # inspected. Keep native stderr non-terminating for the call itself, and
+  # capture the exit code while it is still ours to read.
   $prev = $ErrorActionPreference
   $ErrorActionPreference = 'Continue'
-  try { & node $claspJs @ClaspArgs 2>&1 }
-  finally { $ErrorActionPreference = $prev }
+  try {
+    & node $claspJs @ClaspArgs 2>&1
+    $script:ClaspExit = $LASTEXITCODE
+  } finally { $ErrorActionPreference = $prev }
 }
 
 # --- auth ------------------------------------------------------------------
 Step 'Checking Google sign-in'
-$who = (Invoke-Clasp show-authorized-user 2>&1) -join "`n"
-if ($LASTEXITCODE -ne 0 -or $who -match 'not logged in|No authorization|not authorized') {
+$who = (Invoke-Clasp @('show-authorized-user')) -join "`n"
+if ($script:ClaspExit -ne 0 -or $who -match 'not logged in|No authorization|not authorized') {
   Warn 'Not signed in. A browser will open - use the account that owns the Sheet.'
-  Invoke-Clasp login
-  if ($LASTEXITCODE -ne 0) { throw 'clasp login failed.' }
-  $who = (Invoke-Clasp show-authorized-user 2>&1) -join "`n"
+  Invoke-Clasp @('login')
+  if ($script:ClaspExit -ne 0) { throw 'clasp login failed.' }
+  $who = (Invoke-Clasp @('show-authorized-user')) -join "`n"
 }
 Ok (($who -split "`n") | Select-Object -First 1)
 
@@ -114,7 +129,7 @@ if (-not $ScriptId -and (Test-Path $idCache)) {
 }
 if (-not $ScriptId) {
   Step 'Finding the Apps Script project'
-  $listing = (Invoke-Clasp list-scripts --noShorten 2>&1) -join "`n"
+  $listing = (Invoke-Clasp @('list-scripts', '--noShorten')) -join "`n"
   # @() matters: with a single match PowerShell would hand back a bare string,
   # and $ids[0] would then index into it and yield one character.
   $ids = @([regex]::Matches($listing, 'script\.google\.com/d/([^/]+)/edit') |
@@ -148,7 +163,7 @@ try {
   try {
     # Pull first, so the remote manifest (timezone, scopes) is preserved
     # instead of overwritten with a guess.
-    Invoke-Clasp pull 2>&1 | Out-Null
+    Invoke-Clasp @('pull') | Out-Null
 
     $manifest = Join-Path $stage 'appsscript.json'
     if (-not (Test-Path $manifest)) {
@@ -176,9 +191,9 @@ try {
     Ok 'Code.gs <- tools/quiz-sheet.gs'
 
     Step 'Pushing code'
-    $pushOut = (Invoke-Clasp push -f 2>&1) -join "`n"
+    $pushOut = (Invoke-Clasp @('push', '-f')) -join "`n"
     Write-Host $pushOut
-    if ($LASTEXITCODE -ne 0) {
+    if ($script:ClaspExit -ne 0) {
       if ($pushOut -match 'not enabled the Apps Script API') {
         # One switch, once per Google account, and only reachable in a browser.
         Write-Host ''
@@ -193,7 +208,7 @@ try {
 
     Step 'Creating a version'
     $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
-    $vOut = (Invoke-Clasp create-version "RTL3D quiz $stamp" 2>&1) -join "`n"
+    $vOut = (Invoke-Clasp @('create-version', "RTL3D quiz $stamp")) -join "`n"
     Write-Host $vOut
     $vm = [regex]::Match($vOut, '(\d+)')
     if (-not $vm.Success) { throw "Could not read the new version number from: $vOut" }
@@ -201,8 +216,13 @@ try {
     Ok "version $version"
 
     Step "Updating deployment $deploymentId"
-    Invoke-Clasp redeploy $deploymentId -V $version -d "RTL3D quiz $stamp"
-    if ($LASTEXITCODE -ne 0) { throw 'clasp redeploy failed.' }
+    $rOut = (Invoke-Clasp @('redeploy', $deploymentId, '--versionNumber', $version,
+        '--description', "RTL3D quiz $stamp")) -join "`n"
+    Write-Host $rOut
+    # clasp can report this one on stderr and still exit 0, so check the text.
+    if ($script:ClaspExit -ne 0 -or $rOut -match 'Invalid deployment|error:') {
+      throw "clasp redeploy failed: $rOut"
+    }
     Ok 'deployed - the endpoint URL is unchanged'
   } finally { Pop-Location }
 } finally {

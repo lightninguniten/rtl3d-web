@@ -1,8 +1,12 @@
 /**
  * RTL3D Lightning Quiz -> Google Sheet
  *
- * Paste into Extensions -> Apps Script on your results spreadsheet, then
- * Deploy -> Manage deployments -> Edit -> New version -> Deploy.
+ * Deploy with:  tools\deploy-quiz-script.ps1
+ *
+ * ONE-TIME, after the first deploy: open this project in the Apps Script
+ * editor, choose the "setup" function and press Run. Approve the permission
+ * prompt. That authorises the script and prints the URL of the results
+ * spreadsheet, creating it if it does not exist yet.
  *
  * Each attempt becomes one row:
  *   Timestamp | Name | School/University | Score | Total | Percent | Q1 | Q2 | ...
@@ -13,13 +17,53 @@
  * quiz does not require editing this script.
  */
 
+var SHEET_ID_KEY = 'RTL3D_QUIZ_SHEET_ID';
+
+/**
+ * The spreadsheet to write into.
+ *
+ * This project is standalone rather than bound to a sheet, so
+ * getActiveSpreadsheet() is null here. The id is kept in script properties,
+ * and created on first use, which works whether the project is bound or not.
+ */
+function getSpreadsheet_() {
+  var props = PropertiesService.getScriptProperties();
+  var id = props.getProperty(SHEET_ID_KEY);
+  if (id) {
+    try {
+      return SpreadsheetApp.openById(id);
+    } catch (err) {
+      // Deleted or unreachable - fall through and make a fresh one.
+      props.deleteProperty(SHEET_ID_KEY);
+    }
+  }
+
+  var bound = SpreadsheetApp.getActiveSpreadsheet();
+  if (bound) {
+    props.setProperty(SHEET_ID_KEY, bound.getId());
+    return bound;
+  }
+
+  var created = SpreadsheetApp.create('RTL3D Quiz Results');
+  props.setProperty(SHEET_ID_KEY, created.getId());
+  return created;
+}
+
+/** Run this once from the editor to authorise the script and see the Sheet. */
+function setup() {
+  var ss = getSpreadsheet_();
+  ensureHeader_(ss.getSheets()[0], BASE_HEAD.slice());
+  Logger.log('Results spreadsheet: ' + ss.getUrl());
+  return ss.getUrl();
+}
+
 var BASE_HEAD = ['Timestamp', 'Name', 'School/University', 'Score', 'Total', 'Percent'];
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var sheet = getSpreadsheet_().getSheets()[0];
     var p = (e && e.parameter) ? e.parameter : {};
 
     var answers = [];
@@ -71,12 +115,12 @@ function doGet(e) {
   return reply_({
     ok: true,
     message: 'RTL3D quiz endpoint is live.',
-    sheetUrl: SpreadsheetApp.getActiveSpreadsheet().getUrl()
+    sheetUrl: getSpreadsheet_().getUrl()
   }, p.callback);
 }
 
 function getResultsPayload_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getSpreadsheet_();
   var sheet = ss.getSheets()[0];
   var lastRow = sheet.getLastRow();
   var lastCol = Math.max(sheet.getLastColumn(), BASE_HEAD.length);
