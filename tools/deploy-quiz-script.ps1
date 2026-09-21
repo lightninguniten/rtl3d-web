@@ -87,7 +87,14 @@ Ok 'clasp ready'
 
 function Invoke-Clasp {
   param([Parameter(ValueFromRemainingArguments = $true)][string[]]$ClaspArgs)
-  & node $claspJs @ClaspArgs
+  # clasp writes ordinary progress and errors to stderr. Under
+  # $ErrorActionPreference = 'Stop' that becomes a terminating NativeCommandError
+  # before we ever get to read $LASTEXITCODE, so the callers below could never
+  # inspect a failure. Keep native stderr non-terminating for the call itself.
+  $prev = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try { & node $claspJs @ClaspArgs 2>&1 }
+  finally { $ErrorActionPreference = $prev }
 }
 
 # --- auth ------------------------------------------------------------------
