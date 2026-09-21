@@ -108,8 +108,10 @@ if (-not $ScriptId -and (Test-Path $idCache)) {
 if (-not $ScriptId) {
   Step 'Finding the Apps Script project'
   $listing = (Invoke-Clasp list-scripts --noShorten 2>&1) -join "`n"
-  $ids = [regex]::Matches($listing, 'script\.google\.com/d/([^/]+)/edit') |
-    ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique
+  # @() matters: with a single match PowerShell would hand back a bare string,
+  # and $ids[0] would then index into it and yield one character.
+  $ids = @([regex]::Matches($listing, 'script\.google\.com/d/([^/]+)/edit') |
+    ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
 
   if ($ids.Count -eq 1) {
     # Only one project on the account, so there is nothing to choose between.
@@ -167,8 +169,20 @@ try {
     Ok 'Code.gs <- tools/quiz-sheet.gs'
 
     Step 'Pushing code'
-    Invoke-Clasp push -f
-    if ($LASTEXITCODE -ne 0) { throw 'clasp push failed.' }
+    $pushOut = (Invoke-Clasp push -f 2>&1) -join "`n"
+    Write-Host $pushOut
+    if ($LASTEXITCODE -ne 0) {
+      if ($pushOut -match 'not enabled the Apps Script API') {
+        # One switch, once per Google account, and only reachable in a browser.
+        Write-Host ''
+        Warn 'The Apps Script API is off for this account. It is a single toggle:'
+        Warn '    https://script.google.com/home/usersettings'
+        Warn 'Turn on "Google Apps Script API", wait about a minute, then re-run this script.'
+        try { Start-Process 'https://script.google.com/home/usersettings' } catch { }
+        throw 'Apps Script API is disabled - see above. Nothing was changed.'
+      }
+      throw 'clasp push failed.'
+    }
 
     Step 'Creating a version'
     $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
