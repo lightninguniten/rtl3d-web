@@ -79,7 +79,10 @@ function doPost(e) {
       p.school || '',
       p.score || '',
       p.total || '',
-      (p.percent || '') + (p.percent ? '%' : '')
+      // A plain number. Writing "80%" makes Sheets store the percentage value
+      // 0.8, which then reads back as 0.8 through the API and shows up that
+      // way on the results page.
+      p.percent === undefined || p.percent === '' ? '' : Number(p.percent)
     ].concat(answers));
 
     return json_({ ok: true });
