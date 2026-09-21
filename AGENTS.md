@@ -118,6 +118,33 @@ Cache-busting is automatic: `build-web-assets.bat` stamps every page's
 `css/style.min.css?v=<hash>` with a content hash of the minified CSS, so the token
 changes only when the CSS does. Do not hand-edit the `?v=` strings.
 
+## Partner logos (home page)
+
+The three university marks in the home-page logo strip are generated, not
+hand-placed. `scripts/build_partner_logos.py` takes each university's official
+file and scales it so all three have the same optical area (equal geometric mean
+of the ink bounding box, with a small correction because a solid round seal reads
+heavier than a wide wordmark), then centres it on a shared 800x373 transparent
+canvas:
+
+| Generated (served) | Source (official) |
+|---|---|
+| `images/logos/uniten-mark.png` | `images/logos/uniten-official.png` — www.uniten.edu.my |
+| `images/logos/utem-mark.png` | `images/logos/utem-official.png` — www.utem.edu.my |
+| `images/logos/kindai-mark.svg` | `images/logos/kindai.svg` — www.kindai.ac.jp |
+
+```bat
+py -3 scriptsuild_partner_logos.py
+```
+
+Because the padding is baked into the asset, the strip needs one CSS rule for all
+three cells (`css/parts/16-overrides.css`) and no per-university size override.
+UNITEN ships a lockup with a "The Energy University" descriptor below a rule; the
+descriptor is unreadable at logo-row size, so the strip uses the primary mark only
+(the crop is in the script). The source files are excluded from the deploy in
+`.deployignore`. Each cell links to that university's own site — this is the one
+deliberate exception to the "no outbound hyperlinks" rule below.
+
 ## Shared page &lt;head&gt;
 
 The invariant head tags for every `{slug}/index.html` (charset, viewport, robots,

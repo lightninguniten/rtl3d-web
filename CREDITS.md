@@ -29,6 +29,23 @@ Suggested attribution (plain text):
 
 > Background music: “Epic Trailer” (“Cinematic Trailer”) by Hans Williamson — Music for Video Library (Patreon)
 
+## University logos
+
+The home-page logo strip uses each partner university's own official logo file,
+downloaded from that university's website. The marks are trademarks of their
+respective universities and are used here to identify the joint-research partners.
+
+| University | Source | Repository file |
+|---|---|---|
+| Universiti Tenaga Nasional | www.uniten.edu.my | `images/logos/uniten-official.png` |
+| Universiti Teknikal Malaysia Melaka | www.utem.edu.my | `images/logos/utem-official.png` |
+| Kindai University | www.kindai.ac.jp | `images/logos/kindai.svg` |
+
+`scripts/build_partner_logos.py` only rescales and pads these files so the three
+read at the same size; the artwork itself is unmodified. For UNITEN the primary
+mark is used without the "The Energy University" descriptor, which is unreadable
+at logo-row size.
+
 ## Other third-party notices
 
 See [LICENSE](LICENSE) for OpenStreetMap, Leaflet, Plotly, and other library/data attributions.

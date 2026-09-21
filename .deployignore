@@ -21,6 +21,12 @@ __pycache__/
 css/parts/
 css/style.css
 
+# Partner-logo build sources — only the generated *-mark.* files are served
+# (see scripts/build_partner_logos.py)
+images/logos/uniten-official.png
+images/logos/utem-official.png
+images/logos/kindai.svg
+
 # Dev artifacts & generation intermediates
 logs/
 video/voice/_parts_*/
