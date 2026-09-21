@@ -38,6 +38,10 @@ eslint.config.js
 .stylelintignore
 .deployignore
 
+# Exact LF station geometry is retained in the repository for local analysis only.
+data/lf/sites.json
+data/lf/lf-data.js
+
 # Internal docs (LICENSE is intentionally kept)
 AGENTS.md
 README.md

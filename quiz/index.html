@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="Test your lightning safety knowledge. 10 questions for students.">
   <title>Lightning Safety Quiz — RTL3D</title>
   <link rel="stylesheet" href="css/dm-sans.css">
-  <link rel="stylesheet" href="css/style.min.css?v=4f7245c364">
+  <link rel="stylesheet" href="css/style.min.css?v=2ff2bf9623">
   <style>
     .quiz-wrap {
       width: 100%;
@@ -144,6 +144,17 @@
       font-weight: 700;
       line-height: 1.4;
       color: var(--text);
+    }
+    .quiz-visual {
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(14, 53, 91, 0.9), rgba(255, 199, 44, 0.12));
+      border: 1px solid rgba(255, 199, 44, 0.2);
+      font-size: clamp(1.7rem, 5cqh, 2.8rem);
+      letter-spacing: 0.15em;
     }
 
     .quiz-options {
@@ -373,6 +384,7 @@
                 </div>
               </div>
               <p class="quiz-question" id="quiz-question"></p>
+              <div class="quiz-visual" id="quiz-visual" role="img" aria-label="Quiz question visual"></div>
               <div class="quiz-options" id="quiz-options" role="list"></div>
               <p class="quiz-explain" id="quiz-explain" hidden></p>
               <div class="quiz-next-row">

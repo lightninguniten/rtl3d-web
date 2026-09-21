@@ -423,7 +423,7 @@ PARTNERS = """
                   <li>Chubu University <small>Current measurement, RTL</small></li>
                   <li>University of Fukui <small>γ-ray observation</small></li>
                   <li>Gifu University <small>LF, video, imaging</small></li>
-                  <li>UEC Tokyo <small>VHF, imaging</small></li>
+                  <li>UEC <small>VHF, imaging</small></li>
                   <li>OTOWA Electric <small>E-field, protection</small></li>
                 </ul>
               </div>
