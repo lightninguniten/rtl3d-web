@@ -61,6 +61,7 @@ window.RTL3D_I18N = {
   /* ---- Home / hub ---- */
   'home.badge': { en: 'SATREPS · Malaysia–Japan Joint Research', ms: 'SATREPS · Penyelidikan Bersama Malaysia–Jepun', ja: 'SATREPS・マレーシア-日本共同研究' },
   'home.hook': { en: 'Where does the next strike land?', ms: 'Di manakah sambaran seterusnya?', ja: '次の落雷はどこに落ちるのでしょうか。' },
+  'home.partnerHint': { en: 'Tap a logo to open the university site', ms: 'Ketik logo untuk membuka laman web universiti', ja: 'ロゴをタップすると各大学のサイトが開きます' },
   'home.title1': { en: 'Real-Time Lightning', ms: 'Kilat Masa Nyata', ja: 'リアルタイム雷' },
   'home.title2': { en: '3D Imaging & Forecasting', ms: 'Pengimejan & Ramalan 3D', ja: '3Dイメージング・予測' },
   'home.tagline': {

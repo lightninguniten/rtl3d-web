@@ -143,7 +143,11 @@ UNITEN ships a lockup with a "The Energy University" descriptor below a rule; th
 descriptor is unreadable at logo-row size, so the strip uses the primary mark only
 (the crop is in the script). The source files are excluded from the deploy in
 `.deployignore`. Each cell links to that university's own site — this is the one
-deliberate exception to the "no outbound hyperlinks" rule below.
+deliberate exception to the "no outbound hyperlinks" rule below. Because a bare
+logo does not read as a link, the affordance is stated three ways: an
+open-in-new-tab arrow in every cell, the `home.partnerHint` line under the plate,
+and one short sheen across the strip after load (disabled under
+`prefers-reduced-motion`).
 
 ## Shared page &lt;head&gt;
 
