@@ -45,3 +45,8 @@ video/_tts_ja_parts/
 # Optional: uncomment to shrink the repo (run build-osm-data.bat after clone)
 # data/osm/power-infrastructure.json
 # data/osm/water-infrastructure.json
+
+# Quiz deploy tooling (local CLI + cached ids, never commit)
+tools/.clasp-cli/
+tools/.quiz-script-id
+.clasprc.json

@@ -17,6 +17,26 @@ drifted out of date before.
 
 
 ----------------------------------------------------------------
+THE SHORT WAY - one command
+----------------------------------------------------------------
+Once the web app has been deployed by hand at least once (STEPS 1-4
+below), every later update is just:
+
+    tools\deploy-quiz-script.ps1
+
+It pushes tools/quiz-sheet.gs to the Apps Script project, cuts a new
+version, updates the SAME deployment so the URL does not change, then
+checks the live endpoint and prints your Sheet URL.
+
+First run only, it opens a browser to sign you in, and it needs the
+Apps Script API switched on for your account:
+    https://script.google.com/home/usersettings
+
+The manual steps below are still worth reading once, so you know what
+the script does on your behalf.
+
+
+----------------------------------------------------------------
 ALREADY SET UP, BUT THE RESULTS PAGE IS EMPTY?
 ----------------------------------------------------------------
 That means the deployed script is an old version. Check it by opening
