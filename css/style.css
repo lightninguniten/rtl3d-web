@@ -9050,3 +9050,7 @@ body[data-page="network"] .network-grid {
     margin-bottom: 0.5rem;
   }
 }
+/* Partner prominence follows the project hierarchy while preserving the shared logo row. */
+body[data-page="home"] .partner-logo-kindai { height: clamp(48px, 8.5cqh, 68px); }
+body[data-page="home"] .partner-logo-utem { height: clamp(42px, 7.5cqh, 60px); }
+body[data-page="home"] .partner-logo-uniten { height: clamp(36px, 6.3cqh, 50px); }

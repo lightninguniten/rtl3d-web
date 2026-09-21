@@ -3,6 +3,11 @@
 
   const CLIPS = [
     {
+      file: 'Y20260612H184527_CINE4_450_NCGDL.mp4',
+      labelKey: 'hsv.clip2.label',
+      captionKey: 'hsv.clip2.caption',
+    },
+    {
       file: 'Y20260515H152823_CINE1_427_CC_2RL.mp4',
       labelKey: 'hsv.clip0.label',
       captionKey: 'hsv.caption',
@@ -11,11 +16,6 @@
       file: 'Y202606 6H065544_CINE24_447_cloudactivity.mp4',
       labelKey: 'hsv.clip1.label',
       captionKey: 'hsv.clip1.caption',
-    },
-    {
-      file: 'Y20260612H184527_CINE4_450_NCGDL.mp4',
-      labelKey: 'hsv.clip2.label',
-      captionKey: 'hsv.clip2.caption',
     },
     {
       file: 'Y20260612H184902_CINE7_451_NCGDL.mp4',

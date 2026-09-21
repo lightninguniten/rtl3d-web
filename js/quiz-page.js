@@ -6,30 +6,35 @@
       q: 'What makes lightning happen in the sky?',
       opts: ['Supernatural power', 'Ice and water drops rubbing', 'God is angry', 'Clouds bumping'],
       ans: 1,
+      visual: { symbol: '☁️⚡', alt: 'A storm cloud producing lightning' },
       explain: 'Lots of tiny pieces of ice and drops of water bump and rub into each other in the cloud as they move around. This rubbing builds up static electricity — just like when you rub your socks on a carpet!'
     },
     {
       q: 'Why do some people get hit by lightning?',
       opts: ['Because they are bad luck', 'Because they wear bright clothes', 'Because they stand in open places', 'Because they have things made of iron'],
       ans: 2,
+      visual: { symbol: '🧍🌩️', alt: 'A person exposed in an open area during a storm' },
       explain: 'People are more likely to be hit by lightning when they are in open areas, where they become the tallest object nearby. Iron things do not attract lightning — lightning is so strong that it can strike anything nearby.'
     },
     {
       q: 'Does lightning strike the same place twice?',
       opts: ['Yes, it can strike the same place again', 'No, it never strikes the same place again'],
       ans: 0,
+      visual: { symbol: '⚡🏢⚡', alt: 'Repeated lightning strikes near a tall building' },
       explain: 'Lightning can strike the same place again and again. For example, one mobile phone tower was hit by lightning 7 times in just 40 minutes!'
     },
     {
       q: 'Where is the safe place to avoid lightning strikes?',
       opts: ['On a sports ground', 'Under a tree', 'In a tent on a campsite', 'Inside a house'],
       ans: 3,
+      visual: { symbol: '🏠⛈️', alt: 'A house providing shelter during a thunderstorm' },
       explain: 'Lightning looks for the easiest and fastest path to the ground. Being inside a house or building keeps you safe because the walls and roof protect you. Open fields, trees, and tents do not protect you — lightning can easily strike there. We are building a website and phone app to tell you where lightning strikes.'
     },
     {
       q: 'Can we change the place where lightning strikes?',
       opts: ['Yes, we can change where the lightning strikes', 'No, we cannot change where the lightning strikes'],
       ans: 0,
+      visual: { symbol: '🚀⚡', alt: 'A rocket-triggered lightning experiment' },
       explain: 'We can send a small rocket into the sky with a long wire attached to it. As the rocket flies up, the wire stretches from the ground into the clouds. Lightning likes an easy path — and the wire becomes that path, so lightning follows the wire down to the ground. We did this Rocket-Triggered Lightning for the first time in Malaysia, in 2026!'
     }
   ];
@@ -68,6 +73,12 @@
     var scoreLive = el('quiz-score-live');
     if (scoreLive) scoreLive.textContent = tt('quiz.scoreLive', { n: state.score });
     el('quiz-question').textContent = q.q;
+    var visual = q.visual || QUESTIONS[state.current].visual;
+    var visualEl = el('quiz-visual');
+    if (visualEl && visual) {
+      visualEl.textContent = visual.symbol;
+      visualEl.setAttribute('aria-label', visual.alt);
+    }
     var optsEl = el('quiz-options');
     optsEl.innerHTML = '';
     q.opts.forEach(function (opt, i) {

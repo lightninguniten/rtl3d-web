@@ -1814,7 +1814,7 @@
         bounds.extend(circleBounds(regionCenter.lat, regionCenter.lng, COVERAGE_KM));
       }
 
-      addStationAreaCircles(map, stationsLayer, sites, bounds);
+      if (!hideExactSites) addStationAreaCircles(map, stationsLayer, sites, bounds);
 
       studyBounds = fixedMapViewBounds() || bounds;
       isolateMapNavigation(mapEl, map);

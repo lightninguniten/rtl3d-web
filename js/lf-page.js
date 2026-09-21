@@ -229,13 +229,13 @@
       return Promise.resolve();
     }
 
-    loadPromise = Promise.all([
-      fetch('data/lf/sites.json').then((r) => r.json()),
+    loadPromise = Promise.resolve(
       window.RTL3DFlashLoader
         ? window.RTL3DFlashLoader.loadAllFlashEntries().then((flashes) => ({ flashes }))
-        : fetch('data/lf/flashes.json').then((r) => r.json()),
-    ]).then(([sites, payload]) => {
-      applyData(sites, payload.flashes);
+        : fetch('data/lf/flashes.json').then((r) => r.json())
+    ).then((payload) => {
+      // Public visualisation deliberately omits protected station geometry.
+      applyData({ sites: [] }, payload.flashes);
     }).catch(() => {
       flashesData = [];
       if (flashMeta) flashMeta.textContent = 'Could not load lightning data.';
