@@ -44,6 +44,7 @@
     score: 0,
     answered: false,
     userAns: -1,
+    answers: [],
     finished: false
   };
 
@@ -131,6 +132,7 @@
     if (state.answered) return;
     state.answered = true;
     state.userAns = i;
+    state.answers[state.current] = i;
     if (i === getQuestions()[state.current].ans) state.score++;
     render();
   }
@@ -175,7 +177,23 @@
     submitResult(pct);
   }
 
-  // ---- save the result (name + school + score) to the Google Sheet ------
+  // A language-independent record of one answer: "B" when right,
+  // "A -> C" when the picked option was wrong.
+  function answerCell(idx) {
+    var picked = state.answers[idx];
+    var correct = QUESTIONS[idx].ans;
+    if (picked == null || picked < 0) return '-';
+    if (picked === correct) return LETTERS[picked];
+    return LETTERS[picked] + ' -> ' + LETTERS[correct];
+  }
+
+  function answerFields() {
+    var out = {};
+    for (var i = 0; i < QUESTIONS.length; i++) out['q' + (i + 1)] = answerCell(i);
+    return out;
+  }
+
+  // ---- save the result (name + school + answers) to the Google Sheet ------
   function submitResult(pct) {
     var saveEl = el('quiz-result-save');
     var row = {
@@ -186,6 +204,8 @@
       percent: pct,
       timestamp: new Date().toISOString()
     };
+    var answers = answerFields();
+    Object.keys(answers).forEach(function (k) { row[k] = answers[k]; });
 
     // Always keep a local copy too (so nothing is ever lost on a kiosk).
     try {
@@ -214,6 +234,9 @@
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       body: body
     }).then(function () {
+      // no-cors means the response is opaque: this confirms the request left
+      // the browser, not that the Sheet accepted it. Hence "submitted", not
+      // "saved" - the local copy above is the one guaranteed to exist.
       if (saveEl) saveEl.textContent = tt('quiz.save.done');
     }).catch(function () {
       if (saveEl) saveEl.textContent = tt('quiz.save.offline');
@@ -226,6 +249,9 @@
     try { all = JSON.parse(localStorage.getItem('rtl3d-quiz-results') || '[]'); }
     catch (_) { all = []; }
     var head = ['name', 'school', 'score', 'total', 'percent', 'timestamp'];
+    all.forEach(function (r) {
+      Object.keys(r).forEach(function (k) { if (head.indexOf(k) < 0) head.push(k); });
+    });
     var esc = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
     var lines = [head.join(',')].concat(all.map(function (r) {
       return head.map(function (k) { return esc(r[k]); }).join(',');
@@ -240,7 +266,7 @@
 
   function restart() {
     var name = state.name, school = state.school;
-    state = { current: 0, score: 0, answered: false, userAns: -1, finished: false, name: name, school: school };
+    state = { current: 0, score: 0, answered: false, userAns: -1, answers: [], finished: false, name: name, school: school };
     el('quiz-result').hidden = true;
     el('quiz-body').hidden = false;
     render();

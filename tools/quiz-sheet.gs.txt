@@ -1,93 +1,117 @@
 ================================================================
- RTL3D Lightning Quiz → Google Sheet  (setup, ~5 minutes)
+ RTL3D Lightning Quiz -> Google Sheet
 ================================================================
 
-This connects the quiz to a Google Sheet so every attempt is recorded
-as a row: Timestamp | Name | School/University | Score | Total | Percent.
+Every attempt becomes one row in a Google Sheet:
+
+  Timestamp | Name | School/University | Score | Total | Percent | Q1 | Q2 | ...
+
+The Q columns record what each person picked, so you can see which
+questions people get wrong, not just the total. A right answer is the
+letter on its own ("B"). A wrong answer is written "A -> C", meaning
+they picked A and the correct option was C.
+
+The script itself lives in ONE place:  tools/quiz-sheet.gs
+Do not keep a second copy in this file - that is how the deployed script
+drifted out of date before.
+
 
 ----------------------------------------------------------------
-STEP 1 — Create the Sheet
+ALREADY SET UP, BUT THE RESULTS PAGE IS EMPTY?
 ----------------------------------------------------------------
-1. Go to https://sheets.google.com and create a new blank spreadsheet.
-2. Name it e.g. "RTL3D Quiz Results".
-   (You do NOT need to add header rows — the script does it.)
+That means the deployed script is an old version. Check it by opening
+the endpoint from js/quiz-config.js in a browser. You should see JSON.
+If you see "Script function not found: doGet", go straight to STEP 3
+and deploy a NEW VERSION of the existing deployment. Do not create a
+new deployment - that changes the URL.
 
-----------------------------------------------------------------
-STEP 2 — Add the Apps Script
-----------------------------------------------------------------
-1. In that sheet, click  Extensions ▸ Apps Script.
-2. Delete whatever code is there and paste EVERYTHING between the
-   >>> BEGIN and <<< END lines below.
-3. Click the disk icon to save.
-
->>> BEGIN -------------------------------------------------------
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-  lock.waitLock(30000);
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-
-    // Write a header row once.
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Name', 'School/University', 'Score', 'Total', 'Percent']);
-    }
-
-    var p = (e && e.parameter) ? e.parameter : {};
-    sheet.appendRow([
-      p.timestamp || new Date().toISOString(),
-      p.name || '',
-      p.school || '',
-      p.score || '',
-      p.total || '',
-      (p.percent || '') + (p.percent ? '%' : '')
-    ]);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-function doGet() {
-  return ContentService.createTextOutput('RTL3D quiz endpoint is live.');
-}
-<<< END ---------------------------------------------------------
 
 ----------------------------------------------------------------
-STEP 3 — Deploy as a Web App
+STEP 1 - Create the Sheet (skip if you already have one)
 ----------------------------------------------------------------
-1. Click  Deploy ▸ New deployment.
-2. Click the gear ⚙ next to "Select type" and choose  Web app.
+1. Go to https://sheets.google.com and create a blank spreadsheet.
+2. Name it "RTL3D Quiz Results" - the name matters only so you can find
+   it again in Drive later. Write the URL down somewhere; nothing in
+   this project records which Sheet is in use.
+3. No header row needed. The script writes it.
+
+
+----------------------------------------------------------------
+STEP 2 - Add the Apps Script
+----------------------------------------------------------------
+Run this from the project root:
+
+    tools\setup-quiz-sheet.ps1
+
+It copies tools/quiz-sheet.gs to your clipboard and opens Apps Script.
+Then:
+
+1. In your Sheet, click  Extensions > Apps Script.
+2. Select all the existing code and delete it.
+3. Paste (Ctrl+V) and save.
+
+(If you would rather not run the script: open tools/quiz-sheet.gs in an
+editor and copy the whole file by hand. Same thing.)
+
+
+----------------------------------------------------------------
+STEP 3 - Deploy as a Web App
+----------------------------------------------------------------
+FIRST TIME:
+1. Deploy > New deployment.
+2. Gear next to "Select type" > Web app.
 3. Set:
-      Description:        RTL3D quiz
-      Execute as:         Me
-      Who has access:     Anyone            <-- important
-4. Click  Deploy.  Authorise when prompted (allow your own account).
-5. Copy the  Web app URL.  It looks like:
-      https://script.google.com/macros/s/AKfycb..................../exec
+      Description:      RTL3D quiz
+      Execute as:       Me
+      Who has access:   Anyone          <-- required, the site is public
+4. Deploy, and authorise when prompted.
+5. Copy the Web app URL:
+      https://script.google.com/macros/s/AKfycb..../exec
+
+EVERY TIME AFTER THAT:
+   Deploy > Manage deployments > (pencil) Edit > Version: New version
+   > Deploy.
+   This keeps the same URL. Editing the code alone changes nothing that
+   is live - the deployment is a snapshot, so you must cut a new version.
+
 
 ----------------------------------------------------------------
-STEP 4 — Paste the URL into the website
+STEP 4 - Point the site at it (first time only)
 ----------------------------------------------------------------
-1. Open  js/quiz-config.js  in this project.
-2. Put the URL between the quotes:
+1. Open  js/quiz-config.js
+2. Put the Web app URL between the quotes:
       window.RTL3D_QUIZ_ENDPOINT = 'https://script.google.com/macros/s/AKfyc..../exec';
-3. Save, commit, and push.
+3. Optionally put the Sheet's own URL in RTL3D_QUIZ_SHEET_URL so the
+   results page can link to it even when the endpoint is down.
+4. Save, commit, push.
 
-That's it. Take the quiz once — a new row should appear in the Sheet.
+
+----------------------------------------------------------------
+STEP 5 - Check it actually works
+----------------------------------------------------------------
+Do not skip this. The quiz cannot tell you whether saving succeeded:
+it posts with mode:'no-cors', so the browser hides the response. The
+page says "Result submitted" because the request left the device, not
+because the Sheet accepted it.
+
+1. Open the endpoint URL directly. Expect JSON, including sheetUrl.
+2. Take the quiz once with a name like "TEST".
+3. Look at the Sheet. A row should be there. Delete it afterwards.
+4. Open  /quiz-results/  - it should say "Google Sheet" as the source.
+   If it says "this browser", the deployment is still stale: STEP 3.
+
 
 ----------------------------------------------------------------
 Notes
 ----------------------------------------------------------------
-• To export the Sheet as CSV/Excel: File ▸ Download ▸ CSV (or .xlsx).
-• Results are ALSO saved in the visitor's browser as a backup. On a kiosk
-  machine you can dump them anytime by opening the browser console on the
-  quiz page and running:   RTL3D_QUIZ.exportCsv()
-• If you ever change the script, use Deploy ▸ Manage deployments ▸ Edit ▸
-  New version so the same URL keeps working.
+- Export: in the Sheet, File > Download > CSV (or .xlsx).
+- Results are ALSO kept in the visitor's own browser as a backup. On a
+  kiosk, dump them from the browser console on the quiz page:
+      RTL3D_QUIZ.exportCsv()
+  That export includes the per-question columns too.
+- Adding a question to the quiz needs no change here. The script reads
+  however many q1, q2, ... fields arrive and widens the header itself.
+- Anyone who views the page source can see the endpoint and post rows to
+  it. That is unavoidable for a public static site - the browser has to
+  know the URL. Treat the Sheet as open to tampering, and sanity-check
+  the rows before quoting numbers anywhere that matters.

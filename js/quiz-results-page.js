@@ -21,17 +21,26 @@
     }
   }
 
-  function localToRows(all) {
-    return all.slice().reverse().map(function (r) {
-      return {
-        timestamp: r.timestamp,
-        name: r.name,
-        school: r.school,
-        score: r.score,
-        total: r.total,
-        percent: r.percent
-      };
+  // The Sheet answers with a head row plus plain arrays, so the local copy is
+  // reshaped the same way and both paths render through one function.
+  var LOCAL_HEAD = ['Timestamp', 'Name', 'School/University', 'Score', 'Total', 'Percent'];
+  var LOCAL_KEYS = ['timestamp', 'name', 'school', 'score', 'total', 'percent'];
+
+  function localTable(all) {
+    var extra = [];
+    all.forEach(function (r) {
+      Object.keys(r).forEach(function (k) {
+        if (/^q\d+$/.test(k) && extra.indexOf(k) < 0) extra.push(k);
+      });
     });
+    extra.sort(function (a, b) { return parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10); });
+
+    var keys = LOCAL_KEYS.concat(extra);
+    var head = LOCAL_HEAD.concat(extra.map(function (k) { return k.toUpperCase(); }));
+    var rows = all.slice().reverse().map(function (r) {
+      return keys.map(function (k) { return r[k] == null ? '' : String(r[k]); });
+    });
+    return { head: head, rows: rows };
   }
 
   function fetchRemote(cb) {
@@ -76,23 +85,27 @@
     return d.innerHTML;
   }
 
-  function renderRows(rows, source) {
+  function renderRows(head, rows, source) {
+    var thead = el('quiz-results-head-row');
     var tbody = el('quiz-results-body');
     var meta = el('quiz-results-meta');
     if (!tbody) return;
 
+    var cols = (head && head.length) ? head : LOCAL_HEAD;
+    if (thead) {
+      thead.innerHTML = cols.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('');
+    }
+
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="6">No submissions yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="' + cols.length + '">No submissions yet.</td></tr>';
       if (meta) meta.textContent = source ? ('Source: ' + source) : '';
       return;
     }
 
     tbody.innerHTML = rows.map(function (r) {
-      var pct = r.percent;
-      if (pct != null && String(pct).indexOf('%') < 0) pct = pct + '%';
-      return '<tr><td>' + esc(r.timestamp) + '</td><td>' + esc(r.name) + '</td><td>' +
-        esc(r.school) + '</td><td>' + esc(r.score) + '</td><td>' + esc(r.total) +
-        '</td><td>' + esc(pct) + '</td></tr>';
+      var cells = '';
+      for (var i = 0; i < cols.length; i++) cells += '<td>' + esc(r[i]) + '</td>';
+      return '<tr>' + cells + '</tr>';
     }).join('');
 
     if (meta) meta.textContent = rows.length + ' submission(s)' + (source ? (' · ' + source) : '');
@@ -121,18 +134,18 @@
     fetchRemote(function (data, err) {
       if (data) {
         setStatus('Auto-refresh every ' + (REFRESH_MS / 1000) + ' seconds', false);
-        renderRows(data.rows || [], 'Google Sheet');
+        renderRows(data.head || [], data.rows || [], 'Google Sheet');
         setSheetLink(data.sheetUrl || sheetUrlFallback());
         return;
       }
 
-      var local = localToRows(loadLocal());
-      if (local.length) {
+      var local = localTable(loadLocal());
+      if (local.rows.length) {
         setStatus(err + ' Showing submissions saved on this device only.', true);
-        renderRows(local, 'this browser');
+        renderRows(local.head, local.rows, 'this browser');
       } else {
         setStatus(err, true);
-        renderRows([], '');
+        renderRows(local.head, [], '');
       }
       setSheetLink(sheetUrlFallback());
     });

@@ -365,7 +365,7 @@ window.RTL3D_I18N = {
   'quiz.msg.indoors': { en: 'Lightning is dangerous — please review the safety tips and try again.', ms: 'Kilat berbahaya — sila semak tip keselamatan dan cuba lagi.', ja: '落雷は危険です。安全のヒントを確認して、もう一度挑戦してください。' },
   'quiz.save.local': { en: 'Result saved on this device.', ms: 'Keputusan disimpan pada peranti ini.', ja: '結果はこの端末に保存されました。' },
   'quiz.save.saving': { en: 'Saving your result…', ms: 'Menyimpan keputusan anda…', ja: '結果を保存しています…' },
-  'quiz.save.done': { en: '✓ Result saved.', ms: '✓ Keputusan disimpan.', ja: '✓ 結果を保存しました。' },
+  'quiz.save.done': { en: '✓ Result submitted.', ms: '✓ Keputusan dihantar.', ja: '✓ 結果を送信しました。' },
   'quiz.save.offline': { en: 'Saved on this device (could not reach the server).', ms: 'Disimpan pada peranti ini (tidak dapat menghubungi pelayan).', ja: 'この端末に保存しました（サーバーに接続できませんでした）。' },
 
   /* ---- Sub-page section tags ---- */
